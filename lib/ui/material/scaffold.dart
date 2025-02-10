@@ -1,0 +1,78 @@
+import 'package:edukit/ui/material/navigation_rail.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+class AppScaffold extends StatelessWidget {
+  final Widget body;
+  final String? title;
+  final MainAxisAlignment? appBarAlignment;
+  final MainAxisAlignment? bottomBarAlignment;
+  final List<Widget>? appBarActions;
+  final List<Widget>? bottomBarActions;
+  final EdgeInsetsGeometry padding;
+  const AppScaffold({
+    super.key,
+    this.title,
+    required this.body,
+    this.bottomBarActions,
+    this.appBarActions,
+    this.appBarAlignment,
+    this.bottomBarAlignment,
+    this.padding = const EdgeInsets.all(12.0),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const decoration = BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topRight,
+        end: Alignment.bottomLeft,
+        colors: [Colors.blueAccent, Colors.white],
+      ),
+    );
+
+    bool isAuth = GoRouter.of(context).state.name! == 'auth';
+
+    final child = Padding(
+      padding: padding,
+      child: Column(
+        children: [
+          _appBar(context),
+          Expanded(child: body),
+          _bottomBar(context),
+        ],
+      ),
+    );
+
+    return Scaffold(
+      body: Container(
+        decoration: decoration,
+        child: isAuth
+            ? child
+            : Row(children: [
+                AppNavigationRail(),
+                Expanded(child: child),
+              ]),
+      ),
+    );
+  }
+
+  Widget _appBar(BuildContext context) {
+    if (title == null) return SizedBox.shrink();
+    return Row(
+      mainAxisAlignment: appBarAlignment ?? MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title!, style: Theme.of(context).textTheme.headlineMedium),
+        ...?appBarActions,
+      ],
+    );
+  }
+
+  Widget _bottomBar(BuildContext context) {
+    if (bottomBarActions?.isEmpty ?? true) return SizedBox.shrink();
+    return Row(
+      mainAxisAlignment: bottomBarAlignment ?? MainAxisAlignment.end,
+      children: bottomBarActions!,
+    );
+  }
+}

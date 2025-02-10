@@ -1,0 +1,27 @@
+name: repositories
+description: "A new Flutter package project."
+version: 0.0.1
+
+environment:
+  sdk: ^3.6.2
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  uuid: ^4.5.1
+
+  firebase_auth: ^5.4.1
+  firebase_core: ^3.10.1
+  cloud_firestore: ^5.6.2
+  collection: ^1.19.0
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.14
+  freezed: ^2.5.8
+  json_serializable: ^6.9.3

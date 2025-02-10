@@ -1,0 +1,14 @@
+{
+    "flutter": {
+        "platforms": {
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "smart-vault-ai",
+                    "configurations": {
+                        "web": "1:405877851706:web:5983be959fbfe89d955703"
+                    }
+                }
+            }
+        }
+    }
+}

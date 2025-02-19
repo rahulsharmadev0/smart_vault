@@ -1,6 +1,6 @@
 import 'package:bloc_suite/bloc_suite.dart';
 import 'package:edukit/ui/bloc/auth_cubit.dart';
-import 'package:edukit/ui/bloc/organization_bloc/organization_bloc.dart';
+import 'package:edukit/ui/bloc/organization_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'routes.dart';
@@ -18,17 +18,15 @@ class App extends StatelessWidget {
       listener: (context, state) {
         router.refresh();
       },
-      child: BlocListener<OrganizationBloc, BlocState>(
+      child: BlocListener<OrganizationBloc, OrganizationState>(
         listener: (context, state) {
-          if (state is BlocStateFailure) {
-            msgKey.currentState!.showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-            );
-          }
-          if (state is BlocStateSuccess && state.message != null) {
-            msgKey.currentState!.showSnackBar(
-              SnackBar(content: Text(state.message!), backgroundColor: Colors.red),
-            );
+          String? msg = state.whenOrNull(
+            error: (msg) => msg,
+            loaded: (org, msg) => msg,
+            loading: (msg) => msg,
+          );
+          if (msg != null) {
+            msgKey.currentState!.showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
           }
         },
         child: MaterialApp.router(

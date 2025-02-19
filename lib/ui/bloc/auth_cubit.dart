@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:repositories/repositories.dart';
-import 'package:repositories/models.dart';
-import 'package:edukit/ui/bloc/organization_bloc/organization_bloc.dart';
+import 'package:edukit/ui/bloc/organization_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart' as _firebaseAuth;

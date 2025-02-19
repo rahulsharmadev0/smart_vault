@@ -1,0 +1,10 @@
+targets:
+  $default:
+    builders:
+      freezed:
+        options:
+          # Disable formatting of generated files, to improve generation performance.
+          format: false
+          explicit_to_json: true
+          maybe_map: true
+          maybe_when: true

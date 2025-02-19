@@ -23,7 +23,7 @@ extension OrganizationExtension on Organization {
 }
 
 extension BucketExtension on Bucket {
-  Bucket addAttribute(BucketAttributeField attribute) {
+  Bucket addAttribute(Attribute attribute) {
     return copyWith(attributes: [...attributes, attribute]);
   }
 
@@ -33,7 +33,7 @@ extension BucketExtension on Bucket {
     );
   }
 
-  Bucket updateAttribute(BucketAttributeField updatedAttribute) {
+  Bucket updateAttribute(Attribute updatedAttribute) {
     return copyWith(
       attributes: attributes
           .map((attribute) =>
@@ -42,13 +42,13 @@ extension BucketExtension on Bucket {
     );
   }
 
-  BucketAttributeField? getAttribute(String attributeId) =>
+  Attribute? getAttribute(String attributeId) =>
       attributes.firstWhereOrNull((attribute) => attribute.attributeId == attributeId);
 
   void updateAttributeTitle(int index, String value) {
     if (value.isEmpty || index < 0 || index >= attributes.length) return;
     var tmp = attributes[index].toJson();
     tmp['title'] = value;
-    attributes[index] = BucketAttributeField.fromJson(tmp);
+    attributes[index] = Attribute.fromJson(tmp);
   }
 }

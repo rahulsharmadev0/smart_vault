@@ -16,6 +16,7 @@
     "**/*.flutter-plugins": true,
     "**/*.flutter-plugins-dependencies": true,
     "**/*.g.dart": true,
+    "**/*.freezed.dart": true,
     "**/*.github": true,
     "**/*.gitignore": true,
     "**/*.metadata": true,

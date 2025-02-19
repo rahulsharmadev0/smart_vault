@@ -1,4 +1,4 @@
-import 'package:edukit/ui/bloc/organization_bloc/organization_bloc.dart';
+import 'package:edukit/ui/bloc/organization_bloc.dart';
 import 'package:edukit/ui/material/scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +35,14 @@ class EditFormState {
 
   Bucket? toBucket() {
     if (!isValid) return null;
-    return Bucket(title: bucketName, description: bucketDescription, fileTypes: fileTypes);
+    return Bucket(
+        bucketId: 'bucketId',
+        title: bucketName,
+        description: bucketDescription,
+        fileTypes: fileTypes,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        attributes: []);
   }
 }
 
@@ -46,7 +53,8 @@ class EditFormCubit extends Cubit<EditFormState> {
   void onSubmitted() {
     var bucket = state.toBucket();
     if (bucket == null) return;
-    orgBloc.add(AddBucket(bucket));
+    //TODO
+    // bucket.add(BucketEvent.create('', bucket));
   }
 
   void updateBucketName(String bucketName) {

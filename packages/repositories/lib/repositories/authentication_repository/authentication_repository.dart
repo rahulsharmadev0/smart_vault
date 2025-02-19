@@ -21,15 +21,18 @@ class AuthenticationRepository {
   firebase_auth.User? get userOnce => _fAuth.currentUser;
 
   // Register new user with email and password
-  Future<firebase_auth.UserCredential?> registerWithEmailAndPassword({
+  Future<firebase_auth.UserCredential> registerWithEmailAndPassword({
     required String email,
     required String password,
     required String displayName,
-  }) {
-    return _fAuth
+  }) async {
+    final credential = await _fAuth
         .createUserWithEmailAndPassword(email: email, password: password)
-        .then((value) => value.user!.updateDisplayName(displayName))
-        .handleAuthError();
+        .handleAuthError<firebase_auth.UserCredential>();
+
+    await credential.user?.updateDisplayName(displayName).handleAuthError();
+
+    return credential;
   }
 
   // Sign in with email and password
@@ -42,7 +45,9 @@ class AuthenticationRepository {
   Future<void> resetPassword(String email) => _fAuth.sendPasswordResetEmail(email: email).handleAuthError();
 
   // Sign out
-  Future<void> signOut() => _fAuth.signOut().handleAuthError();
+  Future<void> signOut() async {
+    return await _fAuth.signOut().handleAuthError();
+  }
 }
 
 extension FutureExt<T> on Future<T> {

@@ -1,45 +1,10 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:uuid/uuid.dart';
-import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:collection/collection.dart';
-import 'package:copy_with_extension/copy_with_extension.dart';
 part 'organization_extension.dart';
-part 'bucket_attribute_fields.dart';
+
+part 'organization.freezed.dart';
 part 'organization.g.dart';
-
-const _copyWith = CopyWith(skipFields: true);
-const _jsonSerializable = JsonSerializable(explicitToJson: true, converters: [
-  BucketAttributeFieldJsonConverter(),
-]);
-
-@_copyWith
-@_jsonSerializable
-class Organization extends Equatable {
-  final String name;
-  final String email;
-  final List<Bucket> buckets;
-
-  @CopyWithField(immutable: true)
-  final String orgId;
-
-  @CopyWithField(removable: true)
-  final DateTime createdAt;
-
-  Organization({
-    String? orgId,
-    required this.email,
-    required this.name,
-    this.buckets = const [],
-    DateTime? createdAt,
-  })  : orgId = orgId ?? Uuid().v4(),
-        createdAt = createdAt ?? DateTime.now();
-
-  factory Organization.fromJson(Map<String, dynamic> json) => _$OrganizationFromJson(json);
-  Map<String, dynamic> toJson() => _$OrganizationToJson(this);
-
-  @override
-  List<Object?> get props => [orgId, name, email, createdAt, buckets];
-}
 
 enum DocumentType {
   pdf('PDF'),
@@ -52,33 +17,111 @@ enum DocumentType {
   const DocumentType(this.fullName);
 }
 
-@_copyWith
-@_jsonSerializable
-class Bucket extends Equatable {
-  final String title;
-  final String description;
-  final List<DocumentType> fileTypes;
-  final List<BucketAttributeField> attributes;
+enum AttributeType { text, dateTime, singleSelect, multiSelect }
 
-  @CopyWithField(immutable: true)
-  final String bucketId;
+@freezed
+sealed class Organization with _$Organization {
+  const factory Organization({
+    required String orgId,
+    required String email,
+    required String name,
+    @Default([]) List<Bucket> buckets,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    String? description,
+  }) = _Organization;
 
-  @CopyWithField(removable: true)
-  final DateTime createdAt;
+  factory Organization.fromJson(Map<String, dynamic> json) => _$OrganizationFromJson(json);
+}
 
-  Bucket({
-    String? bucketId,
-    required this.title,
-    required this.description,
-    DateTime? createdAt,
-    this.fileTypes = const [],
-    this.attributes = const [],
-  })  : bucketId = bucketId ?? Uuid().v4(),
-        createdAt = createdAt ?? DateTime.now();
+@freezed
+sealed class Bucket with _$Bucket {
+  const factory Bucket({
+    required String bucketId,
+    required String title,
+    required String description,
+    required List<DocumentType> fileTypes,
+    @Default([]) List<Attribute> attributes,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) = _Bucket;
 
   factory Bucket.fromJson(Map<String, dynamic> json) => _$BucketFromJson(json);
-  Map<String, dynamic> toJson() => _$BucketToJson(this);
+}
 
-  @override
-  List<Object?> get props => [bucketId, title, description, createdAt, attributes, fileTypes];
+@freezed
+sealed class Attribute with _$Attribute {
+  const factory Attribute.text({
+    required String label,
+    required String attributeId,
+  }) = TextAttribute;
+
+  const factory Attribute.dateTime({
+    required String label,
+    required String attributeId,
+  }) = DateTimeAttribute;
+
+  const factory Attribute.singleSelect({
+    required String label,
+    required String attributeId,
+    required List<Option> options,
+  }) = SingleSelectAttribute;
+
+  const factory Attribute.multiSelect({
+    required String label,
+    required String attributeId,
+    required List<Option> options,
+  }) = MultiSelectAttribute;
+
+  factory Attribute.fromJson(Map<String, dynamic> json) => _$AttributeFromJson(json);
+}
+
+@freezed
+sealed class Option with _$Option {
+  const factory Option({required String id, required String value}) = _Option;
+  factory Option.fromJson(Map<String, dynamic> json) => _$OptionFromJson(json);
+}
+
+// Actuall DocumentFile file
+@freezed
+sealed class DocumentFile with _$DocumentFile {
+  const DocumentFile._();
+  const factory DocumentFile({
+    required String fileId,
+    required String orgId,
+    required String bucketId,
+    required String name,
+    required String fileUrl,
+    required DateTime uploadedAt,
+    required DateTime updatedAt,
+    @Default({}) Map<String, dynamic> attributes,
+  }) = _DocumentFile;
+
+  factory DocumentFile.fromJson(Map<String, dynamic> json) => _$DocumentFileFromJson(json);
+
+  // Speceficly desigened as per database schema
+  static DocumentFile fromFireStore(final Map<String, dynamic> json) {
+    return DocumentFile(
+      fileId: json.remove('fileId'),
+      name: json.remove('name'),
+      fileUrl: json.remove('fileUrl'),
+      bucketId: json.remove('bucketId'),
+      uploadedAt: DateTime.parse(json.remove('uploadedAt')),
+      updatedAt: DateTime.parse(json.remove('updatedAt')),
+      orgId: json.remove('orgId'),
+      attributes: json,
+    );
+  }
+
+  // Speceficly desigened as per database schema
+  Map<String, dynamic> toFireStore() => {
+        'fileId': fileId,
+        'name': name,
+        'fileUrl': fileUrl,
+        'bucketId': bucketId,
+        'uploadedAt': uploadedAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
+        'orgId': orgId,
+        ...attributes,
+      };
 }

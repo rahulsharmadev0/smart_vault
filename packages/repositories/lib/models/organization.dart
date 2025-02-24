@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:collection/collection.dart';
+import 'package:uuid/uuid.dart';
 part 'organization_extension.dart';
 
 part 'organization.freezed.dart';

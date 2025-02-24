@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 
 class AppScaffold extends StatelessWidget {
   final Widget body;
-  final String? title;
+  final String? titleText;
+  final Widget? title;
   final MainAxisAlignment? appBarAlignment;
   final MainAxisAlignment? bottomBarAlignment;
   final List<Widget>? appBarActions;
@@ -12,6 +13,7 @@ class AppScaffold extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   const AppScaffold({
     super.key,
+    this.titleText,
     this.title,
     required this.body,
     this.bottomBarActions,
@@ -19,7 +21,7 @@ class AppScaffold extends StatelessWidget {
     this.appBarAlignment,
     this.bottomBarAlignment,
     this.padding = const EdgeInsets.all(12.0),
-  });
+  }) : assert(titleText != null || title != null);
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +60,12 @@ class AppScaffold extends StatelessWidget {
   }
 
   Widget _appBar(BuildContext context) {
-    if (title == null) return SizedBox.shrink();
+    if (titleText == null) return SizedBox.shrink();
+    if (title != null) return title!;
     return Row(
       mainAxisAlignment: appBarAlignment ?? MainAxisAlignment.spaceBetween,
       children: [
-        Text(title!, style: Theme.of(context).textTheme.headlineMedium),
+        Text(titleText!, style: Theme.of(context).textTheme.headlineMedium),
         ...?appBarActions,
       ],
     );

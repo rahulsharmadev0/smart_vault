@@ -1,8 +1,10 @@
+import 'package:edukit/ui/bloc/bucket_bloc.dart';
 import 'package:edukit/ui/bloc/organization_bloc.dart';
 import 'package:edukit/ui/material/scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:repositories/models.dart';
+import 'package:uuid/uuid.dart';
 
 class EditFormState {
   final String bucketName;
@@ -36,7 +38,7 @@ class EditFormState {
   Bucket? toBucket() {
     if (!isValid) return null;
     return Bucket(
-        bucketId: 'bucketId',
+        bucketId: Uuid().v4(),
         title: bucketName,
         description: bucketDescription,
         fileTypes: fileTypes,
@@ -48,13 +50,13 @@ class EditFormState {
 
 class EditFormCubit extends Cubit<EditFormState> {
   OrganizationBloc orgBloc;
-  EditFormCubit(this.orgBloc) : super(EditFormState.empty);
+  BucketBloc bucketBloc;
+  EditFormCubit(this.orgBloc, this.bucketBloc) : super(EditFormState.empty);
 
   void onSubmitted() {
     var bucket = state.toBucket();
     if (bucket == null) return;
-    //TODO
-    // bucket.add(BucketEvent.create('', bucket));
+    bucketBloc.add(BucketEvent.create(orgBloc.orgId, bucket));
   }
 
   void updateBucketName(String bucketName) {
@@ -81,10 +83,13 @@ class CreateOrEditBucketScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => EditFormCubit(context.read<OrganizationBloc>()),
+      create: (context) => EditFormCubit(
+        context.read<OrganizationBloc>(),
+        context.read<BucketBloc>(),
+      ),
       child: Builder(builder: (context) {
         return AppScaffold(
-          title: 'Create Bucket',
+          titleText: 'Create Bucket',
           bottomBarActions: [
             ElevatedButton(
               onPressed: context.read<EditFormCubit>().onSubmitted,

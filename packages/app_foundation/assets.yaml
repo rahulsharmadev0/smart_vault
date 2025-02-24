@@ -1,0 +1,36 @@
+name: app_foundation
+flutter_gen:
+  output: lib/gen/
+  line_length: 80
+  parse_metadata: true
+
+  integrations:
+    image: true
+    flutter_svg: true
+    rive: false
+    lottie: false
+
+  assets:
+    enabled: true
+    outputs:
+      package_parameter_enabled: true
+      style: dot-delimiter
+      class_name: Assets
+    exclude: []
+
+  fonts:
+    enabled: true
+
+    outputs:
+      class_name: FontFamily
+
+  colors:
+    enabled: true
+    inputs: []
+
+    outputs:
+      class_name: ColorName
+
+flutter:
+  assets: ["assets/svg/", "assets/image/", "assets/icon/"]
+  fonts: []

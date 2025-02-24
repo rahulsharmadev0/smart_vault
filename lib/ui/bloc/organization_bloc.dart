@@ -25,6 +25,11 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
   final OrganizationRepository repo;
   Organization? _cachedOrg;
 
+  String get orgId {
+    if (state is! OrgLoadedState) throw Exception('Organization not loaded');
+    return (state as OrgLoadedState).organization.orgId;
+  }
+
   OrganizationBloc({required this.repo}) : super(const OrganizationState.initial()) {
     on<LoadOrganization>(_onLoadOrganization);
     on<UpdateName>(_onUpdateName);

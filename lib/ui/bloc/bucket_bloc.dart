@@ -23,6 +23,10 @@ sealed class BucketState with _$BucketState {
       LoadedBucketState;
 }
 
+//==============================================================
+//                        BucketBloc
+//==============================================================
+
 class BucketBloc extends Bloc<BucketEvent, BucketState> {
   final BucketRepository repo;
   BucketBloc({required this.repo}) : super(const BucketState.initial()) {

@@ -1,74 +1,95 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:edukit/ui/app/routes.dart';
+import 'package:bloc_suite/bloc_suite.dart';
 import 'package:edukit/ui/bloc/bucket_bloc.dart';
-import 'package:edukit/ui/material/scaffold.dart';
-import 'package:edukit/ui/modules/attribute_management_screen.dart';
+import 'package:edukit/ui/modules/attribute_management/attribute_management_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:repositories/models/organization.dart';
 
-class AttributeManagementScreen extends StatefulWidget {
+typedef _AttributeManagementBlocBuilder = BlocWidget<AttributeManagementBloc, AttributeManagementState>;
+
+typedef _AttributeManagementBlocSelector
+    = BlocSelectorWidget<AttributeManagementBloc, AttributeManagementState, List<Attribute>>;
+
+// =========================================
+
+class AttributeManagementWidget extends _AttributeManagementBlocBuilder {
   final String bucketId;
-  const AttributeManagementScreen({super.key, required this.bucketId});
+  final BucketBloc bucketBloc;
+  AttributeManagementWidget({super.key, required this.bucketId, required this.bucketBloc})
+      : super(
+          bloc: AttributeManagementBloc(bucketId: bucketId, bucketBloc: bucketBloc),
+
+          //Note: Widget not rebuilt when the state is the same
+          buildWhen: (p0, p1) => p0.runtimeType != p1.runtimeType,
+        );
 
   @override
-  State<AttributeManagementScreen> createState() => _AttributeManagementScreenState();
+  Widget build(BuildContext context, AttributeManagementBloc bloc, AttributeManagementState state) {
+    return state.map(
+      loading: (_) => CircularProgressIndicator(),
+      error: (e) => Text(e.message),
+      loaded: (state) {
+        return Column(
+          spacing: 8,
+          children: [
+            Text('Fixed Attributes'),
+            FixedAttributesListView(),
+            SizedBox(height: 12),
+            Text('Fixed Attributes'),
+            CustomAttributesListView(),
+          ],
+        );
+      },
+    );
+  }
 }
 
-class _AttributeManagementScreenState extends State<AttributeManagementScreen> {
-  late AttributeManagementCubit cubit;
+// =========================================
+// FixedAttributesListView
+// =========================================
+
+class FixedAttributesListView extends _AttributeManagementBlocSelector {
+  FixedAttributesListView({super.key, super.bloc})
+      : super(selector: (state) => state.mapOrNull(loaded: (v) => v.fixedAttributes)!);
 
   @override
-  void initState() {
-    cubit = AttributeManagementCubit(widget.bucketId, context.read<BucketBloc>());
-    super.initState();
+  bool get autoClose => false;
+
+  @override
+  Widget build(BuildContext context, AttributeManagementBloc bloc, List<Attribute> state) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: state.length,
+      itemBuilder: (context, index) {
+        final attribute = state[index];
+        return ListTile(
+          title: Text(attribute.label),
+        );
+      },
+    );
   }
+}
+
+// =========================================
+//  CustomAttributesListView
+// =========================================
+
+class CustomAttributesListView extends _AttributeManagementBlocSelector {
+  CustomAttributesListView({super.key, super.bloc})
+      : super(selector: (state) => state.mapOrNull(loaded: (v) => v.customAttributes)!);
 
   @override
-  void dispose() {
-    cubit.close();
-    super.dispose();
-  }
+  bool get autoClose => false;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<AttributeManagementCubit, AttributeManagementState>(
-      bloc: cubit,
-      builder: (context, state) {
-        var textTheme2 = Theme.of(context).textTheme;
-        return AppScaffold(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(cubit.title, style: textTheme2.titleMedium),
-                    IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () =>
-                            context.pushNamed('edit-bucket', pathParameters: {'bucketId': widget.bucketId})),
-                  ],
-                ),
-                Text(cubit.description, style: Theme.of(context).textTheme.labelMedium),
-              ],
-            ),
-            body: ListView(
-              children: [
-                for (var i = 0; i < state.length; i++)
-                  ListTile(
-                    title: Text(state[i].name),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => cubit.removeAttribute(i),
-                    ),
-                  ),
-                ElevatedButton(
-                  onPressed: () =>
-                      context.pushNamed('add-attribute', pathParameters: {'bucketId': widget.bucketId}),
-                  child: Text('Add Attribute'),
-                ),
-              ],
-            ));
+  Widget build(BuildContext context, AttributeManagementBloc bloc, List<Attribute> state) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: state.length,
+      itemBuilder: (context, index) {
+        final attribute = state[index];
+        return ListTile(
+          title: Text(attribute.label),
+        );
       },
     );
   }

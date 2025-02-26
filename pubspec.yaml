@@ -20,23 +20,15 @@ dependencies:
   flutter_svg: ^2.0.17
   hydrated_bloc: ^10.0.0
   google_fonts: ^6.2.1
+
+  bloc_suite: ^0.0.2
+  dart_suite: ^0.0.1
+
   repositories:
     path: packages/repositories
 
   app_foundation:
     path: packages/app_foundation
-
-  bloc_suite:
-    git:
-      url: https://github.com/rahulsharmadev0/suite.git
-      ref: main
-      path: packages/bloc_suite
-
-  dart_suite:
-    git:
-      url: https://github.com/rahulsharmadev0/suite.git
-      ref: main
-      path: packages/dart_suite
 
   uuid: ^4.5.1
   collection: ^1.19.0

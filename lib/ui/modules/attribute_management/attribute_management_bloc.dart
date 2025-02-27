@@ -1,5 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:collection/collection.dart';
-import 'package:dart_suite/dart_suite.dart';
 import 'package:edukit/ui/bloc/bucket_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:repositories/models/organization.dart';
@@ -8,7 +9,8 @@ part 'attribute_management_bloc.freezed.dart';
 
 @freezed
 class AttributeManagementEvent with _$AttributeManagementEvent {
-  const factory AttributeManagementEvent.init() = _Init;
+  // ignore: unused_element
+  const factory AttributeManagementEvent._init() = _Init;
   const factory AttributeManagementEvent.addAttribute(Attribute attribute) = _AddAttribute;
   const factory AttributeManagementEvent.removeAttribute(int index) = _RemoveAttribute;
   const factory AttributeManagementEvent.onSubmitted() = _OnSubmitted;
@@ -16,12 +18,30 @@ class AttributeManagementEvent with _$AttributeManagementEvent {
 
 @freezed
 class AttributeManagementState with _$AttributeManagementState {
-  const factory AttributeManagementState.loading() = _Loading;
-  const factory AttributeManagementState.error(String message) = _Error;
+  const factory AttributeManagementState.loading() = AMLoading;
+  const factory AttributeManagementState.error(String message) = AMError;
   const factory AttributeManagementState.loaded({
     required List<Attribute> fixedAttributes,
     required List<Attribute> customAttributes,
-  }) = _Loaded;
+  }) = AMLoaded;
+}
+
+extension AttributeManagementStateExt on AttributeManagementState {
+  T map<T>({
+    T Function(AMLoading state)? loading,
+    T Function(AMError state)? error,
+    T Function(AMLoaded state)? loaded,
+    T Function()? orElse,
+  }) {
+    // ignore: no_leading_underscores_for_local_identifiers
+    T _else() => orElse?.call() ?? (throw StateError('Unhandled state type: $runtimeType'));
+    return switch (this) {
+      AMLoading value => loading?.call(value) ?? _else(),
+      AMError value => error?.call(value) ?? _else(),
+      AMLoaded value => loaded?.call(value) ?? _else(),
+      _ => _else(),
+    };
+  }
 }
 
 //==============================================================
@@ -34,23 +54,23 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
   final String bucketId;
   final BucketBloc bucketBloc;
   AttributeManagementBloc({required this.bucketId, required this.bucketBloc})
-      : super(const AttributeManagementState.loading()) {
-    on<AttributeManagementEvent>((event, emit) {
-      final newState = event.map(
-        init: _init,
-        addAttribute: _addAttribute,
-        removeAttribute: _removeAttribute,
-        onSubmitted: _onSubmitted,
-      );
-      emit(newState);
-    });
+    : super(const AttributeManagementState.loading()) {
+    on<_Init>(_init);
+    on<_AddAttribute>(_addAttribute);
+    on<_RemoveAttribute>(_removeAttribute);
+    on<_OnSubmitted>(_onSubmitted);
+
+    // Initial event
+    add(AttributeManagementEvent._init());
   }
 
-  AttributeManagementState _init(_Init event) {
-    if (state is _Loaded) return state;
-    return bucketBloc.state.maybeMap(
-      orElse: () => AttributeManagementState.error('Bucket State is not loaded'),
-      loaded: (state) {
+  void _init(_Init event, Emitter emit) {
+    if (state is AMLoaded) return;
+
+    final newState = switch (bucketBloc.state) {
+      BucketState.error => AttributeManagementState.error('Error loading bucket'),
+      BucketState.loaded => () {
+        final state = bucketBloc.state as LoadedBucketState;
         final bucket = state.bucket.firstWhereOrNull((e) => e.bucketId == bucketId);
 
         if (bucket == null) {
@@ -63,7 +83,7 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
             customAttributes: const [],
             fixedAttributes: [
               for (var entry in _fixedAttributes.entries)
-                Attribute.text(attributeId: entry.key, label: entry.value)
+                Attribute.text(attributeId: entry.key, label: entry.value),
             ],
           );
         }
@@ -81,41 +101,44 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
           fixedAttributes: fixedAttributes,
           customAttributes: customAttributes,
         );
-      },
-    );
+      }(),
+      _ => AttributeManagementState.loading(),
+    };
+    emit(newState);
   }
 
-  AttributeManagementState _addAttribute(_AddAttribute event) {
-    return _mapper((state) {
+  void _addAttribute(_AddAttribute event, Emitter emit) {
+    _mapperEmit(emit, (state) {
       var customAttributes = [...state.customAttributes, event.attribute];
       return state.copyWith(customAttributes: customAttributes);
     });
   }
 
-  AttributeManagementState _removeAttribute(_RemoveAttribute event) {
-    return _mapper((state) {
+  void _removeAttribute(_RemoveAttribute event, Emitter emit) {
+    _mapperEmit(emit, (state) {
       final customAttributes = [...state.customAttributes]..removeAt(event.index);
       return state.copyWith(customAttributes: customAttributes);
     });
   }
 
-  AttributeManagementState _onSubmitted(_OnSubmitted event) {
-    return _mapper((state) {
-      final bucket = bucketBloc.state.mapOrNull(
-        loaded: (state) => state.bucket.firstWhere((e) => e.bucketId == bucketId),
-      );
+  void _onSubmitted(_OnSubmitted event, Emitter emit) {
+    var bucketState = bucketBloc.state;
+    if (bucketState is! LoadedBucketState) return;
 
+    _mapperEmit(emit, (state) {
+      final bucket = bucketState.bucket.firstWhere((e) => e.bucketId == bucketId);
       //TODO: Implement update method
-      BucketEvent.update('orgId', bucket!.copyWith(attributes: state.customAttributes));
+      BucketEvent.update('orgId', bucket.copyWith(attributes: state.customAttributes));
       return state;
     });
   }
 
   /// Common method to update state
-  AttributeManagementState _mapper(Function(_Loaded state) mapper) {
-    return state.maybeMap(
-      orElse: () => AttributeManagementState.error('State is not loaded'),
+  void _mapperEmit(Emitter emit, AttributeManagementState Function(AMLoaded state) mapper) {
+    var newState = state.map(
       loaded: (state) => mapper(state),
+      orElse: () => AttributeManagementState.error('State is not loaded'),
     );
+    emit(newState);
   }
 }

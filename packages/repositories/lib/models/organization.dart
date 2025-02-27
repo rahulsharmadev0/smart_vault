@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 part 'organization_extension.dart';
 
@@ -20,47 +20,79 @@ enum DocumentType {
 
 enum AttributeType { text, dateTime, singleSelect, multiSelect }
 
+//
+//===============================================================
+//  Organization
+//===============================================================
+//
+
 @freezed
 sealed class Organization with _$Organization {
-  const factory Organization({
-    required String orgId,
+  @override
+  final String orgId;
+  @override
+  final DateTime createdAt, updatedAt;
+
+  Organization._({String? orgId, DateTime? createdAt, DateTime? updatedAt})
+    : orgId = orgId ?? const Uuid().v4(),
+      createdAt = createdAt ?? DateTime.now(),
+      updatedAt = updatedAt ?? DateTime.now();
+
+  factory Organization({
+    String? orgId,
     required String email,
     required String name,
     @Default([]) List<Bucket> buckets,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     String? description,
   }) = _Organization;
 
   factory Organization.fromJson(Map<String, dynamic> json) => _$OrganizationFromJson(json);
 }
 
+//
+//===============================================================
+//  Bucket
+//===============================================================
+//
+
 @freezed
 sealed class Bucket with _$Bucket {
-  const factory Bucket({
-    required String bucketId,
+  @override
+  final String bucketId;
+
+  @override
+  final DateTime createdAt, updatedAt;
+  Bucket._({String? bucketId, DateTime? createdAt, DateTime? updatedAt})
+    : bucketId = bucketId ?? const Uuid().v4(),
+      createdAt = createdAt ?? DateTime.now(),
+      updatedAt = updatedAt ?? DateTime.now();
+
+  factory Bucket({
+    String? bucketId,
     required String title,
     required String description,
     required List<DocumentType> fileTypes,
     @Default([]) List<Attribute> attributes,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) = _Bucket;
 
   factory Bucket.fromJson(Map<String, dynamic> json) => _$BucketFromJson(json);
 }
 
+//
+//===============================================================
+//  Attribute
+//===============================================================
+//
+
 @freezed
 sealed class Attribute with _$Attribute {
-  const factory Attribute.text({
-    required String label,
-    required String attributeId,
-  }) = TextAttribute;
+  const factory Attribute.text({required String label, required String attributeId}) = TextAttribute;
 
-  const factory Attribute.dateTime({
-    required String label,
-    required String attributeId,
-  }) = DateTimeAttribute;
+  const factory Attribute.dateTime({required String label, required String attributeId}) = DateTimeAttribute;
 
   const factory Attribute.singleSelect({
     required String label,
@@ -83,18 +115,32 @@ sealed class Option with _$Option {
   factory Option.fromJson(Map<String, dynamic> json) => _$OptionFromJson(json);
 }
 
+//
+//===============================================================
+//  DocumentFile
+//===============================================================
+
 // Actuall DocumentFile file
 @freezed
 sealed class DocumentFile with _$DocumentFile {
-  const DocumentFile._();
-  const factory DocumentFile({
-    required String fileId,
+  @override
+  final String fileId;
+  @override
+  final DateTime uploadedAt, updatedAt;
+
+  DocumentFile._({String? fileId, DateTime? uploadedAt, DateTime? updatedAt})
+    : fileId = fileId ?? const Uuid().v4(),
+      uploadedAt = uploadedAt ?? DateTime.now(),
+      updatedAt = updatedAt ?? DateTime.now();
+
+  factory DocumentFile({
     required String orgId,
     required String bucketId,
     required String name,
     required String fileUrl,
-    required DateTime uploadedAt,
-    required DateTime updatedAt,
+    String? fileId,
+    DateTime? uploadedAt,
+    DateTime? updatedAt,
     @Default({}) Map<String, dynamic> attributes,
   }) = _DocumentFile;
 
@@ -116,13 +162,13 @@ sealed class DocumentFile with _$DocumentFile {
 
   // Speceficly desigened as per database schema
   Map<String, dynamic> toFireStore() => {
-        'fileId': fileId,
-        'name': name,
-        'fileUrl': fileUrl,
-        'bucketId': bucketId,
-        'uploadedAt': uploadedAt.toIso8601String(),
-        'updatedAt': updatedAt.toIso8601String(),
-        'orgId': orgId,
-        ...attributes,
-      };
+    'fileId': fileId,
+    'name': name,
+    'fileUrl': fileUrl,
+    'bucketId': bucketId,
+    'uploadedAt': uploadedAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+    'orgId': orgId,
+    ...attributes,
+  };
 }

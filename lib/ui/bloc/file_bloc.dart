@@ -23,6 +23,25 @@ sealed class FileState with _$FileState {
       FileLoadedState;
 }
 
+extension FileStateExt on FileState {
+  T map<T>({
+    T Function(FileInitialState)? initial,
+    T Function(FileLoadingState)? loading,
+    T Function(FileErrorState)? error,
+    T Function(FileLoadedState)? loaded,
+    T Function()? orElse,
+  }) {
+    // ignore: no_leading_underscores_for_local_identifiers
+    T _else() => orElse?.call() ?? (throw StateError('Unhandled state type: $runtimeType'));
+    return switch (this) {
+      FileInitialState value => initial?.call(value) ?? _else(),
+      FileLoadingState value => loading?.call(value) ?? _else(),
+      FileErrorState value => error?.call(value) ?? _else(),
+      FileLoadedState value => loaded?.call(value) ?? _else(),
+    };
+  }
+}
+
 class FileBloc extends Bloc<FileEvent, FileState> {
   final FileRepository repo;
   List<DocumentFile> _cachedFiles = [];
@@ -36,115 +55,120 @@ class FileBloc extends Bloc<FileEvent, FileState> {
 
   Future<void> _onCreateFile(CreateFileEvent event, Emitter<FileState> emit) async {
     try {
-      emit(state.maybeMap(
-        initial: (_) => const FileState.loading(),
-        loaded: (state) => state.copyWith(msg: FileMessage.creating.message),
-        orElse: () => state,
-      ));
+      emit(
+        state.map(
+          initial: (_) => const FileState.loading(),
+          loaded: (state) => state.copyWith(msg: FileMessage.creating.message),
+          orElse: () => state,
+        ),
+      );
 
       await repo.create(event.file);
       _cachedFiles = [..._cachedFiles, event.file];
 
-      emit(FileState.loaded(
-        file: _cachedFiles,
-        msg: FileMessage.created.message,
-      ));
+      emit(FileState.loaded(file: _cachedFiles, msg: FileMessage.created.message));
     } catch (e) {
-      emit(state.maybeMap(
-        initial: (_) => FileState.error(msg: FileMessage.creating.getErrorMessage(e)),
-        loaded: (state) => state.copyWith(msg: FileMessage.creating.getErrorMessage(e)),
-        orElse: () => state,
-      ));
+      emit(
+        state.map(
+          initial: (_) => FileState.error(msg: FileMessage.creating.getErrorMessage(e)),
+          loaded: (state) => state.copyWith(msg: FileMessage.creating.getErrorMessage(e)),
+          orElse: () => state,
+        ),
+      );
     }
   }
 
   Future<void> _onUpdateFile(UpdateFileEvent event, Emitter<FileState> emit) async {
     try {
-      emit(state.maybeMap(
-        initial: (_) => FileState.loading(msg: FileMessage.updating.message),
-        loaded: (state) => state.copyWith(
-          msg: FileMessage.updating.message,
-          workOnIndex: state.file.indexWhere((file) => file.fileId == event.file.fileId),
+      emit(
+        state.map(
+          initial: (_) => FileState.loading(msg: FileMessage.updating.message),
+          loaded: (state) {
+            return state.copyWith(
+              msg: FileMessage.updating.message,
+              workOnIndex: state.file.indexWhere((file) => file.fileId == event.file.fileId),
+            );
+          },
+          orElse: () => state,
         ),
-        orElse: () => state,
-      ));
+      );
 
       await repo.update(event.file);
 
-      _cachedFiles = _cachedFiles.map((file) {
-        return file.fileId == event.file.fileId ? event.file : file;
-      }).toList();
+      _cachedFiles =
+          _cachedFiles.map((file) {
+            return file.fileId == event.file.fileId ? event.file : file;
+          }).toList();
 
-      emit(FileState.loaded(
-        file: _cachedFiles,
-        msg: FileMessage.updated.message,
-        workOnIndex: null,
-      ));
+      emit(FileState.loaded(file: _cachedFiles, msg: FileMessage.updated.message, workOnIndex: null));
     } catch (e) {
-      emit(state.maybeMap(
-        initial: (_) => FileState.error(msg: FileMessage.updating.getErrorMessage(e)),
-        loaded: (state) => state.copyWith(
-          msg: FileMessage.updating.getErrorMessage(e),
-          workOnIndex: null,
+      emit(
+        state.map(
+          initial: (_) => FileState.error(msg: FileMessage.updating.getErrorMessage(e)),
+          loaded: (state) => state.copyWith(msg: FileMessage.updating.getErrorMessage(e), workOnIndex: null),
+          orElse: () => state,
         ),
-        orElse: () => state,
-      ));
+      );
     }
   }
 
   Future<void> _onDeleteFile(DeleteFileEvent event, Emitter<FileState> emit) async {
     try {
-      emit(state.maybeMap(
-        initial: (_) => FileState.loading(msg: FileMessage.deleting.message),
-        loaded: (state) => state.copyWith(
-          msg: FileMessage.deleting.message,
-          workOnIndex: state.file.indexWhere((file) => file.fileId == event.fileId),
+      emit(
+        state.map(
+          initial: (_) => FileState.loading(msg: FileMessage.deleting.message),
+          loaded:
+              (state) => state.copyWith(
+                msg: FileMessage.deleting.message,
+                workOnIndex: state.file.indexWhere((file) => file.fileId == event.fileId),
+              ),
+          orElse: () => state,
         ),
-        orElse: () => state,
-      ));
+      );
 
       await repo.delete(event.fileId);
 
       _cachedFiles = _cachedFiles.where((file) => file.fileId != event.fileId).toList();
 
-      emit(FileState.loaded(
-        file: _cachedFiles,
-        msg: FileMessage.deleted.message,
-        workOnIndex: null,
-      ));
+      emit(FileState.loaded(file: _cachedFiles, msg: FileMessage.deleted.message, workOnIndex: null));
     } catch (e) {
-      emit(state.maybeMap(
-        initial: (_) => FileState.error(msg: FileMessage.deleting.getErrorMessage(e)),
-        loaded: (state) => state.copyWith(
-          msg: FileMessage.deleting.getErrorMessage(e),
-          workOnIndex: null,
+      emit(
+        state.map(
+          initial: (_) => FileState.error(msg: FileMessage.deleting.getErrorMessage(e)),
+          loaded: (state) => state.copyWith(msg: FileMessage.deleting.getErrorMessage(e), workOnIndex: null),
+          orElse: () => state,
         ),
-        orElse: () => state,
-      ));
+      );
     }
   }
 
   Future<void> _onLoadFiles(LoadBucketFilesEvent event, Emitter<FileState> emit) async {
     try {
-      emit(state.maybeMap(
-        initial: (_) => FileState.loading(msg: FileMessage.loading.message),
-        loaded: (state) => state.copyWith(msg: FileMessage.loading.message),
-        orElse: () => state,
-      ));
+      emit(
+        state.map(
+          initial: (_) => FileState.loading(msg: FileMessage.loading.message),
+          loaded: (state) => state.copyWith(msg: FileMessage.loading.message),
+          orElse: () => state,
+        ),
+      );
 
       final files = await repo.getFileByBucketId(event.bucketId);
       _cachedFiles = files;
 
-      emit(FileState.loaded(
-        file: files,
-        msg: files.isEmpty ? FileMessage.noFiles.message : FileMessage.loaded.message,
-      ));
+      emit(
+        FileState.loaded(
+          file: files,
+          msg: files.isEmpty ? FileMessage.noFiles.message : FileMessage.loaded.message,
+        ),
+      );
     } catch (e) {
-      emit(state.maybeMap(
-        initial: (_) => FileState.error(msg: FileMessage.loading.getErrorMessage(e)),
-        loaded: (state) => state.copyWith(msg: FileMessage.loading.getErrorMessage(e)),
-        orElse: () => state,
-      ));
+      emit(
+        state.map(
+          initial: (_) => FileState.error(msg: FileMessage.loading.getErrorMessage(e)),
+          loaded: (state) => state.copyWith(msg: FileMessage.loading.getErrorMessage(e)),
+          orElse: () => state,
+        ),
+      );
     }
   }
 }

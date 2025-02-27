@@ -6,8 +6,8 @@ import 'package:repositories/models/organization.dart';
 
 typedef _AttributeManagementBlocBuilder = BlocWidget<AttributeManagementBloc, AttributeManagementState>;
 
-typedef _AttributeManagementBlocSelector
-    = BlocSelectorWidget<AttributeManagementBloc, AttributeManagementState, List<Attribute>>;
+typedef _AttributeManagementBlocSelector =
+    BlocSelectorWidget<AttributeManagementBloc, AttributeManagementState, List<Attribute>>;
 
 // =========================================
 
@@ -15,12 +15,12 @@ class AttributeManagementWidget extends _AttributeManagementBlocBuilder {
   final String bucketId;
   final BucketBloc bucketBloc;
   AttributeManagementWidget({super.key, required this.bucketId, required this.bucketBloc})
-      : super(
-          bloc: AttributeManagementBloc(bucketId: bucketId, bucketBloc: bucketBloc),
+    : super(
+        bloc: AttributeManagementBloc(bucketId: bucketId, bucketBloc: bucketBloc),
 
-          //Note: Widget not rebuilt when the state is the same
-          buildWhen: (p0, p1) => p0.runtimeType != p1.runtimeType,
-        );
+        //Note: Widget not rebuilt when the state is the same
+        buildWhen: (p0, p1) => p0.runtimeType != p1.runtimeType,
+      );
 
   @override
   Widget build(BuildContext context, AttributeManagementBloc bloc, AttributeManagementState state) {
@@ -49,7 +49,7 @@ class AttributeManagementWidget extends _AttributeManagementBlocBuilder {
 
 class FixedAttributesListView extends _AttributeManagementBlocSelector {
   FixedAttributesListView({super.key, super.bloc})
-      : super(selector: (state) => state.mapOrNull(loaded: (v) => v.fixedAttributes)!);
+    : super(selector: (state) => state.map(loaded: (v) => v.fixedAttributes)!);
 
   @override
   bool get autoClose => false;
@@ -61,9 +61,7 @@ class FixedAttributesListView extends _AttributeManagementBlocSelector {
       itemCount: state.length,
       itemBuilder: (context, index) {
         final attribute = state[index];
-        return ListTile(
-          title: Text(attribute.label),
-        );
+        return ListTile(title: Text(attribute.label));
       },
     );
   }
@@ -75,7 +73,7 @@ class FixedAttributesListView extends _AttributeManagementBlocSelector {
 
 class CustomAttributesListView extends _AttributeManagementBlocSelector {
   CustomAttributesListView({super.key, super.bloc})
-      : super(selector: (state) => state.mapOrNull(loaded: (v) => v.customAttributes)!);
+    : super(selector: (state) => state.map(loaded: (v) => v.customAttributes)!);
 
   @override
   bool get autoClose => false;
@@ -87,9 +85,7 @@ class CustomAttributesListView extends _AttributeManagementBlocSelector {
       itemCount: state.length,
       itemBuilder: (context, index) {
         final attribute = state[index];
-        return ListTile(
-          title: Text(attribute.label),
-        );
+        return ListTile(title: Text(attribute.label));
       },
     );
   }

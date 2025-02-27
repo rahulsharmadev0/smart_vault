@@ -6,57 +6,71 @@ part of 'organization.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$OrganizationImpl _$$OrganizationImplFromJson(Map<String, dynamic> json) =>
-    _$OrganizationImpl(
-      orgId: json['orgId'] as String,
+_Organization _$OrganizationFromJson(Map<String, dynamic> json) =>
+    _Organization(
+      orgId: json['orgId'] as String?,
       email: json['email'] as String,
       name: json['name'] as String,
-      buckets: (json['buckets'] as List<dynamic>?)
+      buckets:
+          (json['buckets'] as List<dynamic>?)
               ?.map((e) => Bucket.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      createdAt:
+          json['createdAt'] == null
+              ? null
+              : DateTime.parse(json['createdAt'] as String),
+      updatedAt:
+          json['updatedAt'] == null
+              ? null
+              : DateTime.parse(json['updatedAt'] as String),
       description: json['description'] as String?,
     );
 
-Map<String, dynamic> _$$OrganizationImplToJson(_$OrganizationImpl instance) =>
+Map<String, dynamic> _$OrganizationToJson(_Organization instance) =>
     <String, dynamic>{
       'orgId': instance.orgId,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
       'email': instance.email,
       'name': instance.name,
       'buckets': instance.buckets,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
       'description': instance.description,
     };
 
-_$BucketImpl _$$BucketImplFromJson(Map<String, dynamic> json) => _$BucketImpl(
-      bucketId: json['bucketId'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      fileTypes: (json['fileTypes'] as List<dynamic>)
+_Bucket _$BucketFromJson(Map<String, dynamic> json) => _Bucket(
+  bucketId: json['bucketId'] as String?,
+  title: json['title'] as String,
+  description: json['description'] as String,
+  fileTypes:
+      (json['fileTypes'] as List<dynamic>)
           .map((e) => $enumDecode(_$DocumentTypeEnumMap, e))
           .toList(),
-      attributes: (json['attributes'] as List<dynamic>?)
-              ?.map((e) => Attribute.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-    );
+  attributes:
+      (json['attributes'] as List<dynamic>?)
+          ?.map((e) => Attribute.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  createdAt:
+      json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+  updatedAt:
+      json['updatedAt'] == null
+          ? null
+          : DateTime.parse(json['updatedAt'] as String),
+);
 
-Map<String, dynamic> _$$BucketImplToJson(_$BucketImpl instance) =>
-    <String, dynamic>{
-      'bucketId': instance.bucketId,
-      'title': instance.title,
-      'description': instance.description,
-      'fileTypes':
-          instance.fileTypes.map((e) => _$DocumentTypeEnumMap[e]!).toList(),
-      'attributes': instance.attributes,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
-    };
+Map<String, dynamic> _$BucketToJson(_Bucket instance) => <String, dynamic>{
+  'bucketId': instance.bucketId,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'updatedAt': instance.updatedAt.toIso8601String(),
+  'title': instance.title,
+  'description': instance.description,
+  'fileTypes':
+      instance.fileTypes.map((e) => _$DocumentTypeEnumMap[e]!).toList(),
+  'attributes': instance.attributes,
+};
 
 const _$DocumentTypeEnumMap = {
   DocumentType.pdf: 'pdf',
@@ -66,107 +80,110 @@ const _$DocumentTypeEnumMap = {
   DocumentType.txt: 'txt',
 };
 
-_$TextAttributeImpl _$$TextAttributeImplFromJson(Map<String, dynamic> json) =>
-    _$TextAttributeImpl(
+TextAttribute _$TextAttributeFromJson(Map<String, dynamic> json) =>
+    TextAttribute(
       label: json['label'] as String,
       attributeId: json['attributeId'] as String,
       $type: json['runtimeType'] as String?,
     );
 
-Map<String, dynamic> _$$TextAttributeImplToJson(_$TextAttributeImpl instance) =>
+Map<String, dynamic> _$TextAttributeToJson(TextAttribute instance) =>
     <String, dynamic>{
       'label': instance.label,
       'attributeId': instance.attributeId,
       'runtimeType': instance.$type,
     };
 
-_$DateTimeAttributeImpl _$$DateTimeAttributeImplFromJson(
-        Map<String, dynamic> json) =>
-    _$DateTimeAttributeImpl(
+DateTimeAttribute _$DateTimeAttributeFromJson(Map<String, dynamic> json) =>
+    DateTimeAttribute(
       label: json['label'] as String,
       attributeId: json['attributeId'] as String,
       $type: json['runtimeType'] as String?,
     );
 
-Map<String, dynamic> _$$DateTimeAttributeImplToJson(
-        _$DateTimeAttributeImpl instance) =>
+Map<String, dynamic> _$DateTimeAttributeToJson(DateTimeAttribute instance) =>
     <String, dynamic>{
       'label': instance.label,
       'attributeId': instance.attributeId,
       'runtimeType': instance.$type,
     };
 
-_$SingleSelectAttributeImpl _$$SingleSelectAttributeImplFromJson(
-        Map<String, dynamic> json) =>
-    _$SingleSelectAttributeImpl(
-      label: json['label'] as String,
-      attributeId: json['attributeId'] as String,
-      options: (json['options'] as List<dynamic>)
+SingleSelectAttribute _$SingleSelectAttributeFromJson(
+  Map<String, dynamic> json,
+) => SingleSelectAttribute(
+  label: json['label'] as String,
+  attributeId: json['attributeId'] as String,
+  options:
+      (json['options'] as List<dynamic>)
           .map((e) => Option.fromJson(e as Map<String, dynamic>))
           .toList(),
-      $type: json['runtimeType'] as String?,
-    );
+  $type: json['runtimeType'] as String?,
+);
 
-Map<String, dynamic> _$$SingleSelectAttributeImplToJson(
-        _$SingleSelectAttributeImpl instance) =>
-    <String, dynamic>{
-      'label': instance.label,
-      'attributeId': instance.attributeId,
-      'options': instance.options,
-      'runtimeType': instance.$type,
-    };
+Map<String, dynamic> _$SingleSelectAttributeToJson(
+  SingleSelectAttribute instance,
+) => <String, dynamic>{
+  'label': instance.label,
+  'attributeId': instance.attributeId,
+  'options': instance.options,
+  'runtimeType': instance.$type,
+};
 
-_$MultiSelectAttributeImpl _$$MultiSelectAttributeImplFromJson(
-        Map<String, dynamic> json) =>
-    _$MultiSelectAttributeImpl(
-      label: json['label'] as String,
-      attributeId: json['attributeId'] as String,
-      options: (json['options'] as List<dynamic>)
+MultiSelectAttribute _$MultiSelectAttributeFromJson(
+  Map<String, dynamic> json,
+) => MultiSelectAttribute(
+  label: json['label'] as String,
+  attributeId: json['attributeId'] as String,
+  options:
+      (json['options'] as List<dynamic>)
           .map((e) => Option.fromJson(e as Map<String, dynamic>))
           .toList(),
-      $type: json['runtimeType'] as String?,
-    );
+  $type: json['runtimeType'] as String?,
+);
 
-Map<String, dynamic> _$$MultiSelectAttributeImplToJson(
-        _$MultiSelectAttributeImpl instance) =>
-    <String, dynamic>{
-      'label': instance.label,
-      'attributeId': instance.attributeId,
-      'options': instance.options,
-      'runtimeType': instance.$type,
-    };
+Map<String, dynamic> _$MultiSelectAttributeToJson(
+  MultiSelectAttribute instance,
+) => <String, dynamic>{
+  'label': instance.label,
+  'attributeId': instance.attributeId,
+  'options': instance.options,
+  'runtimeType': instance.$type,
+};
 
-_$OptionImpl _$$OptionImplFromJson(Map<String, dynamic> json) => _$OptionImpl(
-      id: json['id'] as String,
-      value: json['value'] as String,
-    );
+_Option _$OptionFromJson(Map<String, dynamic> json) =>
+    _Option(id: json['id'] as String, value: json['value'] as String);
 
-Map<String, dynamic> _$$OptionImplToJson(_$OptionImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'value': instance.value,
-    };
+Map<String, dynamic> _$OptionToJson(_Option instance) => <String, dynamic>{
+  'id': instance.id,
+  'value': instance.value,
+};
 
-_$DocumentFileImpl _$$DocumentFileImplFromJson(Map<String, dynamic> json) =>
-    _$DocumentFileImpl(
-      fileId: json['fileId'] as String,
+_DocumentFile _$DocumentFileFromJson(Map<String, dynamic> json) =>
+    _DocumentFile(
       orgId: json['orgId'] as String,
       bucketId: json['bucketId'] as String,
       name: json['name'] as String,
       fileUrl: json['fileUrl'] as String,
-      uploadedAt: DateTime.parse(json['uploadedAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      fileId: json['fileId'] as String?,
+      uploadedAt:
+          json['uploadedAt'] == null
+              ? null
+              : DateTime.parse(json['uploadedAt'] as String),
+      updatedAt:
+          json['updatedAt'] == null
+              ? null
+              : DateTime.parse(json['updatedAt'] as String),
       attributes: json['attributes'] as Map<String, dynamic>? ?? const {},
     );
 
-Map<String, dynamic> _$$DocumentFileImplToJson(_$DocumentFileImpl instance) =>
+Map<String, dynamic> _$DocumentFileToJson(_DocumentFile instance) =>
     <String, dynamic>{
       'fileId': instance.fileId,
+      'uploadedAt': instance.uploadedAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
       'orgId': instance.orgId,
       'bucketId': instance.bucketId,
       'name': instance.name,
       'fileUrl': instance.fileUrl,
-      'uploadedAt': instance.uploadedAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
       'attributes': instance.attributes,
     };

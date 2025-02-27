@@ -23,6 +23,24 @@ sealed class BucketState with _$BucketState {
       LoadedBucketState;
 }
 
+extension BucketStateExt on BucketState {
+  T map<T>({
+    T Function(InitialBucketState)? initial,
+    T Function(LoadingBucketState)? loading,
+    T Function(ErrorBucketState)? error,
+    T Function(LoadedBucketState)? loaded,
+    T Function()? orElse,
+  }) {
+    // ignore: no_leading_underscores_for_local_identifiers
+    T _else() => orElse?.call() ?? (throw StateError('Unhandled state type: $runtimeType'));
+    return switch (this) {
+      InitialBucketState value => initial?.call(value) ?? _else(),
+      LoadingBucketState value => loading?.call(value) ?? _else(),
+      ErrorBucketState value => error?.call(value) ?? _else(),
+      LoadedBucketState value => loaded?.call(value) ?? _else(),
+    };
+  }
+}
 //==============================================================
 //                        BucketBloc
 //==============================================================
@@ -36,93 +54,129 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
     on<LoadOrgBuckets>(_onLoadBucket);
   }
   void _onAddBucket(CreateBucket event, Emitter<BucketState> emit) async {
-    emit(state.maybeMap(
-      loaded: (state) => state.copyWith(msg: BucketMessage.creating.message),
-      orElse: () => BucketState.loading(msg: BucketMessage.creating.message),
-    ));
+    emit(
+      state.map(
+        loaded: (state) => state.copyWith(msg: BucketMessage.creating.message),
+        orElse: () => BucketState.loading(msg: BucketMessage.creating.message),
+      ),
+    );
 
     try {
       await repo.create(event.orgId, event.bucket);
-      emit(state.maybeMap(
-        loaded: (state) => state.copyWith(
-          bucket: [...state.bucket, event.bucket],
-          msg: BucketMessage.created.message,
+      emit(
+        state.map(
+          loaded: (state) {
+            return state.copyWith(
+              bucket: [...state.bucket, event.bucket],
+              msg: BucketMessage.created.message,
+            );
+          },
+          orElse: () => BucketState.loaded(bucket: [event.bucket], msg: BucketMessage.created.message),
         ),
-        orElse: () => BucketState.loaded(bucket: [event.bucket], msg: BucketMessage.created.message),
-      ));
+      );
     } catch (e) {
-      emit(state.maybeMap(
-        loaded: (state) => state.copyWith(msg: BucketMessage.creating.getErrorMessage(e)),
-        orElse: () => BucketState.error(msg: BucketMessage.creating.getErrorMessage(e)),
-      ));
+      emit(
+        state.map(
+          loaded: (state) => state.copyWith(msg: BucketMessage.creating.getErrorMessage(e)),
+          orElse: () => BucketState.error(msg: BucketMessage.creating.getErrorMessage(e)),
+        ),
+      );
     }
   }
 
   void _onUpdateBucket(UpdateBucket event, Emitter<BucketState> emit) async {
-    emit(state.maybeMap(
-      loaded: (state) => state.copyWith(
-          msg: BucketMessage.updating.message,
-          workOnIndex: state.bucket.indexWhere((e) => e.bucketId == event.bucket.bucketId)),
-      orElse: () => BucketState.loading(msg: BucketMessage.updating.message),
-    ));
+    emit(
+      state.map(
+        loaded: (state) {
+          return state.copyWith(
+            msg: BucketMessage.updating.message,
+            workOnIndex: state.bucket.indexWhere((e) => e.bucketId == event.bucket.bucketId),
+          );
+        },
+        orElse: () => BucketState.loading(msg: BucketMessage.updating.message),
+      ),
+    );
 
     try {
       await repo.update(event.orgId, event.bucket);
       final buckets = await repo.getBucketsByOrgId(event.orgId);
-      emit(state.maybeMap(
-        loaded: (state) =>
-            state.copyWith(bucket: buckets, msg: BucketMessage.updated.message, workOnIndex: null),
-        orElse: () => BucketState.loaded(bucket: buckets, msg: BucketMessage.updated.message),
-      ));
+      emit(
+        state.map(
+          loaded: (state) {
+            return state.copyWith(bucket: buckets, msg: BucketMessage.updated.message, workOnIndex: null);
+          },
+          orElse: () => BucketState.loaded(bucket: buckets, msg: BucketMessage.updated.message),
+        ),
+      );
     } catch (e) {
-      emit(state.maybeMap(
-        loaded: (state) => state.copyWith(msg: BucketMessage.updating.getErrorMessage(e), workOnIndex: null),
-        orElse: () => BucketState.error(msg: BucketMessage.updating.getErrorMessage(e)),
-      ));
+      emit(
+        state.map(
+          loaded: (state) {
+            return state.copyWith(msg: BucketMessage.updating.getErrorMessage(e), workOnIndex: null);
+          },
+          orElse: () => BucketState.error(msg: BucketMessage.updating.getErrorMessage(e)),
+        ),
+      );
     }
   }
 
   void _onDeleteBucket(DeleteBucket event, Emitter<BucketState> emit) async {
-    emit(state.maybeMap(
-      loaded: (state) => state.copyWith(
-          msg: BucketMessage.deleting.message,
-          workOnIndex: state.bucket.indexWhere((e) => e.bucketId == event.bucketId)),
-      orElse: () => BucketState.loading(msg: BucketMessage.deleting.message),
-    ));
+    emit(
+      state.map(
+        loaded:
+            (state) => state.copyWith(
+              msg: BucketMessage.deleting.message,
+              workOnIndex: state.bucket.indexWhere((e) => e.bucketId == event.bucketId),
+            ),
+        orElse: () => BucketState.loading(msg: BucketMessage.deleting.message),
+      ),
+    );
 
     try {
       await repo.delete(event.orgId, event.bucketId);
       final buckets = await repo.getBucketsByOrgId(event.orgId);
-      emit(state.maybeMap(
-        loaded: (state) =>
-            state.copyWith(bucket: buckets, msg: BucketMessage.deleted.message, workOnIndex: null),
-        orElse: () => BucketState.loaded(bucket: buckets, msg: BucketMessage.deleted.message),
-      ));
+      emit(
+        state.map(
+          loaded:
+              (state) =>
+                  state.copyWith(bucket: buckets, msg: BucketMessage.deleted.message, workOnIndex: null),
+          orElse: () => BucketState.loaded(bucket: buckets, msg: BucketMessage.deleted.message),
+        ),
+      );
     } catch (e) {
-      emit(state.maybeMap(
-        loaded: (state) => state.copyWith(msg: BucketMessage.deleting.getErrorMessage(e), workOnIndex: null),
-        orElse: () => BucketState.error(msg: BucketMessage.deleting.getErrorMessage(e)),
-      ));
+      emit(
+        state.map(
+          loaded:
+              (state) => state.copyWith(msg: BucketMessage.deleting.getErrorMessage(e), workOnIndex: null),
+          orElse: () => BucketState.error(msg: BucketMessage.deleting.getErrorMessage(e)),
+        ),
+      );
     }
   }
 
   void _onLoadBucket(LoadOrgBuckets event, Emitter<BucketState> emit) async {
-    emit(state.maybeMap(
-      loaded: (state) => state.copyWith(msg: BucketMessage.loading.message),
-      orElse: () => BucketState.loading(msg: BucketMessage.loading.message),
-    ));
+    emit(
+      state.map(
+        loaded: (state) => state.copyWith(msg: BucketMessage.loading.message),
+        orElse: () => BucketState.loading(msg: BucketMessage.loading.message),
+      ),
+    );
 
     try {
       final buckets = await repo.getBucketsByOrgId(event.orgId);
-      emit(state.maybeMap(
-        loaded: (state) => state.copyWith(bucket: buckets, msg: BucketMessage.loaded.message),
-        orElse: () => BucketState.loaded(bucket: buckets, msg: BucketMessage.loaded.message),
-      ));
+      emit(
+        state.map(
+          loaded: (state) => state.copyWith(bucket: buckets, msg: BucketMessage.loaded.message),
+          orElse: () => BucketState.loaded(bucket: buckets, msg: BucketMessage.loaded.message),
+        ),
+      );
     } catch (e) {
-      emit(state.maybeMap(
-        loaded: (state) => state.copyWith(msg: BucketMessage.loading.getErrorMessage(e)),
-        orElse: () => BucketState.error(msg: BucketMessage.loading.getErrorMessage(e)),
-      ));
+      emit(
+        state.map(
+          loaded: (state) => state.copyWith(msg: BucketMessage.loading.getErrorMessage(e)),
+          orElse: () => BucketState.error(msg: BucketMessage.loading.getErrorMessage(e)),
+        ),
+      );
     }
   }
 }

@@ -16,7 +16,6 @@
     "**/*.flutter-plugins": true,
     "**/*.flutter-plugins-dependencies": true,
     "**/*.g.dart": true,
-    "**/*.freezed.dart": true,
     "**/*.github": true,
     "**/*.gitignore": true,
     "**/*.metadata": true,
@@ -28,7 +27,8 @@
     "android": true,
     "build": true,
     "web": true,
-    "windows": true
+    "windows": true,
+    "**/*.freezed.dart": true
   },
 
   "explorerExclude.backup": {}

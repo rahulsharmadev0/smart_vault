@@ -1,4 +1,3 @@
-import 'package:bloc_suite/bloc_suite.dart';
 import 'package:edukit/ui/bloc/auth_cubit.dart';
 import 'package:edukit/ui/bloc/organization_bloc.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +19,11 @@ class App extends StatelessWidget {
       },
       child: BlocListener<OrganizationBloc, OrganizationState>(
         listener: (context, state) {
-          String? msg = state.whenOrNull(
-            error: (msg) => msg,
-            loaded: (org, msg) => msg,
-            loading: (msg) => msg,
+          String? msg = state.map(
+            error: (state) => state.msg,
+            loaded: (state) => state.msg,
+            loading: (state) => state.msg,
+            orElse: () => null,
           );
           if (msg != null) {
             msgKey.currentState!.showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
@@ -31,10 +31,7 @@ class App extends StatelessWidget {
         },
         child: MaterialApp.router(
           scaffoldMessengerKey: _scaffoldMessengerKey,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
+          theme: ThemeData(primarySwatch: Colors.blue, visualDensity: VisualDensity.adaptivePlatformDensity),
           routerConfig: router,
         ),
       ),

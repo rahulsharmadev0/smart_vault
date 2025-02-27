@@ -26,7 +26,4 @@ dev_dependencies:
   build_runner: ^2.4.14
   json_serializable: ^6.9.3
   fake_cloud_firestore: ^3.1.0
-  freezed:
-    git:
-      url: https://github.com/rrousselGit/freezed.git
-      path: packages/freezed
+  freezed: ^3.0.1

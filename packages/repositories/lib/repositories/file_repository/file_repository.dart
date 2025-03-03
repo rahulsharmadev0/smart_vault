@@ -3,9 +3,8 @@ import 'package:repositories/models.dart';
 
 class FileRepository {
   final CollectionReference colRef;
-  FileRepository({
-    FirebaseFirestore? firestore,
-  }) : colRef = (firestore ?? FirebaseFirestore.instance).collection('organizations');
+  FileRepository({FirebaseFirestore? firestore})
+    : colRef = (firestore ?? FirebaseFirestore.instance).collection('organizations');
 
   Future<void> create(DocumentFile file) async {
     await colRef.doc(file.fileId).set(file.toFireStore());
@@ -21,10 +20,11 @@ class FileRepository {
 
   Future<List<DocumentFile>> getFileByBucketId(String bucketId) async {
     try {
-      final snapshot = await colRef
-          .where('bucketId', isEqualTo: bucketId)
-          .withConverter(fromFirestore: _fromFirestore, toFirestore: _toFirestore)
-          .get();
+      final snapshot =
+          await colRef
+              .where('bucketId', isEqualTo: bucketId)
+              .withConverter(fromFirestore: _fromFirestore, toFirestore: _toFirestore)
+              .get();
       return snapshot.docs.map((e) => DocumentFile.fromFireStore(e.data() as Map<String, dynamic>)).toList();
     } catch (e) {
       throw Exception('Failed to get files: $e');
@@ -33,10 +33,11 @@ class FileRepository {
 
   Future<DocumentFile> getFileByFileId(String fileId) async {
     try {
-      final snapshot = await colRef
-          .doc(fileId)
-          .withConverter(fromFirestore: _fromFirestore, toFirestore: _toFirestore)
-          .get();
+      final snapshot =
+          await colRef
+              .doc(fileId)
+              .withConverter(fromFirestore: _fromFirestore, toFirestore: _toFirestore)
+              .get();
 
       if (snapshot.data() == null || !snapshot.exists) throw Exception('File not found');
       return snapshot.data()!;

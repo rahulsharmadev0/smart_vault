@@ -1,6 +1,7 @@
-name: app_foundation
+name: ai_chat
 description: "A new Flutter package project."
 version: 0.0.1
+homepage:
 
 environment:
   sdk: ^3.7.0
@@ -9,8 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.0.17
-  vector_graphics: ^1.1.18
+  flutter_markdown: ^0.7.6+2
+  google_generative_ai: ^0.4.6
+  flutter_ai_toolkit: ^0.6.8
 
 dev_dependencies:
   flutter_test:
@@ -18,7 +20,3 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter:
-  assets:
-    - assets/svg/
-    # - assets/image/
-    - assets/icon/

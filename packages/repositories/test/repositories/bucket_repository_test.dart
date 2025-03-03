@@ -2,7 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:repositories/models/organization.dart';
-import 'package:repositories/repositories/bucket_repository/bucket_repository.dart';
+import 'package:repositories/repositories/bucket/bucket_repository.dart';
 
 class MockFirebaseDatabase extends Mock implements FirebaseDatabase {}
 
@@ -26,7 +26,7 @@ void main() {
     when(() => mockFirebaseDatabase.ref('organizations')).thenReturn(mockDatabaseReference);
     when(() => mockDatabaseReference.child(any())).thenReturn(mockOrgReference);
 
-    repository = BucketRepository(firestore: mockFirebaseDatabase);
+    repository = BucketRepository(BucketFirebaseApi(firestore: mockFirebaseDatabase));
 
     final now = DateTime.now();
     testBucket = Bucket(

@@ -60,10 +60,10 @@ packages:
     dependency: "direct main"
     description:
       name: bloc_suite
-      sha256: "54e530bbeb8251b18e9b7f071fcdd35ee0beb8e09cc69a08a6fe90c07cf0e816"
+      sha256: e212d6415ba6ff719796c1356a7055d10701320c70cd76df82cb3c772d237fc6
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.5"
   boolean_selector:
     dependency: transitive
     description:
@@ -244,10 +244,10 @@ packages:
     dependency: "direct main"
     description:
       name: dart_suite
-      sha256: febcd4183289882329b22082306cdb27ce0983a3d8d2090ffaaa4fc7aa501af4
+      sha256: "1329eefc94e6dc488b858a52d34014b128ecc7a3cbed7f11406f1b3d8f013dc1"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1"
+    version: "0.0.2"
   equatable:
     dependency: "direct main"
     description:
@@ -418,12 +418,11 @@ packages:
   freezed:
     dependency: "direct dev"
     description:
-      path: "packages/freezed"
-      ref: HEAD
-      resolved-ref: ef36f883e2e853883798fbc5ccde97050d6619ff
-      url: "https://github.com/rrousselGit/freezed.git"
-    source: git
-    version: "3.0.0"
+      name: freezed
+      sha256: a6274c34d61b3d68082f2b0e9a641a3ec197e525d269f35b82f62d5b2c6d9f75
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.3"
   freezed_annotation:
     dependency: "direct main"
     description:
@@ -452,10 +451,18 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "04539267a740931c6d4479a10d466717ca5901c6fdfd3fcda09391bbb8ebd651"
+      sha256: f02fd7d2a4dc512fec615529824fdd217fecb3a3d3de68360293a551f21634b3
       url: "https://pub.dev"
     source: hosted
-    version: "14.8.0"
+    version: "14.8.1"
+  go_router_builder:
+    dependency: "direct dev"
+    description:
+      name: go_router_builder
+      sha256: d094b60c654aa9a303f93ed627f139753ef582a83d43c1f247d2173d6727e285
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.8.1"
   google_fonts:
     dependency: "direct main"
     description:
@@ -804,6 +811,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  source_helper:
+    dependency: transitive
+    description:
+      name: source_helper
+      sha256: "86d247119aedce8e63f4751bd9626fc9613255935558447569ad42f9f5b48b3c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.5"
   source_span:
     dependency: transitive
     description:
@@ -1006,4 +1021,4 @@ packages:
     version: "3.1.3"
 sdks:
   dart: ">=3.7.0 <4.0.0"
-  flutter: ">=3.24.0"
+  flutter: ">=3.27.0"

@@ -28,7 +28,8 @@
     "build": true,
     "web": true,
     "windows": true,
-    "**/*.freezed.dart": true
+    "**/*.freezed.dart": true,
+    "linux": true
   },
 
   "explorerExclude.backup": {}

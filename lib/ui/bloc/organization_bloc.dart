@@ -66,7 +66,7 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
         ),
       );
 
-      final org = await repo.get(event.value);
+      final org = await repo.getById(event.value);
       _cachedOrg = org;
 
       emit(OrganizationState.loaded(organization: org, msg: OrganizationMessage.loaded.message));
@@ -92,7 +92,7 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
       );
 
       final updatedOrg = _cachedOrg!.copyWith(name: event.value);
-      await repo.update(updatedOrg);
+      await repo.updateName(updatedOrg.orgId, event.value);
       _cachedOrg = updatedOrg;
 
       emit(OrganizationState.loaded(organization: updatedOrg, msg: OrganizationMessage.updated.message));
@@ -118,7 +118,7 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
       );
 
       final updatedOrg = _cachedOrg!.copyWith(description: event.value);
-      await repo.update(updatedOrg);
+      await repo.updateDescription(updatedOrg.orgId, event.value);
       _cachedOrg = updatedOrg;
 
       emit(OrganizationState.loaded(organization: updatedOrg, msg: OrganizationMessage.updated.message));

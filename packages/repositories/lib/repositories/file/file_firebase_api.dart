@@ -1,23 +1,27 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:repositories/models.dart';
+part of 'file_repository.dart';
 
-class FileRepository {
+class FileFirebaseApi implements FileApi {
   final CollectionReference colRef;
-  FileRepository({FirebaseFirestore? firestore})
+
+  FileFirebaseApi({FirebaseFirestore? firestore})
     : colRef = (firestore ?? FirebaseFirestore.instance).collection('organizations');
 
+  @override
   Future<void> create(DocumentFile file) async {
     await colRef.doc(file.fileId).set(file.toFireStore());
   }
 
+  @override
   Future<void> update(DocumentFile file) async {
     await colRef.doc(file.fileId).update(file.toFireStore());
   }
 
+  @override
   Future<void> delete(String fileId) async {
     await colRef.doc(fileId).delete();
   }
 
+  @override
   Future<List<DocumentFile>> getFileByBucketId(String bucketId) async {
     try {
       final snapshot =
@@ -31,6 +35,7 @@ class FileRepository {
     }
   }
 
+  @override
   Future<DocumentFile> getFileByFileId(String fileId) async {
     try {
       final snapshot =

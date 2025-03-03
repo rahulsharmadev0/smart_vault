@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:repositories/repositories/authentication_repository/authentication_repository.dart';
+import 'package:repositories/repositories/authentication/authentication_repository.dart';
 
 void main() {
   late MockFirebaseAuth mockFirebaseAuth;
@@ -50,10 +50,7 @@ void main() {
     });
 
     test('resetPassword sends reset email', () async {
-      await expectLater(
-        authRepo.resetPassword(testEmail),
-        completes,
-      );
+      await expectLater(authRepo.resetPassword(testEmail), completes);
     });
 
     group('signOut', () {
@@ -78,13 +75,7 @@ void main() {
 
         await authRepo.signInWithEmailAndPassword(email: testEmail, password: testPassword);
 
-        expect(
-          userStream,
-          emitsInOrder([
-            isNull,
-            isA<User>(),
-          ]),
-        );
+        expect(userStream, emitsInOrder([isNull, isA<User>()]));
       });
     });
 

@@ -21,7 +21,7 @@ class AppScaffold extends StatelessWidget {
     this.appBarAlignment,
     this.bottomBarAlignment,
     this.padding = const EdgeInsets.all(12.0),
-  }) : assert(titleText != null || title != null);
+  }) : assert(!(titleText != null && title != null));
 
   @override
   Widget build(BuildContext context) {
@@ -37,24 +37,13 @@ class AppScaffold extends StatelessWidget {
 
     final child = Padding(
       padding: padding,
-      child: Column(
-        children: [
-          _appBar(context),
-          Expanded(child: body),
-          _bottomBar(context),
-        ],
-      ),
+      child: Column(children: [_appBar(context), Expanded(child: body), _bottomBar(context)]),
     );
 
     return Scaffold(
       body: Container(
         decoration: decoration,
-        child: isAuth
-            ? child
-            : Row(children: [
-                AppNavigationRail(),
-                Expanded(child: child),
-              ]),
+        child: isAuth ? child : Row(children: [AppNavigationRail(), Expanded(child: child)]),
       ),
     );
   }
@@ -64,18 +53,12 @@ class AppScaffold extends StatelessWidget {
     if (title != null) return title!;
     return Row(
       mainAxisAlignment: appBarAlignment ?? MainAxisAlignment.spaceBetween,
-      children: [
-        Text(titleText!, style: Theme.of(context).textTheme.headlineMedium),
-        ...?appBarActions,
-      ],
+      children: [Text(titleText!, style: Theme.of(context).textTheme.headlineMedium), ...?appBarActions],
     );
   }
 
   Widget _bottomBar(BuildContext context) {
     if (bottomBarActions?.isEmpty ?? true) return SizedBox.shrink();
-    return Row(
-      mainAxisAlignment: bottomBarAlignment ?? MainAxisAlignment.end,
-      children: bottomBarActions!,
-    );
+    return Row(mainAxisAlignment: bottomBarAlignment ?? MainAxisAlignment.end, children: bottomBarActions!);
   }
 }

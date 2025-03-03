@@ -19,11 +19,14 @@ class AuthenticationException implements Exception {
       'invalid-credential' => 'The credential received is malformed or has expired.',
       'invalid-verification-code' => 'The credential verification code received is invalid.',
       'invalid-verification-id' => 'The credential verification ID received is invalid.',
-      _ => 'An unknown exception occurred.'
+      _ => 'An unknown exception occurred.',
     };
     return AuthenticationException(msg);
   }
 
   /// The associated error message.
   final String message;
+
+  @override
+  String toString() => message;
 }

@@ -1,5 +1,5 @@
 import 'package:dart_suite/dart_suite.dart';
-import 'package:repositories/repositories.dart';
+import 'package:edukit/ui/bloc/auth_cubit.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,7 +17,7 @@ enum FormState {
   failure,
 
   /// The form submission has been canceled.
-  canceled
+  canceled,
 }
 
 class AuthFormState with EquatableMixin {
@@ -40,12 +40,13 @@ class AuthFormState with EquatableMixin {
   });
 
   static AuthFormState empty = AuthFormState(
-      organisationName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      formState: FormState.initial,
-      isSignInMode: true);
+    organisationName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    formState: FormState.initial,
+    isSignInMode: true,
+  );
 
   AuthFormState copyWith({
     String? organisationName,
@@ -69,23 +70,23 @@ class AuthFormState with EquatableMixin {
 
   @override
   List<Object?> get props => [
-        organisationName,
-        email,
-        password,
-        confirmPassword,
-        formState,
-        errorMessage,
-        isSignInMode,
-      ];
+    organisationName,
+    email,
+    password,
+    confirmPassword,
+    formState,
+    errorMessage,
+    isSignInMode,
+  ];
 }
 
 extension on AuthFormState {
-  AuthFormState inProgress() => copyWith(formState: FormState.inProgress);
+  // AuthFormState inProgress() => copyWith(formState: FormState.inProgress);
 
-  AuthFormState success() => copyWith(formState: FormState.success);
+  // AuthFormState success() => copyWith(formState: FormState.success);
 
-  AuthFormState failure(String errorMessage) =>
-      copyWith(formState: FormState.failure, errorMessage: errorMessage);
+  // AuthFormState failure(String errorMessage) =>
+  //     copyWith(formState: FormState.failure, errorMessage: errorMessage);
 
   bool isValidSignIn() => password.isNotEmpty && email.regMatch(regPatterns.email);
 
@@ -101,31 +102,22 @@ extension on AuthFormState {
 // ---
 
 class AuthFormCubit extends Cubit<AuthFormState> {
-  AuthenticationRepository repo;
-  AuthFormCubit({required this.repo}) : super(AuthFormState.empty);
+  final AuthCubit bloc;
+  AuthFormCubit({required this.bloc}) : super(AuthFormState.empty);
 
   void createAccount() {
     if (state.isValidCreateAccount()) {
-      emit(state.inProgress());
-      repo
-          .registerWithEmailAndPassword(
-              displayName: state.organisationName, email: state.email, password: state.password)
-          .then((v) => emit(state.success()))
-          .catchError((e) => emit(state.failure(e.toString())));
-    } else {
-      emit(state.failure('Invalid credentials'));
+      bloc.registerWithEmailAndPassword(
+        email: state.email,
+        password: state.password,
+        name: state.organisationName,
+      );
     }
   }
 
   void signIn() async {
     if (state.isValidSignIn()) {
-      emit(state.inProgress());
-      await repo
-          .signInWithEmailAndPassword(email: state.email, password: state.password)
-          .then((v) => emit(state.success()))
-          .catchError((e) => emit(state.failure((e as AuthenticationException).message)));
-    } else {
-      emit(state.failure('Invalid email or password'));
+      bloc.signInWithEmailAndPassword(email: state.email, password: state.password);
     }
   }
 

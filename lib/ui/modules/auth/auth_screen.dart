@@ -1,8 +1,7 @@
+import 'package:edukit/ui/bloc/auth_cubit.dart';
 import 'package:edukit/ui/modules/auth/auth_form.dart';
 import 'package:edukit/ui/modules/auth/auth_form_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:repositories/repositories.dart';
-
 import '../../material/scaffold.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +11,7 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthFormCubit(repo: context.read<AuthenticationRepository>()),
+      create: (context) => AuthFormCubit(bloc: context.read<AuthCubit>()),
       child: BlocListener<AuthFormCubit, AuthFormState>(
         listener: (context, state) {
           var errorMsg = state.errorMessage;
@@ -24,12 +23,7 @@ class AuthScreen extends StatelessWidget {
           body: Stack(
             fit: StackFit.expand,
             alignment: Alignment.centerLeft,
-            children: [
-              Positioned(
-                left: 100,
-                child: AuthenticationForm(),
-              ),
-            ],
+            children: [Positioned(left: 100, child: AuthenticationForm())],
           ),
         ),
       ),

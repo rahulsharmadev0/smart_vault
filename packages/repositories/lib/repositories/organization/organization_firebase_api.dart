@@ -19,7 +19,7 @@ class OrganizationFirebaseApi implements OrganizationApi {
   @override
   Future<Organization> getById(String orgId) async {
     final snapshot = await orgRef.child(orgId).get();
-    return Organization.fromJson(snapshot.value! as Map<String, dynamic>);
+    return Organization.fromJson(json.decode(json.encode(snapshot.value)));
   }
 
   @override

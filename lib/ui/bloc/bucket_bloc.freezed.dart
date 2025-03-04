@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BucketEvent {
 
- String get orgId;
+ String get orgId; void Function()? get onCompleted; dynamic Function(dynamic)? get onError; void Function()? get onSuccess;
 /// Create a copy of BucketEvent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $BucketEventCopyWith<BucketEvent> get copyWith => _$BucketEventCopyWithImpl<Buck
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BucketEvent&&(identical(other.orgId, orgId) || other.orgId == orgId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BucketEvent&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.onCompleted, onCompleted) || other.onCompleted == onCompleted)&&(identical(other.onError, onError) || other.onError == onError)&&(identical(other.onSuccess, onSuccess) || other.onSuccess == onSuccess));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,orgId);
+int get hashCode => Object.hash(runtimeType,orgId,onCompleted,onError,onSuccess);
 
 @override
 String toString() {
-  return 'BucketEvent(orgId: $orgId)';
+  return 'BucketEvent(orgId: $orgId, onCompleted: $onCompleted, onError: $onError, onSuccess: $onSuccess)';
 }
 
 
@@ -46,8 +46,9 @@ abstract mixin class $BucketEventCopyWith<$Res>  {
   factory $BucketEventCopyWith(BucketEvent value, $Res Function(BucketEvent) _then) = _$BucketEventCopyWithImpl;
 @useResult
 $Res call({
- String orgId
+ String orgId, void Function()? onCompleted, dynamic Function(dynamic)? onError, void Function()? onSuccess
 });
+
 
 
 
@@ -62,10 +63,13 @@ class _$BucketEventCopyWithImpl<$Res>
 
 /// Create a copy of BucketEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? orgId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? orgId = null,Object? onCompleted = freezed,Object? onError = freezed,Object? onSuccess = freezed,}) {
   return _then(_self.copyWith(
 orgId: null == orgId ? _self.orgId : orgId // ignore: cast_nullable_to_non_nullable
-as String,
+as String,onCompleted: freezed == onCompleted ? _self.onCompleted : onCompleted // ignore: cast_nullable_to_non_nullable
+as void Function()?,onError: freezed == onError ? _self.onError : onError // ignore: cast_nullable_to_non_nullable
+as dynamic Function(dynamic)?,onSuccess: freezed == onSuccess ? _self.onSuccess : onSuccess // ignore: cast_nullable_to_non_nullable
+as void Function()?,
   ));
 }
 
@@ -75,8 +79,8 @@ as String,
 /// @nodoc
 
 
-class CreateBucket implements BucketEvent {
-  const CreateBucket(this.orgId, this.bucket);
+class CreateBucket extends BucketEvent {
+   CreateBucket(this.orgId, this.bucket, {final  void Function()? onCompleted, final  dynamic Function(dynamic)? onError, final  void Function()? onSuccess}): super._(onCompleted: onCompleted, onError: onError, onSuccess: onSuccess);
   
 
 @override final  String orgId;
@@ -92,16 +96,16 @@ $CreateBucketCopyWith<CreateBucket> get copyWith => _$CreateBucketCopyWithImpl<C
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateBucket&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.bucket, bucket) || other.bucket == bucket));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateBucket&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.bucket, bucket) || other.bucket == bucket)&&(identical(other.onCompleted, onCompleted) || other.onCompleted == onCompleted)&&(identical(other.onError, onError) || other.onError == onError)&&(identical(other.onSuccess, onSuccess) || other.onSuccess == onSuccess));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,orgId,bucket);
+int get hashCode => Object.hash(runtimeType,orgId,bucket,onCompleted,onError,onSuccess);
 
 @override
 String toString() {
-  return 'BucketEvent.create(orgId: $orgId, bucket: $bucket)';
+  return 'BucketEvent.create(orgId: $orgId, bucket: $bucket, onCompleted: $onCompleted, onError: $onError, onSuccess: $onSuccess)';
 }
 
 
@@ -112,10 +116,11 @@ abstract mixin class $CreateBucketCopyWith<$Res> implements $BucketEventCopyWith
   factory $CreateBucketCopyWith(CreateBucket value, $Res Function(CreateBucket) _then) = _$CreateBucketCopyWithImpl;
 @override @useResult
 $Res call({
- String orgId, Bucket bucket
+ String orgId, Bucket bucket, void Function()? onCompleted, dynamic Function(dynamic)? onError, void Function()? onSuccess
 });
 
 
+$BucketCopyWith<$Res> get bucket;
 
 }
 /// @nodoc
@@ -128,22 +133,34 @@ class _$CreateBucketCopyWithImpl<$Res>
 
 /// Create a copy of BucketEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? orgId = null,Object? bucket = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? orgId = null,Object? bucket = null,Object? onCompleted = freezed,Object? onError = freezed,Object? onSuccess = freezed,}) {
   return _then(CreateBucket(
 null == orgId ? _self.orgId : orgId // ignore: cast_nullable_to_non_nullable
 as String,null == bucket ? _self.bucket : bucket // ignore: cast_nullable_to_non_nullable
-as Bucket,
+as Bucket,onCompleted: freezed == onCompleted ? _self.onCompleted : onCompleted // ignore: cast_nullable_to_non_nullable
+as void Function()?,onError: freezed == onError ? _self.onError : onError // ignore: cast_nullable_to_non_nullable
+as dynamic Function(dynamic)?,onSuccess: freezed == onSuccess ? _self.onSuccess : onSuccess // ignore: cast_nullable_to_non_nullable
+as void Function()?,
   ));
 }
 
-
+/// Create a copy of BucketEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$BucketCopyWith<$Res> get bucket {
+  
+  return $BucketCopyWith<$Res>(_self.bucket, (value) {
+    return _then(_self.copyWith(bucket: value));
+  });
+}
 }
 
 /// @nodoc
 
 
-class UpdateBucket implements BucketEvent {
-  const UpdateBucket(this.orgId, this.bucket);
+class UpdateBucket extends BucketEvent {
+   UpdateBucket(this.orgId, this.bucket, {final  void Function()? onCompleted, final  dynamic Function(dynamic)? onError, final  void Function()? onSuccess}): super._(onCompleted: onCompleted, onError: onError, onSuccess: onSuccess);
   
 
 @override final  String orgId;
@@ -159,16 +176,16 @@ $UpdateBucketCopyWith<UpdateBucket> get copyWith => _$UpdateBucketCopyWithImpl<U
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateBucket&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.bucket, bucket) || other.bucket == bucket));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UpdateBucket&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.bucket, bucket) || other.bucket == bucket)&&(identical(other.onCompleted, onCompleted) || other.onCompleted == onCompleted)&&(identical(other.onError, onError) || other.onError == onError)&&(identical(other.onSuccess, onSuccess) || other.onSuccess == onSuccess));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,orgId,bucket);
+int get hashCode => Object.hash(runtimeType,orgId,bucket,onCompleted,onError,onSuccess);
 
 @override
 String toString() {
-  return 'BucketEvent.update(orgId: $orgId, bucket: $bucket)';
+  return 'BucketEvent.update(orgId: $orgId, bucket: $bucket, onCompleted: $onCompleted, onError: $onError, onSuccess: $onSuccess)';
 }
 
 
@@ -179,10 +196,11 @@ abstract mixin class $UpdateBucketCopyWith<$Res> implements $BucketEventCopyWith
   factory $UpdateBucketCopyWith(UpdateBucket value, $Res Function(UpdateBucket) _then) = _$UpdateBucketCopyWithImpl;
 @override @useResult
 $Res call({
- String orgId, Bucket bucket
+ String orgId, Bucket bucket, void Function()? onCompleted, dynamic Function(dynamic)? onError, void Function()? onSuccess
 });
 
 
+$BucketCopyWith<$Res> get bucket;
 
 }
 /// @nodoc
@@ -195,22 +213,34 @@ class _$UpdateBucketCopyWithImpl<$Res>
 
 /// Create a copy of BucketEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? orgId = null,Object? bucket = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? orgId = null,Object? bucket = null,Object? onCompleted = freezed,Object? onError = freezed,Object? onSuccess = freezed,}) {
   return _then(UpdateBucket(
 null == orgId ? _self.orgId : orgId // ignore: cast_nullable_to_non_nullable
 as String,null == bucket ? _self.bucket : bucket // ignore: cast_nullable_to_non_nullable
-as Bucket,
+as Bucket,onCompleted: freezed == onCompleted ? _self.onCompleted : onCompleted // ignore: cast_nullable_to_non_nullable
+as void Function()?,onError: freezed == onError ? _self.onError : onError // ignore: cast_nullable_to_non_nullable
+as dynamic Function(dynamic)?,onSuccess: freezed == onSuccess ? _self.onSuccess : onSuccess // ignore: cast_nullable_to_non_nullable
+as void Function()?,
   ));
 }
 
-
+/// Create a copy of BucketEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$BucketCopyWith<$Res> get bucket {
+  
+  return $BucketCopyWith<$Res>(_self.bucket, (value) {
+    return _then(_self.copyWith(bucket: value));
+  });
+}
 }
 
 /// @nodoc
 
 
-class DeleteBucket implements BucketEvent {
-  const DeleteBucket(this.orgId, this.bucketId);
+class DeleteBucket extends BucketEvent {
+   DeleteBucket(this.orgId, this.bucketId, {final  void Function()? onCompleted, final  dynamic Function(dynamic)? onError, final  void Function()? onSuccess}): super._(onCompleted: onCompleted, onError: onError, onSuccess: onSuccess);
   
 
 @override final  String orgId;
@@ -226,16 +256,16 @@ $DeleteBucketCopyWith<DeleteBucket> get copyWith => _$DeleteBucketCopyWithImpl<D
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteBucket&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.bucketId, bucketId) || other.bucketId == bucketId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteBucket&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.bucketId, bucketId) || other.bucketId == bucketId)&&(identical(other.onCompleted, onCompleted) || other.onCompleted == onCompleted)&&(identical(other.onError, onError) || other.onError == onError)&&(identical(other.onSuccess, onSuccess) || other.onSuccess == onSuccess));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,orgId,bucketId);
+int get hashCode => Object.hash(runtimeType,orgId,bucketId,onCompleted,onError,onSuccess);
 
 @override
 String toString() {
-  return 'BucketEvent.delete(orgId: $orgId, bucketId: $bucketId)';
+  return 'BucketEvent.delete(orgId: $orgId, bucketId: $bucketId, onCompleted: $onCompleted, onError: $onError, onSuccess: $onSuccess)';
 }
 
 
@@ -246,8 +276,9 @@ abstract mixin class $DeleteBucketCopyWith<$Res> implements $BucketEventCopyWith
   factory $DeleteBucketCopyWith(DeleteBucket value, $Res Function(DeleteBucket) _then) = _$DeleteBucketCopyWithImpl;
 @override @useResult
 $Res call({
- String orgId, String bucketId
+ String orgId, String bucketId, void Function()? onCompleted, dynamic Function(dynamic)? onError, void Function()? onSuccess
 });
+
 
 
 
@@ -262,11 +293,14 @@ class _$DeleteBucketCopyWithImpl<$Res>
 
 /// Create a copy of BucketEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? orgId = null,Object? bucketId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? orgId = null,Object? bucketId = null,Object? onCompleted = freezed,Object? onError = freezed,Object? onSuccess = freezed,}) {
   return _then(DeleteBucket(
 null == orgId ? _self.orgId : orgId // ignore: cast_nullable_to_non_nullable
 as String,null == bucketId ? _self.bucketId : bucketId // ignore: cast_nullable_to_non_nullable
-as String,
+as String,onCompleted: freezed == onCompleted ? _self.onCompleted : onCompleted // ignore: cast_nullable_to_non_nullable
+as void Function()?,onError: freezed == onError ? _self.onError : onError // ignore: cast_nullable_to_non_nullable
+as dynamic Function(dynamic)?,onSuccess: freezed == onSuccess ? _self.onSuccess : onSuccess // ignore: cast_nullable_to_non_nullable
+as void Function()?,
   ));
 }
 
@@ -276,8 +310,8 @@ as String,
 /// @nodoc
 
 
-class LoadOrgBuckets implements BucketEvent {
-  const LoadOrgBuckets(this.orgId);
+class LoadOrgBuckets extends BucketEvent {
+   LoadOrgBuckets(this.orgId, {final  void Function()? onCompleted, final  dynamic Function(dynamic)? onError, final  void Function()? onSuccess}): super._(onCompleted: onCompleted, onError: onError, onSuccess: onSuccess);
   
 
 @override final  String orgId;
@@ -292,16 +326,16 @@ $LoadOrgBucketsCopyWith<LoadOrgBuckets> get copyWith => _$LoadOrgBucketsCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadOrgBuckets&&(identical(other.orgId, orgId) || other.orgId == orgId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadOrgBuckets&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.onCompleted, onCompleted) || other.onCompleted == onCompleted)&&(identical(other.onError, onError) || other.onError == onError)&&(identical(other.onSuccess, onSuccess) || other.onSuccess == onSuccess));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,orgId);
+int get hashCode => Object.hash(runtimeType,orgId,onCompleted,onError,onSuccess);
 
 @override
 String toString() {
-  return 'BucketEvent.loadOrgBuckets(orgId: $orgId)';
+  return 'BucketEvent.loadOrgBuckets(orgId: $orgId, onCompleted: $onCompleted, onError: $onError, onSuccess: $onSuccess)';
 }
 
 
@@ -312,8 +346,9 @@ abstract mixin class $LoadOrgBucketsCopyWith<$Res> implements $BucketEventCopyWi
   factory $LoadOrgBucketsCopyWith(LoadOrgBuckets value, $Res Function(LoadOrgBuckets) _then) = _$LoadOrgBucketsCopyWithImpl;
 @override @useResult
 $Res call({
- String orgId
+ String orgId, void Function()? onCompleted, dynamic Function(dynamic)? onError, void Function()? onSuccess
 });
+
 
 
 
@@ -328,10 +363,13 @@ class _$LoadOrgBucketsCopyWithImpl<$Res>
 
 /// Create a copy of BucketEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? orgId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? orgId = null,Object? onCompleted = freezed,Object? onError = freezed,Object? onSuccess = freezed,}) {
   return _then(LoadOrgBuckets(
 null == orgId ? _self.orgId : orgId // ignore: cast_nullable_to_non_nullable
-as String,
+as String,onCompleted: freezed == onCompleted ? _self.onCompleted : onCompleted // ignore: cast_nullable_to_non_nullable
+as void Function()?,onError: freezed == onError ? _self.onError : onError // ignore: cast_nullable_to_non_nullable
+as dynamic Function(dynamic)?,onSuccess: freezed == onSuccess ? _self.onSuccess : onSuccess // ignore: cast_nullable_to_non_nullable
+as void Function()?,
   ));
 }
 
@@ -362,7 +400,10 @@ String toString() {
 
 }
 
-
+/// @nodoc
+class $BucketStateCopyWith<$Res>  {
+$BucketStateCopyWith(BucketState _, $Res Function(BucketState) __);
+}
 
 
 /// @nodoc
@@ -432,12 +473,13 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $LoadingBucketStateCopyWith<$Res>  {
+abstract mixin class $LoadingBucketStateCopyWith<$Res> implements $BucketStateCopyWith<$Res> {
   factory $LoadingBucketStateCopyWith(LoadingBucketState value, $Res Function(LoadingBucketState) _then) = _$LoadingBucketStateCopyWithImpl;
 @useResult
 $Res call({
  String? msg
 });
+
 
 
 
@@ -497,12 +539,13 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $ErrorBucketStateCopyWith<$Res>  {
+abstract mixin class $ErrorBucketStateCopyWith<$Res> implements $BucketStateCopyWith<$Res> {
   factory $ErrorBucketStateCopyWith(ErrorBucketState value, $Res Function(ErrorBucketState) _then) = _$ErrorBucketStateCopyWithImpl;
 @useResult
 $Res call({
  String msg
 });
+
 
 
 
@@ -570,12 +613,13 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $LoadedBucketStateCopyWith<$Res>  {
+abstract mixin class $LoadedBucketStateCopyWith<$Res> implements $BucketStateCopyWith<$Res> {
   factory $LoadedBucketStateCopyWith(LoadedBucketState value, $Res Function(LoadedBucketState) _then) = _$LoadedBucketStateCopyWithImpl;
 @useResult
 $Res call({
  List<Bucket> bucket, int? workOnIndex, String? msg
 });
+
 
 
 
@@ -592,7 +636,7 @@ class _$LoadedBucketStateCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? bucket = null,Object? workOnIndex = freezed,Object? msg = freezed,}) {
   return _then(LoadedBucketState(
-bucket: null == bucket ? _self.bucket : bucket // ignore: cast_nullable_to_non_nullable
+bucket: null == bucket ? _self._bucket : bucket // ignore: cast_nullable_to_non_nullable
 as List<Bucket>,workOnIndex: freezed == workOnIndex ? _self.workOnIndex : workOnIndex // ignore: cast_nullable_to_non_nullable
 as int?,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
 as String?,

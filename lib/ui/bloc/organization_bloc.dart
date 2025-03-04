@@ -1,3 +1,4 @@
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:repositories/repositories.dart';
@@ -8,7 +9,9 @@ part 'organization_bloc.freezed.dart';
 
 @freezed
 sealed class OrganizationEvent with _$OrganizationEvent {
-  const factory OrganizationEvent.loadOrganization(String value) = LoadOrganization;
+  const factory OrganizationEvent.create(String email, String name, String organizationId) =
+      CreateOrganization;
+  const factory OrganizationEvent.load(String value) = LoadOrganization;
   const factory OrganizationEvent.updateName(String value) = UpdateName;
   const factory OrganizationEvent.updateDescription(String value) = UpdateDescription;
 }
@@ -51,9 +54,23 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
   }
 
   OrganizationBloc({required this.repo}) : super(const OrganizationState.initial()) {
+    on<CreateOrganization>(_onCreateOrganization);
     on<LoadOrganization>(_onLoadOrganization);
     on<UpdateName>(_onUpdateName);
     on<UpdateDescription>(_onUpdateDescription);
+  }
+
+  Future<void> _onCreateOrganization(CreateOrganization event, Emitter<OrganizationState> emit) async {
+    try {
+      emit(OrganizationState.loading(msg: OrganizationMessage.loading.message));
+
+      _cachedOrg = Organization(email: event.email, name: event.name, orgId: event.organizationId);
+      await repo.create(_cachedOrg!);
+
+      emit(OrganizationState.loaded(organization: _cachedOrg!, msg: OrganizationMessage.loaded.message));
+    } catch (e) {
+      emit(OrganizationState.error(msg: OrganizationMessage.loaded.getErrorMessage(e)));
+    }
   }
 
   Future<void> _onLoadOrganization(LoadOrganization event, Emitter<OrganizationState> emit) async {

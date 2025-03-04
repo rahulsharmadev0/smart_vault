@@ -1,3 +1,4 @@
+import 'package:bloc_suite/bloc_suite.dart';
 import 'package:edukit/ui/bloc/_messages.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -7,11 +8,35 @@ import 'package:repositories/repositories.dart';
 part 'bucket_bloc.freezed.dart';
 
 @freezed
-sealed class BucketEvent with _$BucketEvent {
-  const factory BucketEvent.create(String orgId, Bucket bucket) = CreateBucket;
-  const factory BucketEvent.update(String orgId, Bucket bucket) = UpdateBucket;
-  const factory BucketEvent.delete(String orgId, String bucketId) = DeleteBucket;
-  const factory BucketEvent.loadOrgBuckets(String orgId) = LoadOrgBuckets;
+sealed class BucketEvent extends LifecycleEvent with _$BucketEvent {
+  BucketEvent._({super.onCompleted, super.onError, super.onSuccess});
+  factory BucketEvent.create(
+    String orgId,
+    Bucket bucket, {
+    void Function()? onCompleted,
+    dynamic Function(dynamic)? onError,
+    void Function()? onSuccess,
+  }) = CreateBucket;
+  factory BucketEvent.update(
+    String orgId,
+    Bucket bucket, {
+    void Function()? onCompleted,
+    dynamic Function(dynamic)? onError,
+    void Function()? onSuccess,
+  }) = UpdateBucket;
+  factory BucketEvent.delete(
+    String orgId,
+    String bucketId, {
+    void Function()? onCompleted,
+    dynamic Function(dynamic)? onError,
+    void Function()? onSuccess,
+  }) = DeleteBucket;
+  factory BucketEvent.loadOrgBuckets(
+    String orgId, {
+    void Function()? onCompleted,
+    dynamic Function(dynamic)? onError,
+    void Function()? onSuccess,
+  }) = LoadOrgBuckets;
 }
 
 @freezed
@@ -62,7 +87,7 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
     );
 
     try {
-      await repo.create(event.orgId, event.bucket);
+      await repo.create(event.bucket);
       emit(
         state.map(
           loaded: (state) {
@@ -98,7 +123,7 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
     );
 
     try {
-      await repo.update(event.orgId, event.bucket);
+      await repo.update(event.bucket);
       final buckets = await repo.getBucketsByOrgId(event.orgId);
       emit(
         state.map(
@@ -133,7 +158,7 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
     );
 
     try {
-      await repo.delete(event.orgId, event.bucketId);
+      await repo.delete(event.bucketId);
       final buckets = await repo.getBucketsByOrgId(event.orgId);
       emit(
         state.map(

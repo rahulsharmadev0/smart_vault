@@ -42,7 +42,6 @@ sealed class Organization with _$Organization {
     String? orgId,
     required String email,
     required String name,
-    @Default([]) List<Bucket> buckets,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? description,
@@ -71,6 +70,7 @@ sealed class Bucket with _$Bucket {
 
   factory Bucket({
     String? bucketId,
+    required String orgId,
     required String title,
     required String description,
     required List<DocumentType> fileTypes,
@@ -90,28 +90,54 @@ sealed class Bucket with _$Bucket {
 
 @freezed
 sealed class Attribute with _$Attribute {
-  const factory Attribute.text({required String label, required String attributeId}) = TextAttribute;
+  @override
+  final String attributeId;
 
-  const factory Attribute.dateTime({required String label, required String attributeId}) = DateTimeAttribute;
+  Attribute._({String? attributeId}) : attributeId = attributeId ?? const Uuid().v4();
 
-  const factory Attribute.singleSelect({
+  factory Attribute.text({required String label, String? attributeId}) = TextAttribute;
+
+  factory Attribute.dateTime({required String label, String? attributeId}) = DateTimeAttribute;
+
+  factory Attribute.singleSelect({
     required String label,
-    required String attributeId,
+    String? attributeId,
     required List<Option> options,
   }) = SingleSelectAttribute;
 
-  const factory Attribute.multiSelect({
-    required String label,
-    required String attributeId,
-    required List<Option> options,
-  }) = MultiSelectAttribute;
+  factory Attribute.multiSelect({required String label, String? attributeId, required List<Option> options}) =
+      MultiSelectAttribute;
 
   factory Attribute.fromJson(Map<String, dynamic> json) => _$AttributeFromJson(json);
+
+  T map<T>({
+    T Function(TextAttribute)? text,
+    T Function(DateTimeAttribute)? dateTime,
+    T Function(SingleSelectAttribute)? singleSelect,
+    T Function(MultiSelectAttribute)? multiSelect,
+    T Function()? orElse,
+  }) {
+    switch (this) {
+      case TextAttribute state:
+        return text?.call(state) ?? orElse?.call() as T;
+      case DateTimeAttribute state:
+        return dateTime?.call(state) ?? orElse?.call() as T;
+      case SingleSelectAttribute state:
+        return singleSelect?.call(state) ?? orElse?.call() as T;
+      case MultiSelectAttribute state:
+        return multiSelect?.call(state) ?? orElse?.call() as T;
+    }
+  }
 }
 
 @freezed
 sealed class Option with _$Option {
-  const factory Option({required String id, required String value}) = _Option;
+  @override
+  final String id;
+  Option._({String? id}) : id = id ?? const Uuid().v4();
+
+  factory Option({String? id, required String value}) = _Option;
+
   factory Option.fromJson(Map<String, dynamic> json) => _$OptionFromJson(json);
 }
 

@@ -36,7 +36,8 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void registerWithEmailAndPassword({required String email, required String password, required String name}) {
-    _authRepo.registerWithEmailAndPassword(email: email, password: password, displayName: name).then((_) {
+    _authRepo.registerWithEmailAndPassword(email: email, password: password, displayName: name).then((cred) {
+      _orgBloc.add(OrganizationEvent.create(email, name, cred.user!.uid));
       emit(const AuthState.authenticated());
     }, onError: _handleError);
   }

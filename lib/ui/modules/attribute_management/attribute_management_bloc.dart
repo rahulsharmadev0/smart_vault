@@ -11,8 +11,9 @@ part 'attribute_management_bloc.freezed.dart';
 class AttributeManagementEvent with _$AttributeManagementEvent {
   // ignore: unused_element
   const factory AttributeManagementEvent._init() = _Init;
-  const factory AttributeManagementEvent.addAttribute(Attribute attribute) = _AddAttribute;
-  const factory AttributeManagementEvent.removeAttribute(int index) = _RemoveAttribute;
+  const factory AttributeManagementEvent.add(Attribute attribute) = _AddAttribute;
+  const factory AttributeManagementEvent.update(Attribute attribute) = _UpdateAttribute;
+  const factory AttributeManagementEvent.remove(int index) = _RemoveAttribute;
   const factory AttributeManagementEvent.onSubmitted() = _OnSubmitted;
 }
 
@@ -59,8 +60,7 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
     on<_AddAttribute>(_addAttribute);
     on<_RemoveAttribute>(_removeAttribute);
     on<_OnSubmitted>(_onSubmitted);
-
-    // Initial event
+    on<_UpdateAttribute>(_updateAttribute);
     add(AttributeManagementEvent._init());
   }
 
@@ -105,6 +105,16 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
       _ => AttributeManagementState.loading(),
     };
     emit(newState);
+  }
+
+  void _updateAttribute(_UpdateAttribute event, Emitter emit) {
+    _mapperEmit(emit, (state) {
+      final customAttributes = [...state.customAttributes];
+      final index = customAttributes.indexWhere((e) => e.attributeId == event.attribute.attributeId);
+      if (index == -1) return state;
+      customAttributes[index] = event.attribute;
+      return state.copyWith(customAttributes: customAttributes);
+    });
   }
 
   void _addAttribute(_AddAttribute event, Emitter emit) {

@@ -36,7 +36,10 @@ String toString() {
 
 }
 
-
+/// @nodoc
+class $AttributeManagementEventCopyWith<$Res>  {
+$AttributeManagementEventCopyWith(AttributeManagementEvent _, $Res Function(AttributeManagementEvent) __);
+}
 
 
 /// @nodoc
@@ -99,14 +102,14 @@ int get hashCode => Object.hash(runtimeType,attribute);
 
 @override
 String toString() {
-  return 'AttributeManagementEvent.addAttribute(attribute: $attribute)';
+  return 'AttributeManagementEvent.add(attribute: $attribute)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$AddAttributeCopyWith<$Res>  {
+abstract mixin class _$AddAttributeCopyWith<$Res> implements $AttributeManagementEventCopyWith<$Res> {
   factory _$AddAttributeCopyWith(_AddAttribute value, $Res Function(_AddAttribute) _then) = __$AddAttributeCopyWithImpl;
 @useResult
 $Res call({
@@ -114,6 +117,7 @@ $Res call({
 });
 
 
+$AttributeCopyWith<$Res> get attribute;
 
 }
 /// @nodoc
@@ -133,7 +137,91 @@ as Attribute,
   ));
 }
 
+/// Create a copy of AttributeManagementEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AttributeCopyWith<$Res> get attribute {
+  
+  return $AttributeCopyWith<$Res>(_self.attribute, (value) {
+    return _then(_self.copyWith(attribute: value));
+  });
+}
+}
 
+/// @nodoc
+
+
+class _UpdateAttribute implements AttributeManagementEvent {
+  const _UpdateAttribute(this.attribute);
+  
+
+ final  Attribute attribute;
+
+/// Create a copy of AttributeManagementEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$UpdateAttributeCopyWith<_UpdateAttribute> get copyWith => __$UpdateAttributeCopyWithImpl<_UpdateAttribute>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateAttribute&&(identical(other.attribute, attribute) || other.attribute == attribute));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,attribute);
+
+@override
+String toString() {
+  return 'AttributeManagementEvent.update(attribute: $attribute)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$UpdateAttributeCopyWith<$Res> implements $AttributeManagementEventCopyWith<$Res> {
+  factory _$UpdateAttributeCopyWith(_UpdateAttribute value, $Res Function(_UpdateAttribute) _then) = __$UpdateAttributeCopyWithImpl;
+@useResult
+$Res call({
+ Attribute attribute
+});
+
+
+$AttributeCopyWith<$Res> get attribute;
+
+}
+/// @nodoc
+class __$UpdateAttributeCopyWithImpl<$Res>
+    implements _$UpdateAttributeCopyWith<$Res> {
+  __$UpdateAttributeCopyWithImpl(this._self, this._then);
+
+  final _UpdateAttribute _self;
+  final $Res Function(_UpdateAttribute) _then;
+
+/// Create a copy of AttributeManagementEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? attribute = null,}) {
+  return _then(_UpdateAttribute(
+null == attribute ? _self.attribute : attribute // ignore: cast_nullable_to_non_nullable
+as Attribute,
+  ));
+}
+
+/// Create a copy of AttributeManagementEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AttributeCopyWith<$Res> get attribute {
+  
+  return $AttributeCopyWith<$Res>(_self.attribute, (value) {
+    return _then(_self.copyWith(attribute: value));
+  });
+}
 }
 
 /// @nodoc
@@ -164,19 +252,20 @@ int get hashCode => Object.hash(runtimeType,index);
 
 @override
 String toString() {
-  return 'AttributeManagementEvent.removeAttribute(index: $index)';
+  return 'AttributeManagementEvent.remove(index: $index)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$RemoveAttributeCopyWith<$Res>  {
+abstract mixin class _$RemoveAttributeCopyWith<$Res> implements $AttributeManagementEventCopyWith<$Res> {
   factory _$RemoveAttributeCopyWith(_RemoveAttribute value, $Res Function(_RemoveAttribute) _then) = __$RemoveAttributeCopyWithImpl;
 @useResult
 $Res call({
  int index
 });
+
 
 
 
@@ -257,7 +346,10 @@ String toString() {
 
 }
 
-
+/// @nodoc
+class $AttributeManagementStateCopyWith<$Res>  {
+$AttributeManagementStateCopyWith(AttributeManagementState _, $Res Function(AttributeManagementState) __);
+}
 
 
 /// @nodoc
@@ -305,7 +397,7 @@ class AMError implements AttributeManagementState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$ErrorCopyWith<AMError> get copyWith => __$ErrorCopyWithImpl<AMError>(this, _$identity);
+$AMErrorCopyWith<AMError> get copyWith => _$AMErrorCopyWithImpl<AMError>(this, _$identity);
 
 
 
@@ -327,8 +419,8 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class _$ErrorCopyWith<$Res>  {
-  factory _$ErrorCopyWith(AMError value, $Res Function(AMError) _then) = __$ErrorCopyWithImpl;
+abstract mixin class $AMErrorCopyWith<$Res> implements $AttributeManagementStateCopyWith<$Res> {
+  factory $AMErrorCopyWith(AMError value, $Res Function(AMError) _then) = _$AMErrorCopyWithImpl;
 @useResult
 $Res call({
  String message
@@ -336,11 +428,12 @@ $Res call({
 
 
 
+
 }
 /// @nodoc
-class __$ErrorCopyWithImpl<$Res>
-    implements _$ErrorCopyWith<$Res> {
-  __$ErrorCopyWithImpl(this._self, this._then);
+class _$AMErrorCopyWithImpl<$Res>
+    implements $AMErrorCopyWith<$Res> {
+  _$AMErrorCopyWithImpl(this._self, this._then);
 
   final AMError _self;
   final $Res Function(AMError) _then;
@@ -383,7 +476,7 @@ class AMLoaded implements AttributeManagementState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$LoadedCopyWith<AMLoaded> get copyWith => __$LoadedCopyWithImpl<AMLoaded>(this, _$identity);
+$AMLoadedCopyWith<AMLoaded> get copyWith => _$AMLoadedCopyWithImpl<AMLoaded>(this, _$identity);
 
 
 
@@ -405,8 +498,8 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class _$LoadedCopyWith<$Res>  {
-  factory _$LoadedCopyWith(AMLoaded value, $Res Function(AMLoaded) _then) = __$LoadedCopyWithImpl;
+abstract mixin class $AMLoadedCopyWith<$Res> implements $AttributeManagementStateCopyWith<$Res> {
+  factory $AMLoadedCopyWith(AMLoaded value, $Res Function(AMLoaded) _then) = _$AMLoadedCopyWithImpl;
 @useResult
 $Res call({
  List<Attribute> fixedAttributes, List<Attribute> customAttributes
@@ -414,11 +507,12 @@ $Res call({
 
 
 
+
 }
 /// @nodoc
-class __$LoadedCopyWithImpl<$Res>
-    implements _$LoadedCopyWith<$Res> {
-  __$LoadedCopyWithImpl(this._self, this._then);
+class _$AMLoadedCopyWithImpl<$Res>
+    implements $AMLoadedCopyWith<$Res> {
+  _$AMLoadedCopyWithImpl(this._self, this._then);
 
   final AMLoaded _self;
   final $Res Function(AMLoaded) _then;
@@ -427,8 +521,8 @@ class __$LoadedCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? fixedAttributes = null,Object? customAttributes = null,}) {
   return _then(AMLoaded(
-fixedAttributes: null == fixedAttributes ? _self.fixedAttributes : fixedAttributes // ignore: cast_nullable_to_non_nullable
-as List<Attribute>,customAttributes: null == customAttributes ? _self.customAttributes : customAttributes // ignore: cast_nullable_to_non_nullable
+fixedAttributes: null == fixedAttributes ? _self._fixedAttributes : fixedAttributes // ignore: cast_nullable_to_non_nullable
+as List<Attribute>,customAttributes: null == customAttributes ? _self._customAttributes : customAttributes // ignore: cast_nullable_to_non_nullable
 as List<Attribute>,
   ));
 }

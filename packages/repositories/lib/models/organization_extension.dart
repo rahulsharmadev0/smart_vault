@@ -1,27 +1,5 @@
 part of 'organization.dart';
 
-extension OrganizationExtension on Organization {
-  Organization addBucket(Bucket bucket) {
-    return copyWith(buckets: [...buckets, bucket]);
-  }
-
-  Organization removeBucket(String bucketId) {
-    return copyWith(
-      buckets: buckets.where((bucket) => bucket.bucketId != bucketId).toList(),
-    );
-  }
-
-  Organization updateBucket(Bucket updatedBucket) {
-    return copyWith(
-      buckets: buckets
-          .map((bucket) => bucket.bucketId == updatedBucket.bucketId ? updatedBucket : bucket)
-          .toList(),
-    );
-  }
-
-  Bucket? getBucket(String bucketId) => buckets.firstWhereOrNull((bucket) => bucket.bucketId == bucketId);
-}
-
 extension BucketExtension on Bucket {
   Bucket addAttribute(Attribute attribute) {
     return copyWith(attributes: [...attributes, attribute]);
@@ -35,10 +13,13 @@ extension BucketExtension on Bucket {
 
   Bucket updateAttribute(Attribute updatedAttribute) {
     return copyWith(
-      attributes: attributes
-          .map((attribute) =>
-              attribute.attributeId == updatedAttribute.attributeId ? updatedAttribute : attribute)
-          .toList(),
+      attributes:
+          attributes
+              .map(
+                (attribute) =>
+                    attribute.attributeId == updatedAttribute.attributeId ? updatedAttribute : attribute,
+              )
+              .toList(),
     );
   }
 

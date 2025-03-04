@@ -36,7 +36,10 @@ String toString() {
 
 }
 
-
+/// @nodoc
+class $FileEventCopyWith<$Res>  {
+$FileEventCopyWith(FileEvent _, $Res Function(FileEvent) __);
+}
 
 
 /// @nodoc
@@ -74,7 +77,7 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $CreateFileEventCopyWith<$Res>  {
+abstract mixin class $CreateFileEventCopyWith<$Res> implements $FileEventCopyWith<$Res> {
   factory $CreateFileEventCopyWith(CreateFileEvent value, $Res Function(CreateFileEvent) _then) = _$CreateFileEventCopyWithImpl;
 @useResult
 $Res call({
@@ -82,6 +85,7 @@ $Res call({
 });
 
 
+$DocumentFileCopyWith<$Res> get file;
 
 }
 /// @nodoc
@@ -101,7 +105,16 @@ as DocumentFile,
   ));
 }
 
-
+/// Create a copy of FileEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$DocumentFileCopyWith<$Res> get file {
+  
+  return $DocumentFileCopyWith<$Res>(_self.file, (value) {
+    return _then(_self.copyWith(file: value));
+  });
+}
 }
 
 /// @nodoc
@@ -139,7 +152,7 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $UpdateFileEventCopyWith<$Res>  {
+abstract mixin class $UpdateFileEventCopyWith<$Res> implements $FileEventCopyWith<$Res> {
   factory $UpdateFileEventCopyWith(UpdateFileEvent value, $Res Function(UpdateFileEvent) _then) = _$UpdateFileEventCopyWithImpl;
 @useResult
 $Res call({
@@ -147,6 +160,7 @@ $Res call({
 });
 
 
+$DocumentFileCopyWith<$Res> get file;
 
 }
 /// @nodoc
@@ -166,7 +180,16 @@ as DocumentFile,
   ));
 }
 
-
+/// Create a copy of FileEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$DocumentFileCopyWith<$Res> get file {
+  
+  return $DocumentFileCopyWith<$Res>(_self.file, (value) {
+    return _then(_self.copyWith(file: value));
+  });
+}
 }
 
 /// @nodoc
@@ -204,12 +227,13 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $DeleteFileEventCopyWith<$Res>  {
+abstract mixin class $DeleteFileEventCopyWith<$Res> implements $FileEventCopyWith<$Res> {
   factory $DeleteFileEventCopyWith(DeleteFileEvent value, $Res Function(DeleteFileEvent) _then) = _$DeleteFileEventCopyWithImpl;
 @useResult
 $Res call({
  String fileId
 });
+
 
 
 
@@ -269,12 +293,13 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $LoadBucketFilesEventCopyWith<$Res>  {
+abstract mixin class $LoadBucketFilesEventCopyWith<$Res> implements $FileEventCopyWith<$Res> {
   factory $LoadBucketFilesEventCopyWith(LoadBucketFilesEvent value, $Res Function(LoadBucketFilesEvent) _then) = _$LoadBucketFilesEventCopyWithImpl;
 @useResult
 $Res call({
  String bucketId
 });
+
 
 
 
@@ -323,7 +348,10 @@ String toString() {
 
 }
 
-
+/// @nodoc
+class $FileStateCopyWith<$Res>  {
+$FileStateCopyWith(FileState _, $Res Function(FileState) __);
+}
 
 
 /// @nodoc
@@ -393,12 +421,13 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $FileLoadingStateCopyWith<$Res>  {
+abstract mixin class $FileLoadingStateCopyWith<$Res> implements $FileStateCopyWith<$Res> {
   factory $FileLoadingStateCopyWith(FileLoadingState value, $Res Function(FileLoadingState) _then) = _$FileLoadingStateCopyWithImpl;
 @useResult
 $Res call({
  String? msg
 });
+
 
 
 
@@ -458,12 +487,13 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $FileErrorStateCopyWith<$Res>  {
+abstract mixin class $FileErrorStateCopyWith<$Res> implements $FileStateCopyWith<$Res> {
   factory $FileErrorStateCopyWith(FileErrorState value, $Res Function(FileErrorState) _then) = _$FileErrorStateCopyWithImpl;
 @useResult
 $Res call({
  String msg
 });
+
 
 
 
@@ -531,12 +561,13 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $FileLoadedStateCopyWith<$Res>  {
+abstract mixin class $FileLoadedStateCopyWith<$Res> implements $FileStateCopyWith<$Res> {
   factory $FileLoadedStateCopyWith(FileLoadedState value, $Res Function(FileLoadedState) _then) = _$FileLoadedStateCopyWithImpl;
 @useResult
 $Res call({
  List<DocumentFile> file, int? workOnIndex, String? msg
 });
+
 
 
 
@@ -553,7 +584,7 @@ class _$FileLoadedStateCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? file = null,Object? workOnIndex = freezed,Object? msg = freezed,}) {
   return _then(FileLoadedState(
-file: null == file ? _self.file : file // ignore: cast_nullable_to_non_nullable
+file: null == file ? _self._file : file // ignore: cast_nullable_to_non_nullable
 as List<DocumentFile>,workOnIndex: freezed == workOnIndex ? _self.workOnIndex : workOnIndex // ignore: cast_nullable_to_non_nullable
 as int?,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
 as String?,

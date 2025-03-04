@@ -1,32 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:repositories/models/organization.dart';
 
 enum AttributeDialogType { simple, withOptions }
 
 class AttributeDialog extends StatefulWidget {
-  final VoidCallback? onClose;
   final AttributeDialogType type;
-  final Function(String name)? onSimpleSave;
-  final Function(String name, Set<String> options)? onOptionsSave;
   final Set<String> _options;
 
-  AttributeDialog({
-    super.key,
-    required Function(String name) onSave,
-    this.onClose,
-  })  : type = AttributeDialogType.simple,
-        onSimpleSave = onSave,
-        onOptionsSave = null,
-        _options = {};
+  AttributeDialog({super.key}) : type = AttributeDialogType.simple, _options = {};
 
-  AttributeDialog.withOptions({
-    super.key,
-    this.onClose,
-    required Function(String name, Set<String> options) onSave,
-    List<String> options = const [],
-  })  : type = AttributeDialogType.withOptions,
-        onOptionsSave = onSave,
-        onSimpleSave = null,
-        _options = Set.from(options);
+  AttributeDialog.withOptions({super.key, List<String> options = const []})
+    : type = AttributeDialogType.withOptions,
+      _options = Set.from(options);
 
   @override
   State<AttributeDialog> createState() => _AttributeDialogState();
@@ -59,11 +44,14 @@ class _AttributeDialogState extends State<AttributeDialog> {
     if (name.isEmpty) return;
 
     if (widget.type == AttributeDialogType.simple) {
-      widget.onSimpleSave?.call(name);
+      Navigator.of(context).pop(Attribute.text(label: name));
     } else {
-      widget.onOptionsSave?.call(name, widget._options);
+      var attribute = Attribute.multiSelect(
+        label: name,
+        options: widget._options.map((e) => Option(value: e)).toList(),
+      );
+      Navigator.of(context).pop(attribute);
     }
-    Navigator.of(context).pop();
   }
 
   void _onAdd() {
@@ -85,12 +73,7 @@ class _AttributeDialogState extends State<AttributeDialog> {
     return AlertDialog(
       title: Text(widget.type == AttributeDialogType.simple ? 'Create Attribute' : 'Create Multi Attribute'),
       actions: [
-        TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              widget.onClose?.call();
-            },
-            child: Text('Close')),
+        TextButton(onPressed: Navigator.of(context).pop, child: Text('Close')),
         TextButton(onPressed: () => _handleSave(context), child: Text('Save')),
       ],
       content: SizedBox(
@@ -99,12 +82,7 @@ class _AttributeDialogState extends State<AttributeDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Name',
-              ),
-            ),
+            TextField(controller: _nameController, decoration: InputDecoration(labelText: 'Name')),
             if (widget.type == AttributeDialogType.withOptions) ...[
               SizedBox(height: 16),
               TextField(
@@ -112,10 +90,7 @@ class _AttributeDialogState extends State<AttributeDialog> {
                 decoration: InputDecoration(
                   labelText: 'Options',
                   hintText: 'eg. Option 1, Option 2',
-                  suffix: IconButton(
-                    onPressed: !_hasOptionsText ? null : _onAdd,
-                    icon: Icon(Icons.add),
-                  ),
+                  suffix: IconButton(onPressed: !_hasOptionsText ? null : _onAdd, icon: Icon(Icons.add)),
                 ),
               ),
               if (widget._options.isNotEmpty) ...[
@@ -134,12 +109,10 @@ class _AttributeDialogState extends State<AttributeDialog> {
                 Wrap(
                   spacing: 12,
                   runSpacing: 12,
-                  children: widget._options
-                      .map((e) => Chip(
-                            label: Text(e),
-                            onDeleted: () => _onDelete(e),
-                          ))
-                      .toList(),
+                  children:
+                      widget._options
+                          .map((e) => Chip(label: Text(e), onDeleted: () => _onDelete(e)))
+                          .toList(),
                 ),
               ],
             ],

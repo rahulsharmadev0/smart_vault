@@ -15,62 +15,102 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OrganizationEvent {
 
- String get value;
-/// Create a copy of OrganizationEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$OrganizationEventCopyWith<OrganizationEvent> get copyWith => _$OrganizationEventCopyWithImpl<OrganizationEvent>(this as OrganizationEvent, _$identity);
+
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrganizationEvent&&(identical(other.value, value) || other.value == value));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrganizationEvent);
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value);
+int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'OrganizationEvent(value: $value)';
+  return 'OrganizationEvent()';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $OrganizationEventCopyWith<$Res>  {
-  factory $OrganizationEventCopyWith(OrganizationEvent value, $Res Function(OrganizationEvent) _then) = _$OrganizationEventCopyWithImpl;
+class $OrganizationEventCopyWith<$Res>  {
+$OrganizationEventCopyWith(OrganizationEvent _, $Res Function(OrganizationEvent) __);
+}
+
+
+/// @nodoc
+
+
+class CreateOrganization implements OrganizationEvent {
+  const CreateOrganization(this.email, this.name, this.organizationId);
+  
+
+ final  String email;
+ final  String name;
+ final  String organizationId;
+
+/// Create a copy of OrganizationEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CreateOrganizationCopyWith<CreateOrganization> get copyWith => _$CreateOrganizationCopyWithImpl<CreateOrganization>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateOrganization&&(identical(other.email, email) || other.email == email)&&(identical(other.name, name) || other.name == name)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,email,name,organizationId);
+
+@override
+String toString() {
+  return 'OrganizationEvent.create(email: $email, name: $name, organizationId: $organizationId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CreateOrganizationCopyWith<$Res> implements $OrganizationEventCopyWith<$Res> {
+  factory $CreateOrganizationCopyWith(CreateOrganization value, $Res Function(CreateOrganization) _then) = _$CreateOrganizationCopyWithImpl;
 @useResult
 $Res call({
- String value
+ String email, String name, String organizationId
 });
 
 
 
+
 }
 /// @nodoc
-class _$OrganizationEventCopyWithImpl<$Res>
-    implements $OrganizationEventCopyWith<$Res> {
-  _$OrganizationEventCopyWithImpl(this._self, this._then);
+class _$CreateOrganizationCopyWithImpl<$Res>
+    implements $CreateOrganizationCopyWith<$Res> {
+  _$CreateOrganizationCopyWithImpl(this._self, this._then);
 
-  final OrganizationEvent _self;
-  final $Res Function(OrganizationEvent) _then;
+  final CreateOrganization _self;
+  final $Res Function(CreateOrganization) _then;
 
 /// Create a copy of OrganizationEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? value = null,}) {
-  return _then(_self.copyWith(
-value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+@pragma('vm:prefer-inline') $Res call({Object? email = null,Object? name = null,Object? organizationId = null,}) {
+  return _then(CreateOrganization(
+null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,null == organizationId ? _self.organizationId : organizationId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
 
-}
 
+}
 
 /// @nodoc
 
@@ -79,11 +119,11 @@ class LoadOrganization implements OrganizationEvent {
   const LoadOrganization(this.value);
   
 
-@override final  String value;
+ final  String value;
 
 /// Create a copy of OrganizationEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
+@JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $LoadOrganizationCopyWith<LoadOrganization> get copyWith => _$LoadOrganizationCopyWithImpl<LoadOrganization>(this, _$identity);
 
@@ -100,7 +140,7 @@ int get hashCode => Object.hash(runtimeType,value);
 
 @override
 String toString() {
-  return 'OrganizationEvent.loadOrganization(value: $value)';
+  return 'OrganizationEvent.load(value: $value)';
 }
 
 
@@ -109,10 +149,11 @@ String toString() {
 /// @nodoc
 abstract mixin class $LoadOrganizationCopyWith<$Res> implements $OrganizationEventCopyWith<$Res> {
   factory $LoadOrganizationCopyWith(LoadOrganization value, $Res Function(LoadOrganization) _then) = _$LoadOrganizationCopyWithImpl;
-@override @useResult
+@useResult
 $Res call({
  String value
 });
+
 
 
 
@@ -127,7 +168,7 @@ class _$LoadOrganizationCopyWithImpl<$Res>
 
 /// Create a copy of OrganizationEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
   return _then(LoadOrganization(
 null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String,
@@ -144,11 +185,11 @@ class UpdateName implements OrganizationEvent {
   const UpdateName(this.value);
   
 
-@override final  String value;
+ final  String value;
 
 /// Create a copy of OrganizationEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
+@JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $UpdateNameCopyWith<UpdateName> get copyWith => _$UpdateNameCopyWithImpl<UpdateName>(this, _$identity);
 
@@ -174,10 +215,11 @@ String toString() {
 /// @nodoc
 abstract mixin class $UpdateNameCopyWith<$Res> implements $OrganizationEventCopyWith<$Res> {
   factory $UpdateNameCopyWith(UpdateName value, $Res Function(UpdateName) _then) = _$UpdateNameCopyWithImpl;
-@override @useResult
+@useResult
 $Res call({
  String value
 });
+
 
 
 
@@ -192,7 +234,7 @@ class _$UpdateNameCopyWithImpl<$Res>
 
 /// Create a copy of OrganizationEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
   return _then(UpdateName(
 null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String,
@@ -209,11 +251,11 @@ class UpdateDescription implements OrganizationEvent {
   const UpdateDescription(this.value);
   
 
-@override final  String value;
+ final  String value;
 
 /// Create a copy of OrganizationEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
+@JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $UpdateDescriptionCopyWith<UpdateDescription> get copyWith => _$UpdateDescriptionCopyWithImpl<UpdateDescription>(this, _$identity);
 
@@ -239,10 +281,11 @@ String toString() {
 /// @nodoc
 abstract mixin class $UpdateDescriptionCopyWith<$Res> implements $OrganizationEventCopyWith<$Res> {
   factory $UpdateDescriptionCopyWith(UpdateDescription value, $Res Function(UpdateDescription) _then) = _$UpdateDescriptionCopyWithImpl;
-@override @useResult
+@useResult
 $Res call({
  String value
 });
+
 
 
 
@@ -257,7 +300,7 @@ class _$UpdateDescriptionCopyWithImpl<$Res>
 
 /// Create a copy of OrganizationEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
   return _then(UpdateDescription(
 null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String,
@@ -291,7 +334,10 @@ String toString() {
 
 }
 
-
+/// @nodoc
+class $OrganizationStateCopyWith<$Res>  {
+$OrganizationStateCopyWith(OrganizationState _, $Res Function(OrganizationState) __);
+}
 
 
 /// @nodoc
@@ -361,12 +407,13 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $OrgLoadingStateCopyWith<$Res>  {
+abstract mixin class $OrgLoadingStateCopyWith<$Res> implements $OrganizationStateCopyWith<$Res> {
   factory $OrgLoadingStateCopyWith(OrgLoadingState value, $Res Function(OrgLoadingState) _then) = _$OrgLoadingStateCopyWithImpl;
 @useResult
 $Res call({
  String? msg
 });
+
 
 
 
@@ -426,12 +473,13 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $OrgErrorStateCopyWith<$Res>  {
+abstract mixin class $OrgErrorStateCopyWith<$Res> implements $OrganizationStateCopyWith<$Res> {
   factory $OrgErrorStateCopyWith(OrgErrorState value, $Res Function(OrgErrorState) _then) = _$OrgErrorStateCopyWithImpl;
 @useResult
 $Res call({
  String msg
 });
+
 
 
 
@@ -492,7 +540,7 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $OrgLoadedStateCopyWith<$Res>  {
+abstract mixin class $OrgLoadedStateCopyWith<$Res> implements $OrganizationStateCopyWith<$Res> {
   factory $OrgLoadedStateCopyWith(OrgLoadedState value, $Res Function(OrgLoadedState) _then) = _$OrgLoadedStateCopyWithImpl;
 @useResult
 $Res call({
@@ -500,6 +548,7 @@ $Res call({
 });
 
 
+$OrganizationCopyWith<$Res> get organization;
 
 }
 /// @nodoc
@@ -520,7 +569,16 @@ as String?,
   ));
 }
 
-
+/// Create a copy of OrganizationState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$OrganizationCopyWith<$Res> get organization {
+  
+  return $OrganizationCopyWith<$Res>(_self.organization, (value) {
+    return _then(_self.copyWith(organization: value));
+  });
+}
 }
 
 // dart format on

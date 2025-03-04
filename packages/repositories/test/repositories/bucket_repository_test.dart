@@ -70,7 +70,7 @@ void main() {
       when(() => mockOrgReference.get()).thenAnswer((_) async => mockSnapshot);
       when(() => mockSnapshot.value).thenReturn(testBucket.toJson());
 
-      final result = await repository.getBucket(testOrgId, testBucket.bucketId);
+      final result = await repository.getBucketById(testOrgId, testBucket.bucketId);
 
       expect(result.bucketId, equals(testBucket.bucketId));
       expect(result.title, equals(testBucket.title));

@@ -11,11 +11,6 @@ _Organization _$OrganizationFromJson(Map<String, dynamic> json) =>
       orgId: json['orgId'] as String?,
       email: json['email'] as String,
       name: json['name'] as String,
-      buckets:
-          (json['buckets'] as List<dynamic>?)
-              ?.map((e) => Bucket.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
       createdAt:
           json['createdAt'] == null
               ? null
@@ -34,12 +29,12 @@ Map<String, dynamic> _$OrganizationToJson(_Organization instance) =>
       'updatedAt': instance.updatedAt.toIso8601String(),
       'email': instance.email,
       'name': instance.name,
-      'buckets': instance.buckets,
       'description': instance.description,
     };
 
 _Bucket _$BucketFromJson(Map<String, dynamic> json) => _Bucket(
   bucketId: json['bucketId'] as String?,
+  orgId: json['orgId'] as String,
   title: json['title'] as String,
   description: json['description'] as String,
   fileTypes:
@@ -65,6 +60,7 @@ Map<String, dynamic> _$BucketToJson(_Bucket instance) => <String, dynamic>{
   'bucketId': instance.bucketId,
   'createdAt': instance.createdAt.toIso8601String(),
   'updatedAt': instance.updatedAt.toIso8601String(),
+  'orgId': instance.orgId,
   'title': instance.title,
   'description': instance.description,
   'fileTypes':
@@ -83,28 +79,28 @@ const _$DocumentTypeEnumMap = {
 TextAttribute _$TextAttributeFromJson(Map<String, dynamic> json) =>
     TextAttribute(
       label: json['label'] as String,
-      attributeId: json['attributeId'] as String,
+      attributeId: json['attributeId'] as String?,
       $type: json['runtimeType'] as String?,
     );
 
 Map<String, dynamic> _$TextAttributeToJson(TextAttribute instance) =>
     <String, dynamic>{
-      'label': instance.label,
       'attributeId': instance.attributeId,
+      'label': instance.label,
       'runtimeType': instance.$type,
     };
 
 DateTimeAttribute _$DateTimeAttributeFromJson(Map<String, dynamic> json) =>
     DateTimeAttribute(
       label: json['label'] as String,
-      attributeId: json['attributeId'] as String,
+      attributeId: json['attributeId'] as String?,
       $type: json['runtimeType'] as String?,
     );
 
 Map<String, dynamic> _$DateTimeAttributeToJson(DateTimeAttribute instance) =>
     <String, dynamic>{
-      'label': instance.label,
       'attributeId': instance.attributeId,
+      'label': instance.label,
       'runtimeType': instance.$type,
     };
 
@@ -112,7 +108,7 @@ SingleSelectAttribute _$SingleSelectAttributeFromJson(
   Map<String, dynamic> json,
 ) => SingleSelectAttribute(
   label: json['label'] as String,
-  attributeId: json['attributeId'] as String,
+  attributeId: json['attributeId'] as String?,
   options:
       (json['options'] as List<dynamic>)
           .map((e) => Option.fromJson(e as Map<String, dynamic>))
@@ -123,8 +119,8 @@ SingleSelectAttribute _$SingleSelectAttributeFromJson(
 Map<String, dynamic> _$SingleSelectAttributeToJson(
   SingleSelectAttribute instance,
 ) => <String, dynamic>{
-  'label': instance.label,
   'attributeId': instance.attributeId,
+  'label': instance.label,
   'options': instance.options,
   'runtimeType': instance.$type,
 };
@@ -133,7 +129,7 @@ MultiSelectAttribute _$MultiSelectAttributeFromJson(
   Map<String, dynamic> json,
 ) => MultiSelectAttribute(
   label: json['label'] as String,
-  attributeId: json['attributeId'] as String,
+  attributeId: json['attributeId'] as String?,
   options:
       (json['options'] as List<dynamic>)
           .map((e) => Option.fromJson(e as Map<String, dynamic>))
@@ -144,14 +140,14 @@ MultiSelectAttribute _$MultiSelectAttributeFromJson(
 Map<String, dynamic> _$MultiSelectAttributeToJson(
   MultiSelectAttribute instance,
 ) => <String, dynamic>{
-  'label': instance.label,
   'attributeId': instance.attributeId,
+  'label': instance.label,
   'options': instance.options,
   'runtimeType': instance.$type,
 };
 
 _Option _$OptionFromJson(Map<String, dynamic> json) =>
-    _Option(id: json['id'] as String, value: json['value'] as String);
+    _Option(id: json['id'] as String?, value: json['value'] as String);
 
 Map<String, dynamic> _$OptionToJson(_Option instance) => <String, dynamic>{
   'id': instance.id,

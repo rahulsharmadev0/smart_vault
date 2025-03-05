@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'package:bloc/bloc.dart';
+import 'package:edukit/ui/bloc/auth_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:repositories/repositories.dart';
@@ -18,17 +21,18 @@ sealed class OrganizationEvent with _$OrganizationEvent {
 @freezed
 sealed class OrganizationState with _$OrganizationState {
   const factory OrganizationState.initial() = OrgInitialState;
-  const factory OrganizationState.loading({String? msg}) = OrgLoadingState;
-  const factory OrganizationState.error({required String msg}) = OrgErrorState;
-  const factory OrganizationState.loaded({required Organization organization, String? msg}) = OrgLoadedState;
+  const factory OrganizationState.loading({String? msg}) = OrganizationLoadingState;
+  const factory OrganizationState.error({required String msg}) = OrganizationErrorState;
+  const factory OrganizationState.loaded({required Organization organization, String? msg}) =
+      OrganizationLoadedState;
 }
 
 extension OrganizationStateExt on OrganizationState {
   T map<T>({
     T Function(OrgInitialState)? initial,
-    T Function(OrgLoadingState)? loading,
-    T Function(OrgErrorState)? error,
-    T Function(OrgLoadedState)? loaded,
+    T Function(OrganizationLoadingState)? loading,
+    T Function(OrganizationErrorState)? error,
+    T Function(OrganizationLoadedState)? loaded,
     T Function()? orElse,
   }) {
     // ignore: no_leading_underscores_for_local_identifiers
@@ -36,29 +40,52 @@ extension OrganizationStateExt on OrganizationState {
 
     return switch (this) {
       OrgInitialState value => initial?.call(value) ?? _else(),
-      OrgLoadingState value => loading?.call(value) ?? _else(),
-      OrgErrorState value => error?.call(value) ?? _else(),
-      OrgLoadedState value => loaded?.call(value) ?? _else(),
+      OrganizationLoadingState value => loading?.call(value) ?? _else(),
+      OrganizationErrorState value => error?.call(value) ?? _else(),
+      OrganizationLoadedState value => loaded?.call(value) ?? _else(),
     };
   }
 }
 
 class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
   final OrganizationRepository repo;
+  final AuthCubit authCubit;
+  StreamSubscription? _authSubscription;
   Organization? _cachedOrg;
 
-  bool get isLoaded => state is OrgLoadedState;
+  bool get isLoaded => state is OrganizationLoadedState;
+  bool get isInitial => state is OrgInitialState;
 
   String get orgId {
-    if (state is! OrgLoadedState) throw Exception('Organization not loaded');
-    return _cachedOrg?.orgId ?? (state as OrgLoadedState).organization.orgId;
+    if (state is OrgInitialState) {
+      throw StateError('OrganizationBloc is not loaded');
+    }
+    return (state as OrganizationLoadedState).organization.orgId;
   }
 
-  OrganizationBloc({required this.repo}) : super(const OrganizationState.initial()) {
+  OrganizationBloc({required this.repo, required this.authCubit}) : super(const OrganizationState.initial()) {
     on<CreateOrganization>(_onCreateOrganization);
     on<LoadOrganization>(_onLoadOrganization);
     on<UpdateName>(_onUpdateName);
     on<UpdateDescription>(_onUpdateDescription);
+
+    // Listen to authentication state changes
+    _authSubscription = authCubit.stream.listen(_loadOrCreateOrganization);
+
+    // Check if user is already authenticated
+    _loadOrCreateOrganization(authCubit.state);
+  }
+
+  // Load or create organization based on the current authentication state
+  _loadOrCreateOrganization(AuthState currentState) {
+    if (state is LoadOrganization) return;
+
+    if (currentState is AuthStateAuthenticated) {
+      add(LoadOrganization(currentState.uid));
+    } else if (currentState is AuthStateNewAccountCreated) {
+      // Create and load the organization
+      add(CreateOrganization(currentState.email, currentState.name, currentState.uid));
+    }
   }
 
   Future<void> _onCreateOrganization(CreateOrganization event, Emitter<OrganizationState> emit) async {
@@ -147,5 +174,11 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
         ),
       );
     }
+  }
+
+  @override
+  Future<void> close() {
+    _authSubscription?.cancel();
+    return super.close();
   }
 }

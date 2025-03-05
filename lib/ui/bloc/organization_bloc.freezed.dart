@@ -375,8 +375,8 @@ String toString() {
 /// @nodoc
 
 
-class OrgLoadingState implements OrganizationState {
-  const OrgLoadingState({this.msg});
+class OrganizationLoadingState implements OrganizationState {
+  const OrganizationLoadingState({this.msg});
   
 
  final  String? msg;
@@ -385,13 +385,13 @@ class OrgLoadingState implements OrganizationState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$OrgLoadingStateCopyWith<OrgLoadingState> get copyWith => _$OrgLoadingStateCopyWithImpl<OrgLoadingState>(this, _$identity);
+$OrganizationLoadingStateCopyWith<OrganizationLoadingState> get copyWith => _$OrganizationLoadingStateCopyWithImpl<OrganizationLoadingState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrgLoadingState&&(identical(other.msg, msg) || other.msg == msg));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrganizationLoadingState&&(identical(other.msg, msg) || other.msg == msg));
 }
 
 
@@ -407,8 +407,8 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $OrgLoadingStateCopyWith<$Res> implements $OrganizationStateCopyWith<$Res> {
-  factory $OrgLoadingStateCopyWith(OrgLoadingState value, $Res Function(OrgLoadingState) _then) = _$OrgLoadingStateCopyWithImpl;
+abstract mixin class $OrganizationLoadingStateCopyWith<$Res> implements $OrganizationStateCopyWith<$Res> {
+  factory $OrganizationLoadingStateCopyWith(OrganizationLoadingState value, $Res Function(OrganizationLoadingState) _then) = _$OrganizationLoadingStateCopyWithImpl;
 @useResult
 $Res call({
  String? msg
@@ -419,17 +419,17 @@ $Res call({
 
 }
 /// @nodoc
-class _$OrgLoadingStateCopyWithImpl<$Res>
-    implements $OrgLoadingStateCopyWith<$Res> {
-  _$OrgLoadingStateCopyWithImpl(this._self, this._then);
+class _$OrganizationLoadingStateCopyWithImpl<$Res>
+    implements $OrganizationLoadingStateCopyWith<$Res> {
+  _$OrganizationLoadingStateCopyWithImpl(this._self, this._then);
 
-  final OrgLoadingState _self;
-  final $Res Function(OrgLoadingState) _then;
+  final OrganizationLoadingState _self;
+  final $Res Function(OrganizationLoadingState) _then;
 
 /// Create a copy of OrganizationState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? msg = freezed,}) {
-  return _then(OrgLoadingState(
+  return _then(OrganizationLoadingState(
 msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -441,8 +441,8 @@ as String?,
 /// @nodoc
 
 
-class OrgErrorState implements OrganizationState {
-  const OrgErrorState({required this.msg});
+class OrganizationErrorState implements OrganizationState {
+  const OrganizationErrorState({required this.msg});
   
 
  final  String msg;
@@ -451,13 +451,13 @@ class OrgErrorState implements OrganizationState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$OrgErrorStateCopyWith<OrgErrorState> get copyWith => _$OrgErrorStateCopyWithImpl<OrgErrorState>(this, _$identity);
+$OrganizationErrorStateCopyWith<OrganizationErrorState> get copyWith => _$OrganizationErrorStateCopyWithImpl<OrganizationErrorState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrgErrorState&&(identical(other.msg, msg) || other.msg == msg));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrganizationErrorState&&(identical(other.msg, msg) || other.msg == msg));
 }
 
 
@@ -473,8 +473,8 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $OrgErrorStateCopyWith<$Res> implements $OrganizationStateCopyWith<$Res> {
-  factory $OrgErrorStateCopyWith(OrgErrorState value, $Res Function(OrgErrorState) _then) = _$OrgErrorStateCopyWithImpl;
+abstract mixin class $OrganizationErrorStateCopyWith<$Res> implements $OrganizationStateCopyWith<$Res> {
+  factory $OrganizationErrorStateCopyWith(OrganizationErrorState value, $Res Function(OrganizationErrorState) _then) = _$OrganizationErrorStateCopyWithImpl;
 @useResult
 $Res call({
  String msg
@@ -485,17 +485,17 @@ $Res call({
 
 }
 /// @nodoc
-class _$OrgErrorStateCopyWithImpl<$Res>
-    implements $OrgErrorStateCopyWith<$Res> {
-  _$OrgErrorStateCopyWithImpl(this._self, this._then);
+class _$OrganizationErrorStateCopyWithImpl<$Res>
+    implements $OrganizationErrorStateCopyWith<$Res> {
+  _$OrganizationErrorStateCopyWithImpl(this._self, this._then);
 
-  final OrgErrorState _self;
-  final $Res Function(OrgErrorState) _then;
+  final OrganizationErrorState _self;
+  final $Res Function(OrganizationErrorState) _then;
 
 /// Create a copy of OrganizationState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? msg = null,}) {
-  return _then(OrgErrorState(
+  return _then(OrganizationErrorState(
 msg: null == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -507,8 +507,8 @@ as String,
 /// @nodoc
 
 
-class OrgLoadedState implements OrganizationState {
-  const OrgLoadedState({required this.organization, this.msg});
+class OrganizationLoadedState implements OrganizationState {
+  const OrganizationLoadedState({required this.organization, this.msg});
   
 
  final  Organization organization;
@@ -518,13 +518,13 @@ class OrgLoadedState implements OrganizationState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$OrgLoadedStateCopyWith<OrgLoadedState> get copyWith => _$OrgLoadedStateCopyWithImpl<OrgLoadedState>(this, _$identity);
+$OrganizationLoadedStateCopyWith<OrganizationLoadedState> get copyWith => _$OrganizationLoadedStateCopyWithImpl<OrganizationLoadedState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrgLoadedState&&(identical(other.organization, organization) || other.organization == organization)&&(identical(other.msg, msg) || other.msg == msg));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrganizationLoadedState&&(identical(other.organization, organization) || other.organization == organization)&&(identical(other.msg, msg) || other.msg == msg));
 }
 
 
@@ -540,8 +540,8 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class $OrgLoadedStateCopyWith<$Res> implements $OrganizationStateCopyWith<$Res> {
-  factory $OrgLoadedStateCopyWith(OrgLoadedState value, $Res Function(OrgLoadedState) _then) = _$OrgLoadedStateCopyWithImpl;
+abstract mixin class $OrganizationLoadedStateCopyWith<$Res> implements $OrganizationStateCopyWith<$Res> {
+  factory $OrganizationLoadedStateCopyWith(OrganizationLoadedState value, $Res Function(OrganizationLoadedState) _then) = _$OrganizationLoadedStateCopyWithImpl;
 @useResult
 $Res call({
  Organization organization, String? msg
@@ -552,17 +552,17 @@ $OrganizationCopyWith<$Res> get organization;
 
 }
 /// @nodoc
-class _$OrgLoadedStateCopyWithImpl<$Res>
-    implements $OrgLoadedStateCopyWith<$Res> {
-  _$OrgLoadedStateCopyWithImpl(this._self, this._then);
+class _$OrganizationLoadedStateCopyWithImpl<$Res>
+    implements $OrganizationLoadedStateCopyWith<$Res> {
+  _$OrganizationLoadedStateCopyWithImpl(this._self, this._then);
 
-  final OrgLoadedState _self;
-  final $Res Function(OrgLoadedState) _then;
+  final OrganizationLoadedState _self;
+  final $Res Function(OrganizationLoadedState) _then;
 
 /// Create a copy of OrganizationState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? organization = null,Object? msg = freezed,}) {
-  return _then(OrgLoadedState(
+  return _then(OrganizationLoadedState(
 organization: null == organization ? _self.organization : organization // ignore: cast_nullable_to_non_nullable
 as Organization,msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
 as String?,

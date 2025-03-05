@@ -5,7 +5,7 @@ import 'package:edukit/ui/bloc/auth_cubit.dart';
 import 'package:edukit/ui/bloc/bucket_bloc.dart';
 import 'package:edukit/ui/bloc/file_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edukit/ui/bloc/organization_bloc.dart';
 import 'package:repositories/repositories.dart';
@@ -17,23 +17,21 @@ void main() async {
     final organizationRepo = OrganizationRepository(OrganizationFirebaseApi());
     final bucketRepo = BucketRepository(BucketFirebaseApi());
     final fileRepo = FileRepository(FileFirebaseApi());
+    var authRepository = AuthenticationRepository();
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => OrganizationBloc(repo: organizationRepo)),
-        BlocProvider(create: (context) => BucketBloc(repo: bucketRepo)),
-        BlocProvider(create: (context) => FileBloc(repo: fileRepo)),
+        BlocProvider(create: (context) => AuthCubit(repo: authRepository)),
+        BlocProvider(
+          create: (context) => OrganizationBloc(repo: organizationRepo, authCubit: context.read<AuthCubit>()),
+        ),
         BlocProvider(
           create:
-              (context) =>
-                  AuthCubit(repo: AuthenticationRepository(), bloc: context.read<OrganizationBloc>()),
+              (context) => BucketBloc(repo: bucketRepo, organizationBloc: context.read<OrganizationBloc>()),
         ),
+        BlocProvider(create: (context) => FileBloc(repo: fileRepo)),
       ],
-      child: Builder(
-        builder: (context) {
-          return const App();
-        },
-      ),
+      child: const App(),
     );
   });
 }

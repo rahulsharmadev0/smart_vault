@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:repositories/models.dart';
 import 'package:repositories/repositories.dart';
+import 'dart:async';
+import 'package:bloc/bloc.dart';
+import 'package:edukit/ui/bloc/organization_bloc.dart';
 
 part 'bucket_bloc.freezed.dart';
 
@@ -50,7 +53,6 @@ sealed class BucketEvent extends LifecycleEvent with _$BucketEvent {
 
 @freezed
 sealed class BucketState with _$BucketState {
-  const factory BucketState.initial() = InitialBucketState;
   const factory BucketState.loading({String? msg}) = LoadingBucketState;
   const factory BucketState.error({required String msg}) = ErrorBucketState;
   const factory BucketState.loaded({required List<Bucket> bucket, int? workOnIndex, String? msg}) =
@@ -59,7 +61,6 @@ sealed class BucketState with _$BucketState {
 
 extension BucketStateExt on BucketState {
   T map<T>({
-    T Function(InitialBucketState)? initial,
     T Function(LoadingBucketState)? loading,
     T Function(ErrorBucketState)? error,
     T Function(LoadedBucketState)? loaded,
@@ -68,10 +69,10 @@ extension BucketStateExt on BucketState {
     // ignore: no_leading_underscores_for_local_identifiers
     T _else() => orElse?.call() ?? (throw StateError('Unhandled state type: $runtimeType'));
     return switch (this) {
-      InitialBucketState value => initial?.call(value) ?? _else(),
       LoadingBucketState value => loading?.call(value) ?? _else(),
       ErrorBucketState value => error?.call(value) ?? _else(),
       LoadedBucketState value => loaded?.call(value) ?? _else(),
+      _ => throw StateError('Unhandled state type: $runtimeType'),
     };
   }
 }
@@ -81,16 +82,31 @@ extension BucketStateExt on BucketState {
 
 class BucketBloc extends Bloc<BucketEvent, BucketState> {
   final BucketRepository repo;
+  final OrganizationBloc organizationBloc;
+  StreamSubscription? _organizationSubscription;
 
   bool get isLoaded => state is LoadedBucketState;
   List<Bucket> get buckets => (state as LoadedBucketState).bucket;
 
-  BucketBloc({required this.repo}) : super(const BucketState.initial()) {
+  BucketBloc({required this.repo, required this.organizationBloc}) : super(const BucketState.loading()) {
     on<CreateBucket>(_onAddBucket);
     on<UpdateBucket>(_onUpdateBucket);
     on<DeleteBucket>(_onDeleteBucket);
     on<LoadOrgBuckets>(_onLoadBucket);
+
+    // Listen to organization state changes
+    _organizationSubscription = organizationBloc.stream.listen(_fetchBucketsOnOrgLoaded);
+
+    // Check if organization is already loaded
+    _fetchBucketsOnOrgLoaded(organizationBloc.state);
   }
+
+  void _fetchBucketsOnOrgLoaded(OrganizationState orgState) {
+    if (state is! LoadedBucketState && orgState is OrganizationLoadedState) {
+      add(LoadOrgBuckets(orgState.organization.orgId));
+    }
+  }
+
   void _onAddBucket(CreateBucket event, Emitter<BucketState> emit) async {
     emit(
       state.map(
@@ -216,5 +232,11 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
         ),
       );
     }
+  }
+
+  @override
+  Future<void> close() {
+    _organizationSubscription?.cancel();
+    return super.close();
   }
 }

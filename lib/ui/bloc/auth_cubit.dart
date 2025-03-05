@@ -1,54 +1,45 @@
 import 'dart:async';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:repositories/repositories.dart';
-import 'package:edukit/ui/bloc/organization_bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore: library_prefixes
 import 'package:firebase_auth/firebase_auth.dart' as fbAuth;
 
-enum AuthStatus { authenticated, unauthenticated, error }
+part 'auth_cubit.freezed.dart';
 
-class AuthState extends Equatable {
-  final AuthStatus status;
-  final String? errorMessage;
-
-  const AuthState({required this.status, this.errorMessage});
-
-  const AuthState.unauthenticated() : status = AuthStatus.unauthenticated, errorMessage = null;
-
-  const AuthState.authenticated() : status = AuthStatus.authenticated, errorMessage = null;
-
-  const AuthState.error(this.errorMessage) : status = AuthStatus.error;
-
-  @override
-  List<Object?> get props => [status, errorMessage];
+@freezed
+class AuthState with _$AuthState {
+  const factory AuthState.unauthenticated() = AuthStateUnauthenticated;
+  const factory AuthState.error(String errorMessage) = AuthStateError;
+  const factory AuthState.authenticated(String email, String name, String uid) = AuthStateAuthenticated;
+  const factory AuthState.newAccountCreated(String email, String name, String uid) =
+      AuthStateNewAccountCreated;
 }
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthenticationRepository _authRepo;
-  final OrganizationBloc _orgBloc;
 
-  bool get isAuthenticated => state.status == AuthStatus.authenticated;
-  bool get isUnauthenticated => state.status == AuthStatus.unauthenticated;
-  bool get hasError => state.status == AuthStatus.error;
+  bool get isAuthenticated => state is AuthStateAuthenticated || state is AuthStateNewAccountCreated;
+  bool get isUnauthenticated => state is AuthStateUnauthenticated;
 
-  AuthCubit({required AuthenticationRepository repo, required OrganizationBloc bloc})
+  AuthCubit({required AuthenticationRepository repo})
     : _authRepo = repo,
-      _orgBloc = bloc,
+
       super(const AuthState.unauthenticated()) {
     _userSubscription = _authRepo.user.listen(_handleUserChange, onError: _handleError);
   }
 
   void registerWithEmailAndPassword({required String email, required String password, required String name}) {
     _authRepo.registerWithEmailAndPassword(email: email, password: password, displayName: name).then((cred) {
-      _orgBloc.add(OrganizationEvent.create(email, name, cred.user!.uid));
-      emit(const AuthState.authenticated());
+      var user = cred.user!;
+      emit(AuthState.newAccountCreated(user.email!, user.displayName!, user.uid));
     }, onError: _handleError);
   }
 
   void signInWithEmailAndPassword({required String email, required String password}) {
-    _authRepo.signInWithEmailAndPassword(email: email, password: password).then((_) {
-      emit(const AuthState.authenticated());
+    _authRepo.signInWithEmailAndPassword(email: email, password: password).then((cred) {
+      var user = cred.user!;
+      emit(AuthState.authenticated(user.email!, user.displayName!, user.uid));
     }, onError: _handleError);
   }
 
@@ -58,8 +49,7 @@ class AuthCubit extends Cubit<AuthState> {
     if (user == null) {
       emit(const AuthState.unauthenticated());
     } else {
-      _orgBloc.add(LoadOrganization(user.uid));
-      emit(const AuthState.authenticated());
+      emit(AuthState.authenticated(user.email!, user.displayName!, user.uid));
     }
   }
 

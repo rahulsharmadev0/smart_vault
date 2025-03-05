@@ -107,17 +107,18 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
 
   void _updateAttribute(_UpdateAttribute event, Emitter emit) {
     _mapperEmit(emit, (state) {
-      final fixedAttributes = [...state.fixedAttributes];
-      final customAttributes = [...state.customAttributes];
+      print('idx: ${event.attribute}');
+      var fixedAttributes = [...state.fixedAttributes];
+      var customAttributes = [...state.customAttributes];
 
-      // Check in fixedAttributes first
+      int idx = fixedAttributes.indexWhere((e) => e.attributeId == event.attribute.attributeId);
 
-      if (fixedAttributes.remove(event.attribute)) {
-        fixedAttributes.add(event.attribute);
-      } else if (customAttributes.remove(event.attribute)) {
-        customAttributes.add(event.attribute);
+      if (idx != -1) {
+        fixedAttributes[idx] = event.attribute;
+      } else {
+        idx = customAttributes.indexWhere((e) => e.attributeId == event.attribute.attributeId);
+        if (idx != -1) customAttributes[idx] = event.attribute;
       }
-
       return state.copyWith(fixedAttributes: fixedAttributes, customAttributes: customAttributes);
     });
   }
@@ -151,9 +152,10 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
   /// Common method to update state
   void _mapperEmit(Emitter emit, AttributeManagementState Function(AMLoaded state) mapper) {
     var newState = state.map(
-      loaded: (state) => mapper(state),
+      loaded: (o) => mapper(o),
       orElse: () => AttributeManagementState.error('State is not loaded'),
     );
+    print('<---object${newState.toString()}');
     emit(newState);
   }
 }

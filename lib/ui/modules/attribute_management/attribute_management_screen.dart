@@ -113,12 +113,15 @@ class FixedAttributesListView extends _AttributeManagementBlocSelector {
         return AttributesTile(
           attribute: state[index],
           onEdit: () async {
+            /// TODO: Need to optmize generate new Attribute with unique id
             final value = await showDialog<Attribute?>(
               context: context,
               builder: (ctx) => AttributeDialog(label: state[index].label),
             );
+
             if (value != null) {
-              bloc.add(AttributeManagementEvent.update(value));
+              var attribute = state[index].copyWith(label: value.label);
+              bloc.add(AttributeManagementEvent.update(attribute));
             }
           },
         );

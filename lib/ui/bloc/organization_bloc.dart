@@ -1,4 +1,3 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:repositories/repositories.dart';
@@ -48,9 +47,11 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
   final OrganizationRepository repo;
   Organization? _cachedOrg;
 
+  bool get isLoaded => state is OrgLoadedState;
+
   String get orgId {
     if (state is! OrgLoadedState) throw Exception('Organization not loaded');
-    return (state as OrgLoadedState).organization.orgId;
+    return _cachedOrg?.orgId ?? (state as OrgLoadedState).organization.orgId;
   }
 
   OrganizationBloc({required this.repo}) : super(const OrganizationState.initial()) {
@@ -85,7 +86,6 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
 
       final org = await repo.getById(event.value);
       _cachedOrg = org;
-
       emit(OrganizationState.loaded(organization: org, msg: OrganizationMessage.loaded.message));
     } catch (e) {
       emit(

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BucketEvent {
 
- String get orgId; void Function()? get onCompleted; dynamic Function(dynamic)? get onError; void Function()? get onSuccess;
+ void Function()? get onSuccess; void Function()? get onCompleted;  Function(dynamic error)? get onError; String get orgId;
 /// Create a copy of BucketEvent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $BucketEventCopyWith<BucketEvent> get copyWith => _$BucketEventCopyWithImpl<Buck
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BucketEvent&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.onCompleted, onCompleted) || other.onCompleted == onCompleted)&&(identical(other.onError, onError) || other.onError == onError)&&(identical(other.onSuccess, onSuccess) || other.onSuccess == onSuccess));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BucketEvent&&(identical(other.onSuccess, onSuccess) || other.onSuccess == onSuccess)&&(identical(other.onCompleted, onCompleted) || other.onCompleted == onCompleted)&&(identical(other.onError, onError) || other.onError == onError)&&(identical(other.orgId, orgId) || other.orgId == orgId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,orgId,onCompleted,onError,onSuccess);
+int get hashCode => Object.hash(runtimeType,onSuccess,onCompleted,onError,orgId);
 
 @override
 String toString() {
-  return 'BucketEvent(orgId: $orgId, onCompleted: $onCompleted, onError: $onError, onSuccess: $onSuccess)';
+  return 'BucketEvent(onSuccess: $onSuccess, onCompleted: $onCompleted, onError: $onError, orgId: $orgId)';
 }
 
 
@@ -67,7 +67,7 @@ class _$BucketEventCopyWithImpl<$Res>
   return _then(_self.copyWith(
 orgId: null == orgId ? _self.orgId : orgId // ignore: cast_nullable_to_non_nullable
 as String,onCompleted: freezed == onCompleted ? _self.onCompleted : onCompleted // ignore: cast_nullable_to_non_nullable
-as void Function()?,onError: freezed == onError ? _self.onError : onError // ignore: cast_nullable_to_non_nullable
+as void Function()?,onError: freezed == onError ? _self.onError! : onError // ignore: cast_nullable_to_non_nullable
 as dynamic Function(dynamic)?,onSuccess: freezed == onSuccess ? _self.onSuccess : onSuccess // ignore: cast_nullable_to_non_nullable
 as void Function()?,
   ));

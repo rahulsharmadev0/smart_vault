@@ -9,7 +9,16 @@ part 'bucket_bloc.freezed.dart';
 
 @freezed
 sealed class BucketEvent extends LifecycleEvent with _$BucketEvent {
-  BucketEvent._({super.onCompleted, super.onError, super.onSuccess});
+  @override
+  final void Function()? onSuccess;
+  @override
+  final void Function()? onCompleted;
+  @override
+  final Function(dynamic error)? onError;
+
+  BucketEvent._({this.onCompleted, this.onError, this.onSuccess})
+    : super(onCompleted: onCompleted, onError: onError, onSuccess: onSuccess);
+
   factory BucketEvent.create(
     String orgId,
     Bucket bucket, {
@@ -72,6 +81,10 @@ extension BucketStateExt on BucketState {
 
 class BucketBloc extends Bloc<BucketEvent, BucketState> {
   final BucketRepository repo;
+
+  bool get isLoaded => state is LoadedBucketState;
+  List<Bucket> get buckets => (state as LoadedBucketState).bucket;
+
   BucketBloc({required this.repo}) : super(const BucketState.initial()) {
     on<CreateBucket>(_onAddBucket);
     on<UpdateBucket>(_onUpdateBucket);

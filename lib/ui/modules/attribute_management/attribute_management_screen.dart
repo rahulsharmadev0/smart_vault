@@ -2,6 +2,7 @@
 
 import 'package:bloc_suite/bloc_suite.dart';
 import 'package:edukit/ui/bloc/bucket_bloc.dart';
+import 'package:edukit/ui/material/scaffold.dart';
 import 'package:edukit/ui/modules/attribute_management/attribute_management_bloc.dart';
 import 'package:edukit/ui/widgets/attribute_dialog.dart';
 import 'package:flutter/material.dart';
@@ -26,22 +27,19 @@ class AttributeManagementScreen extends StatelessWidget {
         //Note: Widget not rebuilt when the state is the same
         buildWhen: (p0, p1) => p0.runtimeType != p1.runtimeType,
         builder: (context, state) {
-          return state.map(
-            loading: (_) => CircularProgressIndicator(),
-            error: (e) => Text(e.message),
-            loaded: (state) {
-              return Column(
-                spacing: 8,
-                children: [
-                  Align(alignment: Alignment.centerRight, child: AddAttributeButton()),
-                  Text('Fixed Attributes'),
-                  FixedAttributesListView(),
-                  SizedBox(height: 12),
-                  Text('Fixed Attributes'),
-                  CustomAttributesListView(),
-                ],
-              );
-            },
+          return AppScaffold(
+            titleText: 'Attribute Management',
+            body: Column(
+              spacing: 8,
+              children: [
+                Row(children: [AddAttributeButton()]),
+                Text('Fixed Attributes'),
+                FixedAttributesListView(),
+                SizedBox(height: 12),
+                Text('Fixed Attributes'),
+                // CustomAttributesListView(),
+              ],
+            ),
           );
         },
       ),
@@ -94,20 +92,20 @@ class AddAttributeButton extends BlocWidget<AttributeManagementBloc, AttributeMa
 // FixedAttributesListView
 // =========================================
 
-class FixedAttributesListView extends _AttributeManagementBlocSelector {
-  FixedAttributesListView({super.key})
-    : super(selector: (state) => state.map(loaded: (v) => v.fixedAttributes)!);
+class FixedAttributesListView extends StatelessWidget {
+  const FixedAttributesListView({super.key});
+
+  // @override
+  // bool get autoClose => false;
 
   @override
-  bool get autoClose => false;
+  Widget build(context) {
+    return BlocSelector<AttributeManagementBloc, AttributeManagementState, List<Attribute>>(
+      selector: (state) => state.map(loaded: (v) => v.fixedAttributes, orElse: () => []),
 
-  @override
-  Widget build(context, bloc, state) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: state.length,
-      itemBuilder: (context, index) {
-        return AttributesTile(attribute: state[index]);
+      builder: (context, state) {
+        print('FixedAttributesListView: $state');
+        return Column(spacing: 8, children: [for (var attribute in state) Text(attribute.label)]);
       },
     );
   }

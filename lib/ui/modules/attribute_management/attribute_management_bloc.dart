@@ -61,50 +61,46 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
     on<_RemoveAttribute>(_removeAttribute);
     on<_OnSubmitted>(_onSubmitted);
     on<_UpdateAttribute>(_updateAttribute);
-    add(AttributeManagementEvent._init());
+
+    add(const _Init());
   }
 
   void _init(_Init event, Emitter emit) {
-    if (state is AMLoaded) return;
+    if (this.state is AMLoaded) return;
 
-    final newState = switch (bucketBloc.state) {
-      BucketState.error => AttributeManagementState.error('Error loading bucket'),
-      BucketState.loaded => () {
-        final state = bucketBloc.state as LoadedBucketState;
-        final bucket = state.bucket.firstWhereOrNull((e) => e.bucketId == bucketId);
+    final state = bucketBloc.state as LoadedBucketState;
+    final bucket = state.bucket.firstWhereOrNull((e) => e.bucketId == bucketId);
+    if (bucket == null) {
+      emit(AttributeManagementState.error('Bucket not found'));
+      return;
+    }
 
-        if (bucket == null) {
-          return AttributeManagementState.error('Bucket not found');
-        }
+    // If bucket has no attributes, return fixed attributes
+    if (bucket.attributes.isEmpty) {
+      emit(
+        AttributeManagementState.loaded(
+          customAttributes: const [],
+          fixedAttributes: [
+            for (var entry in _fixedAttributes.entries)
+              Attribute.text(attributeId: entry.key, label: entry.value),
+          ],
+        ),
+      );
+      return;
+    }
 
-        // If bucket has no attributes, return fixed attributes
-        if (bucket.attributes.isEmpty) {
-          return AttributeManagementState.loaded(
-            customAttributes: const [],
-            fixedAttributes: [
-              for (var entry in _fixedAttributes.entries)
-                Attribute.text(attributeId: entry.key, label: entry.value),
-            ],
-          );
-        }
+    List<Attribute> customAttributes = [], fixedAttributes = [];
+    for (var attribute in bucket.attributes) {
+      if (_fixedAttributes.containsKey(attribute.attributeId)) {
+        fixedAttributes.add(attribute);
+      } else {
+        customAttributes.add(attribute);
+      }
+    }
 
-        List<Attribute> customAttributes = [], fixedAttributes = [];
-        for (var attribute in bucket.attributes) {
-          if (_fixedAttributes.containsKey(attribute.attributeId)) {
-            fixedAttributes.add(attribute);
-          } else {
-            customAttributes.add(attribute);
-          }
-        }
-
-        return AttributeManagementState.loaded(
-          fixedAttributes: fixedAttributes,
-          customAttributes: customAttributes,
-        );
-      }(),
-      _ => AttributeManagementState.loading(),
-    };
-    emit(newState);
+    emit(
+      AttributeManagementState.loaded(fixedAttributes: fixedAttributes, customAttributes: customAttributes),
+    );
   }
 
   void _updateAttribute(_UpdateAttribute event, Emitter emit) {

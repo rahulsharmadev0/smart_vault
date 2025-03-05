@@ -28,6 +28,10 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthenticationRepository _authRepo;
   final OrganizationBloc _orgBloc;
 
+  bool get isAuthenticated => state.status == AuthStatus.authenticated;
+  bool get isUnauthenticated => state.status == AuthStatus.unauthenticated;
+  bool get hasError => state.status == AuthStatus.error;
+
   AuthCubit({required AuthenticationRepository repo, required OrganizationBloc bloc})
     : _authRepo = repo,
       _orgBloc = bloc,

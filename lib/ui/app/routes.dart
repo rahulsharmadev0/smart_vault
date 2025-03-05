@@ -13,29 +13,17 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(de
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/auth',
+  initialLocation: '/',
   debugLogDiagnostics: true,
   observers: [RouteObserver()],
   redirect: (context, state) {
     // Get state from BLoCs
     final authCubit = context.read<AuthCubit>();
-    final orgBloc = context.read<OrganizationBloc>();
     final isAuthRoute = state.matchedLocation == '/auth';
-    final isLoadOrgRoute = state.matchedLocation == '/load-org';
 
     // Logic for unauthenticated users - direct to auth
-    if (authCubit.isUnauthenticated) {
-      return isAuthRoute ? null : '/auth';
-    }
-
-    // When authenticated but on auth route - redirect to proper location
-    if (authCubit.isAuthenticated && isAuthRoute) {
-      return !orgBloc.isLoaded ? '/load-org' : '/';
-    }
-
-    // If organization isn't loaded yet but user is authenticated
-    if (authCubit.isAuthenticated && !orgBloc.isLoaded && !isLoadOrgRoute) {
-      return '/load-org';
+    if (authCubit.isUnauthenticated && !isAuthRoute) {
+      return '/auth';
     }
 
     // Default - no redirection needed
@@ -60,18 +48,12 @@ final GoRouter router = GoRouter(
       },
     ),
 
-    GoRoute(
-      path: '/',
-      builder: (context, state) {
-        return const FilesManagementScreen();
-      },
-    ),
+    GoRoute(path: '/', name: 'home', builder: (context, state) => const FilesManagementScreen()),
 
     GoRoute(
       path: '/:bucketId',
-      builder: (context, state) {
-        return FilesManagementScreen(bucketId: state.pathParameters['bucketId']);
-      },
+      name: 'bucket',
+      builder: (context, state) => FilesManagementScreen(bucketId: state.pathParameters['bucketId']),
     ),
   ],
 );

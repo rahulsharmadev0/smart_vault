@@ -17,23 +17,27 @@ class FilesManagementScreen extends StatelessWidget {
       titleText: 'Files Management',
       body: BlocConsumer<BucketBloc, BucketState>(
         listener: (context, state) {
-          if (state is LoadedBucketState && state.bucket.isEmpty) {
-            context.goNamed('create-bucket');
+          if (state is LoadedBucketState) {
+            if (state.buckets.isEmpty) {
+              context.goNamed('create-bucket');
+            } else if (bucketId == null) {
+              final currentBucket =
+                  bucketId == null
+                      ? state.buckets.first
+                      : state.buckets.firstWhereOrNull((o) => o.bucketId == bucketId) ?? state.buckets.first;
+              context.goNamed('bucket', pathParameters: {'bucketId': currentBucket.bucketId});
+            }
           }
         },
         builder: (context, state) {
-          if (state is LoadingBucketState) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is ErrorBucketState) {
+          if (state is ErrorBucketState) {
             return Center(child: Text('Error: ${state.msg}'));
           } else if (state is LoadedBucketState) {
             final currentBucket =
-                bucketId == null
-                    ? state.bucket.first
-                    : state.bucket.firstWhereOrNull((o) => o.bucketId == bucketId) ?? state.bucket.first;
+                state.buckets.firstWhereOrNull((o) => o.bucketId == bucketId) ?? state.buckets.first;
             return _BucketScreen(currentBucket);
           } else {
-            return const SizedBox.shrink();
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),

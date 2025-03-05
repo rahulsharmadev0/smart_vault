@@ -5,7 +5,6 @@ import 'package:edukit/ui/bloc/auth_cubit.dart';
 import 'package:edukit/ui/bloc/bucket_bloc.dart';
 import 'package:edukit/ui/bloc/file_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edukit/ui/bloc/organization_bloc.dart';
 import 'package:repositories/repositories.dart';
@@ -23,9 +22,11 @@ void main() async {
       providers: [
         BlocProvider(create: (context) => AuthCubit(repo: authRepository)),
         BlocProvider(
+          lazy: false,
           create: (context) => OrganizationBloc(repo: organizationRepo, authCubit: context.read<AuthCubit>()),
         ),
         BlocProvider(
+          lazy: false,
           create:
               (context) => BucketBloc(repo: bucketRepo, organizationBloc: context.read<OrganizationBloc>()),
         ),

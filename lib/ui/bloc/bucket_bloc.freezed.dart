@@ -578,7 +578,7 @@ class LoadedBucketState implements BucketState {
   
 
  final  List<Bucket> _bucket;
- List<Bucket> get bucket {
+ List<Bucket> get buckets {
   if (_bucket is EqualUnmodifiableListView) return _bucket;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_bucket);
@@ -606,7 +606,7 @@ int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(
 
 @override
 String toString() {
-  return 'BucketState.loaded(bucket: $bucket, workOnIndex: $workOnIndex, msg: $msg)';
+  return 'BucketState.loaded(bucket: $buckets, workOnIndex: $workOnIndex, msg: $msg)';
 }
 
 

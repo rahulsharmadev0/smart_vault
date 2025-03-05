@@ -94,7 +94,6 @@ class AddAttributeButton extends BlocWidget<AttributeManagementBloc, AttributeMa
 
 class FixedAttributesListView extends StatelessWidget {
   const FixedAttributesListView({super.key});
-
   // @override
   // bool get autoClose => false;
 
@@ -102,9 +101,7 @@ class FixedAttributesListView extends StatelessWidget {
   Widget build(context) {
     return BlocSelector<AttributeManagementBloc, AttributeManagementState, List<Attribute>>(
       selector: (state) => state.map(loaded: (v) => v.fixedAttributes, orElse: () => []),
-
       builder: (context, state) {
-        print('FixedAttributesListView: $state');
         return Column(spacing: 8, children: [for (var attribute in state) Text(attribute.label)]);
       },
     );

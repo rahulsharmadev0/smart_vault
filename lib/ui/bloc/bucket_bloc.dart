@@ -86,7 +86,7 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
   StreamSubscription? _organizationSubscription;
 
   bool get isLoaded => state is LoadedBucketState;
-  List<Bucket> get buckets => (state as LoadedBucketState).bucket;
+  List<Bucket> get buckets => (state as LoadedBucketState).buckets;
 
   BucketBloc({required this.repo, required this.organizationBloc}) : super(const BucketState.loading()) {
     on<CreateBucket>(_onAddBucket);
@@ -121,7 +121,7 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
         state.map(
           loaded: (state) {
             return state.copyWith(
-              bucket: [...state.bucket, event.bucket],
+              bucket: [...state.buckets, event.bucket],
               msg: BucketMessage.created.message,
             );
           },
@@ -144,7 +144,7 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
         loaded: (state) {
           return state.copyWith(
             msg: BucketMessage.updating.message,
-            workOnIndex: state.bucket.indexWhere((e) => e.bucketId == event.bucket.bucketId),
+            workOnIndex: state.buckets.indexWhere((e) => e.bucketId == event.bucket.bucketId),
           );
         },
         orElse: () => BucketState.loading(msg: BucketMessage.updating.message),
@@ -180,7 +180,7 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
         loaded:
             (state) => state.copyWith(
               msg: BucketMessage.deleting.message,
-              workOnIndex: state.bucket.indexWhere((e) => e.bucketId == event.bucketId),
+              workOnIndex: state.buckets.indexWhere((e) => e.bucketId == event.bucketId),
             ),
         orElse: () => BucketState.loading(msg: BucketMessage.deleting.message),
       ),

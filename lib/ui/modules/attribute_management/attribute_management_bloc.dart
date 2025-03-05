@@ -62,7 +62,9 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
     on<_OnSubmitted>(_onSubmitted);
     on<_UpdateAttribute>(_updateAttribute);
 
-    add(const _Init());
+    bucketBloc.stream.listen((event) {
+      if (event is LoadedBucketState) add(const _Init());
+    });
   }
 
   void _init(_Init event, Emitter emit) {
@@ -105,11 +107,18 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
 
   void _updateAttribute(_UpdateAttribute event, Emitter emit) {
     _mapperEmit(emit, (state) {
+      final fixedAttributes = [...state.fixedAttributes];
       final customAttributes = [...state.customAttributes];
-      final index = customAttributes.indexWhere((e) => e.attributeId == event.attribute.attributeId);
-      if (index == -1) return state;
-      customAttributes[index] = event.attribute;
-      return state.copyWith(customAttributes: customAttributes);
+
+      // Check in fixedAttributes first
+
+      if (fixedAttributes.remove(event.attribute)) {
+        fixedAttributes.add(event.attribute);
+      } else if (customAttributes.remove(event.attribute)) {
+        customAttributes.add(event.attribute);
+      }
+
+      return state.copyWith(fixedAttributes: fixedAttributes, customAttributes: customAttributes);
     });
   }
 
@@ -133,8 +142,8 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
 
     _mapperEmit(emit, (state) {
       final bucket = bucketState.buckets.firstWhere((e) => e.bucketId == bucketId);
-      //TODO: Implement update method
-      BucketEvent.update('orgId', bucket.copyWith(attributes: state.customAttributes));
+
+      // BucketEvent.update(bucket.orgId, bucket.copyWith(attributes: state.customAttributes));
       return state;
     });
   }

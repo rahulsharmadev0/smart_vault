@@ -31,13 +31,14 @@ class AttributeManagementScreen extends StatelessWidget {
             titleText: 'Attribute Management',
             body: Column(
               spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [AddAttributeButton()]),
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: [AddAttributeButton()]),
                 Text('Fixed Attributes'),
                 FixedAttributesListView(),
                 SizedBox(height: 12),
                 Text('Fixed Attributes'),
-                // CustomAttributesListView(),
+                CustomAttributesListView(),
               ],
             ),
           );
@@ -60,7 +61,7 @@ class AddAttributeButton extends BlocWidget<AttributeManagementBloc, AttributeMa
         ),
         AttributeType.singleSelect => await showDialog<Attribute?>(
           context: context,
-          builder: (ctx) => AttributeDialog(),
+          builder: (ctx) => AttributeDialog.withOptions(),
         ),
         AttributeType.multiSelect => await showDialog<Attribute?>(
           context: context,
@@ -84,6 +85,9 @@ class AddAttributeButton extends BlocWidget<AttributeManagementBloc, AttributeMa
         }).toList();
       },
       onSelected: onTap,
+      borderRadius: BorderRadius.circular(8),
+      style: FilledButton.styleFrom(),
+      icon: Row(spacing: 4, children: [Icon(Icons.add), Text('Attribute')]),
     );
   }
 }
@@ -92,17 +96,32 @@ class AddAttributeButton extends BlocWidget<AttributeManagementBloc, AttributeMa
 // FixedAttributesListView
 // =========================================
 
-class FixedAttributesListView extends StatelessWidget {
-  const FixedAttributesListView({super.key});
-  // @override
-  // bool get autoClose => false;
+class FixedAttributesListView extends _AttributeManagementBlocSelector {
+  FixedAttributesListView({super.key})
+    : super(selector: (state) => state.map(loaded: (v) => v.fixedAttributes, orElse: () => []));
 
   @override
-  Widget build(context) {
-    return BlocSelector<AttributeManagementBloc, AttributeManagementState, List<Attribute>>(
-      selector: (state) => state.map(loaded: (v) => v.fixedAttributes, orElse: () => []),
-      builder: (context, state) {
-        return Column(spacing: 8, children: [for (var attribute in state) Text(attribute.label)]);
+  bool get autoClose => false;
+
+  @override
+  Widget build(context, bloc, state) {
+    return ListView.separated(
+      shrinkWrap: true,
+      itemCount: state.length,
+      separatorBuilder: (context, index) => SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        return AttributesTile(
+          attribute: state[index],
+          onEdit: () async {
+            final value = await showDialog<Attribute?>(
+              context: context,
+              builder: (ctx) => AttributeDialog(label: state[index].label),
+            );
+            if (value != null) {
+              bloc.add(AttributeManagementEvent.update(value));
+            }
+          },
+        );
       },
     );
   }
@@ -114,16 +133,17 @@ class FixedAttributesListView extends StatelessWidget {
 
 class CustomAttributesListView extends _AttributeManagementBlocSelector {
   CustomAttributesListView({super.key})
-    : super(selector: (state) => state.map(loaded: (v) => v.customAttributes)!);
+    : super(selector: (state) => state.map(loaded: (v) => v.customAttributes, orElse: () => []));
 
   @override
   bool get autoClose => false;
 
   @override
   Widget build(context, bloc, state) {
-    return ListView.builder(
+    return ListView.separated(
       shrinkWrap: true,
       itemCount: state.length,
+      separatorBuilder: (context, index) => SizedBox(height: 8),
       itemBuilder: (context, index) {
         return AttributesTile(attribute: state[index]);
       },
@@ -149,8 +169,9 @@ class AttributesTile extends StatelessWidget {
 
   Widget tile(String title, String label) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
       alignment: Alignment.centerLeft,
+      color: Colors.grey[200],
       child: Row(
         spacing: 8,
         children: [

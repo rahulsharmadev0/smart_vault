@@ -5,11 +5,12 @@ enum AttributeDialogType { simple, withOptions }
 
 class AttributeDialog extends StatefulWidget {
   final AttributeDialogType type;
+  final String label;
   final Set<String> _options;
 
-  AttributeDialog({super.key}) : type = AttributeDialogType.simple, _options = {};
+  AttributeDialog({this.label = '', super.key}) : type = AttributeDialogType.simple, _options = {};
 
-  AttributeDialog.withOptions({super.key, List<String> options = const []})
+  AttributeDialog.withOptions({this.label = '', super.key, List<String> options = const []})
     : type = AttributeDialogType.withOptions,
       _options = Set.from(options);
 
@@ -18,13 +19,14 @@ class AttributeDialog extends StatefulWidget {
 }
 
 class _AttributeDialogState extends State<AttributeDialog> {
-  final _nameController = TextEditingController();
+  late final _nameController = TextEditingController(text: widget.label);
   final _optionsController = TextEditingController();
   bool _hasOptionsText = false;
 
   @override
   void initState() {
     super.initState();
+
     _optionsController.addListener(() {
       setState(() {
         _hasOptionsText = _optionsController.text.trim().isNotEmpty;

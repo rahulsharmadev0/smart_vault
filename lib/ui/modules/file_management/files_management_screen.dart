@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:edukit/ui/bloc/bucket_bloc.dart';
 import 'package:edukit/ui/bloc/organization_bloc.dart';
 import 'package:flutter/material.dart';

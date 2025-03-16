@@ -65,6 +65,9 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
     bucketBloc.stream.listen((event) {
       if (event is LoadedBucketState) add(const _Init());
     });
+
+    //TODO: May cause error
+    add(const _Init());
   }
 
   void _init(_Init event, Emitter emit) {

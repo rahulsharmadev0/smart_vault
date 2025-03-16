@@ -13,7 +13,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) => router.refresh(),
+      listener: (context, state) => router.go('/'),
       child: MaterialApp.router(
         scaffoldMessengerKey: _scaffoldMessengerKey,
         theme: ThemeData(primarySwatch: Colors.blue, visualDensity: VisualDensity.adaptivePlatformDensity),

@@ -1,6 +1,4 @@
 import 'package:edukit/ui/bloc/auth_cubit.dart';
-import 'package:edukit/ui/bloc/bucket_bloc.dart';
-import 'package:edukit/ui/bloc/organization_bloc.dart';
 import 'package:edukit/ui/modules/attribute_management/attribute_management_screen.dart';
 import 'package:edukit/ui/modules/auth/auth_screen.dart';
 import 'package:edukit/ui/modules/create_bucket/create_or_edit_bucket_screen.dart';
@@ -33,6 +31,7 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(path: '/auth', name: 'auth', builder: (context, state) => const AuthScreen()),
 
+    GoRoute(path: '/', name: 'home', builder: (_, _) => const FilesManagementScreen()),
     GoRoute(
       path: '/create-bucket',
       name: 'create-bucket',
@@ -42,13 +41,8 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/attribute-management/:bucketId',
       name: 'attribute-management',
-      builder: (context, state) {
-        final bucketId = state.pathParameters['bucketId']!;
-        return AttributeManagementScreen(bucketId: bucketId);
-      },
+      builder: (_, state) => AttributeManagementScreen(bucketId: state.pathParameters['bucketId']!),
     ),
-
-    GoRoute(path: '/', name: 'home', builder: (context, state) => const FilesManagementScreen()),
 
     GoRoute(
       path: '/:bucketId',

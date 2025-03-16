@@ -148,7 +148,24 @@ class CustomAttributesListView extends _AttributeManagementBlocSelector {
       itemCount: state.length,
       separatorBuilder: (context, index) => SizedBox(height: 8),
       itemBuilder: (context, index) {
-        return AttributesTile(attribute: state[index]);
+        return AttributesTile(
+          key: ValueKey(index),
+          attribute: state[index],
+          onDelete: () => bloc.add(AttributeManagementEvent.remove(index)),
+          onEdit: () async {
+            /// TODO: Need to optmize generate new Attribute with unique id
+            final value = await showDialog<Attribute?>(
+              context: context,
+              // TODO: Need to open correct dialog based on the attribute type
+              builder: (ctx) => AttributeDialog(label: state[index].label),
+            );
+
+            if (value != null) {
+              var attribute = state[index].copyWith(label: value.label);
+              bloc.add(AttributeManagementEvent.update(attribute));
+            }
+          },
+        );
       },
     );
   }
@@ -172,6 +189,7 @@ class AttributesTile extends StatelessWidget {
 
   Widget tile(String title, String label) {
     return Container(
+      key: key,
       padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
       alignment: Alignment.centerLeft,
       color: Colors.grey[200],

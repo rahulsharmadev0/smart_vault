@@ -20,6 +20,10 @@ class FilesManagementScreen extends StatelessWidget {
           if (state is LoadedBucketState) {
             if (state.buckets.isEmpty) {
               context.goNamed('create-bucket');
+            } else if (state.buckets.length == 1) {
+              final currentBucket =
+                  state.buckets.firstWhereOrNull((o) => o.bucketId == bucketId) ?? state.buckets.first;
+              context.goNamed('bucket', pathParameters: {'bucketId': currentBucket.bucketId});
             } else if (bucketId == null) {
               final currentBucket =
                   bucketId == null

@@ -1,6 +1,6 @@
-part of 'bucket_repository.dart';
+part of '../repositories/bucket_repository.dart';
 
-abstract class BucketApi {
+sealed class BucketApi extends ApiBase {
   Future<void> create(Bucket bucket);
 
   Future<void> update(Bucket bucket);
@@ -15,7 +15,7 @@ abstract class BucketApi {
 
   Future<void> updateDescription(String bucketId, String description);
 
-  Future<void> updateFileTypes(String bucketId, List<DocumentType> filetypes);
+  Future<void> updateFileTypes(String bucketId, List<DocumentType> fileTypes);
 
   Future<void> updateAttributes(String bucketId, List<Attribute> attributes);
 }

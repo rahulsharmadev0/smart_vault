@@ -78,46 +78,56 @@ class AuthFormState with EquatableMixin {
     errorMessage,
     isSignInMode,
   ];
-}
 
-extension on AuthFormState {
-  // AuthFormState inProgress() => copyWith(formState: FormState.inProgress);
+  bool get isValidSignIn => password.isNotBlank && email.regMatch(regPatterns.email);
 
-  // AuthFormState success() => copyWith(formState: FormState.success);
-
-  // AuthFormState failure(String errorMessage) =>
-  //     copyWith(formState: FormState.failure, errorMessage: errorMessage);
-
-  bool isValidSignIn() => password.isNotEmpty && email.regMatch(regPatterns.email);
-
-  bool isValidCreateAccount() =>
+  bool get isValidCreateAccount =>
       password.isNotBlank &&
       organisationName.regMatch(regPatterns.username()) &&
       email.regMatch(regPatterns.email) &&
       password == confirmPassword;
 
-  AuthFormState toggleMode() => copyWith(isSignInMode: !isSignInMode);
+  AuthFormState toggleMode() =>
+      copyWith(isSignInMode: !isSignInMode, errorMessage: null, formState: FormState.initial);
 }
-
-// ---
 
 class AuthFormCubit extends Cubit<AuthFormState> {
   final AuthCubit bloc;
-  AuthFormCubit({required this.bloc}) : super(AuthFormState.empty);
+
+  AuthFormCubit({required this.bloc}) : super(AuthFormState.empty) {
+    // Listen to auth state changes
+    bloc.stream.listen(_handleAuthStateChange);
+  }
+
+  void _handleAuthStateChange(AuthState authState) {
+    if (authState is AuthStateError) {
+      emit(state.copyWith(formState: FormState.failure, errorMessage: authState.errorMessage));
+    } else if (authState is AuthStateLoading) {
+      emit(state.copyWith(formState: FormState.inProgress, errorMessage: null));
+    } else if (authState is AuthStateAuthenticated || authState is AuthStateNewAccountCreated) {
+      emit(state.copyWith(formState: FormState.success, errorMessage: null));
+    }
+  }
 
   void createAccount() {
-    if (state.isValidCreateAccount()) {
+    if (state.isValidCreateAccount) {
       bloc.registerWithEmailAndPassword(
         email: state.email,
         password: state.password,
         name: state.organisationName,
       );
+    } else {
+      emit(state.copyWith(formState: FormState.failure, errorMessage: 'Please fill all fields correctly'));
     }
   }
 
-  void signIn() async {
-    if (state.isValidSignIn()) {
+  void signIn() {
+    if (state.isValidSignIn) {
       bloc.signInWithEmailAndPassword(email: state.email, password: state.password);
+    } else {
+      emit(
+        state.copyWith(formState: FormState.failure, errorMessage: 'Please enter valid email and password'),
+      );
     }
   }
 

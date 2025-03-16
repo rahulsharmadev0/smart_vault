@@ -17,17 +17,17 @@ class FilesManagementScreen extends StatelessWidget {
       body: BlocConsumer<BucketBloc, BucketState>(
         listener: (context, state) {
           if (state is LoadedBucketState) {
-            if (state.buckets.isEmpty) {
+            if (state.bucket.isEmpty) {
               context.goNamed('create-bucket');
-            } else if (state.buckets.length == 1) {
+            } else if (state.bucket.length == 1) {
               final currentBucket =
-                  state.buckets.firstWhereOrNull((o) => o.bucketId == bucketId) ?? state.buckets.first;
+                  state.bucket.firstWhereOrNull((o) => o.bucketId == bucketId) ?? state.bucket.first;
               context.goNamed('bucket', pathParameters: {'bucketId': currentBucket.bucketId});
             } else if (bucketId == null) {
               final currentBucket =
                   bucketId == null
-                      ? state.buckets.first
-                      : state.buckets.firstWhereOrNull((o) => o.bucketId == bucketId) ?? state.buckets.first;
+                      ? state.bucket.first
+                      : state.bucket.firstWhereOrNull((o) => o.bucketId == bucketId) ?? state.bucket.first;
               context.goNamed('bucket', pathParameters: {'bucketId': currentBucket.bucketId});
             }
           }
@@ -37,7 +37,7 @@ class FilesManagementScreen extends StatelessWidget {
             return Center(child: Text('Error: ${state.msg}'));
           } else if (state is LoadedBucketState) {
             final currentBucket =
-                state.buckets.firstWhereOrNull((o) => o.bucketId == bucketId) ?? state.buckets.first;
+                state.bucket.firstWhereOrNull((o) => o.bucketId == bucketId) ?? state.bucket.first;
             return _BucketScreen(currentBucket);
           } else {
             return const Center(child: CircularProgressIndicator());

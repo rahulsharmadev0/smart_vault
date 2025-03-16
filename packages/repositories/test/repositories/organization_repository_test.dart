@@ -2,7 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:repositories/models/organization.dart';
-import 'package:repositories/repositories/organization/organization_repository.dart';
+import 'package:repositories/repositories/organization_repository.dart';
 
 class MockFirebaseDatabase extends Mock implements FirebaseDatabase {}
 
@@ -25,14 +25,13 @@ void main() {
     when(() => mockFirebaseDatabase.ref('organizations')).thenReturn(mockDatabaseReference);
     when(() => mockDatabaseReference.child(any())).thenReturn(mockOrgReference);
 
-    repository = OrganizationRepository(OrganizationFirebaseApi(firestore: mockFirebaseDatabase));
+    repository = OrganizationRepository(FirebaseOrganizationApi(firestore: mockFirebaseDatabase));
 
     final now = DateTime.now();
     testOrganization = Organization(
       orgId: 'test-org-id',
       email: 'test@example.com',
       name: 'Test Organization',
-      buckets: const [],
       createdAt: now,
       updatedAt: now,
     );
@@ -73,7 +72,6 @@ void main() {
       expect(result.orgId, equals(testOrganization.orgId));
       expect(result.email, equals(testOrganization.email));
       expect(result.name, equals(testOrganization.name));
-      expect(result.buckets, equals(testOrganization.buckets));
       expect(result.createdAt, equals(testOrganization.createdAt));
       expect(result.updatedAt, equals(testOrganization.updatedAt));
       verify(() => mockOrgReference.get()).called(1);

@@ -86,7 +86,7 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
   StreamSubscription? _organizationSubscription;
 
   bool get isLoaded => state is LoadedBucketState;
-  List<Bucket> get buckets => (state as LoadedBucketState).buckets;
+  List<Bucket> get bucket => (state as LoadedBucketState).bucket;
 
   BucketBloc({required this.repo, required this.organizationBloc}) : super(const BucketState.loading()) {
     on<CreateBucket>(_onAddBucket);

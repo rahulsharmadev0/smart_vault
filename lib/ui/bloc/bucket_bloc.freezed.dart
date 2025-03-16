@@ -379,63 +379,62 @@ as void Function()?,
 /// @nodoc
 mixin _$BucketState {
 
-
+ String? get msg;
+/// Create a copy of BucketState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$BucketStateCopyWith<BucketState> get copyWith => _$BucketStateCopyWithImpl<BucketState>(this as BucketState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BucketState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BucketState&&(identical(other.msg, msg) || other.msg == msg));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,msg);
 
 @override
 String toString() {
-  return 'BucketState()';
+  return 'BucketState(msg: $msg)';
 }
 
 
 }
 
 /// @nodoc
-class $BucketStateCopyWith<$Res>  {
-$BucketStateCopyWith(BucketState _, $Res Function(BucketState) __);
+abstract mixin class $BucketStateCopyWith<$Res>  {
+  factory $BucketStateCopyWith(BucketState value, $Res Function(BucketState) _then) = _$BucketStateCopyWithImpl;
+@useResult
+$Res call({
+ String msg
+});
+
+
+
+
 }
-
-
 /// @nodoc
+class _$BucketStateCopyWithImpl<$Res>
+    implements $BucketStateCopyWith<$Res> {
+  _$BucketStateCopyWithImpl(this._self, this._then);
 
+  final BucketState _self;
+  final $Res Function(BucketState) _then;
 
-class InitialBucketState implements BucketState {
-  const InitialBucketState();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InitialBucketState);
+/// Create a copy of BucketState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? msg = null,}) {
+  return _then(_self.copyWith(
+msg: null == msg ? _self.msg! : msg // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
 }
 
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'BucketState.initial()';
 }
-
-
-}
-
-
 
 
 /// @nodoc
@@ -445,11 +444,11 @@ class LoadingBucketState implements BucketState {
   const LoadingBucketState({this.msg});
   
 
- final  String? msg;
+@override final  String? msg;
 
 /// Create a copy of BucketState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $LoadingBucketStateCopyWith<LoadingBucketState> get copyWith => _$LoadingBucketStateCopyWithImpl<LoadingBucketState>(this, _$identity);
 
@@ -475,7 +474,7 @@ String toString() {
 /// @nodoc
 abstract mixin class $LoadingBucketStateCopyWith<$Res> implements $BucketStateCopyWith<$Res> {
   factory $LoadingBucketStateCopyWith(LoadingBucketState value, $Res Function(LoadingBucketState) _then) = _$LoadingBucketStateCopyWithImpl;
-@useResult
+@override @useResult
 $Res call({
  String? msg
 });
@@ -494,7 +493,7 @@ class _$LoadingBucketStateCopyWithImpl<$Res>
 
 /// Create a copy of BucketState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? msg = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? msg = freezed,}) {
   return _then(LoadingBucketState(
 msg: freezed == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -511,11 +510,11 @@ class ErrorBucketState implements BucketState {
   const ErrorBucketState({required this.msg});
   
 
- final  String msg;
+@override final  String msg;
 
 /// Create a copy of BucketState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $ErrorBucketStateCopyWith<ErrorBucketState> get copyWith => _$ErrorBucketStateCopyWithImpl<ErrorBucketState>(this, _$identity);
 
@@ -541,7 +540,7 @@ String toString() {
 /// @nodoc
 abstract mixin class $ErrorBucketStateCopyWith<$Res> implements $BucketStateCopyWith<$Res> {
   factory $ErrorBucketStateCopyWith(ErrorBucketState value, $Res Function(ErrorBucketState) _then) = _$ErrorBucketStateCopyWithImpl;
-@useResult
+@override @useResult
 $Res call({
  String msg
 });
@@ -560,7 +559,7 @@ class _$ErrorBucketStateCopyWithImpl<$Res>
 
 /// Create a copy of BucketState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? msg = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? msg = null,}) {
   return _then(ErrorBucketState(
 msg: null == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nullable
 as String,
@@ -578,18 +577,18 @@ class LoadedBucketState implements BucketState {
   
 
  final  List<Bucket> _bucket;
- List<Bucket> get buckets {
+ List<Bucket> get bucket {
   if (_bucket is EqualUnmodifiableListView) return _bucket;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_bucket);
 }
 
  final  int? workOnIndex;
- final  String? msg;
+@override final  String? msg;
 
 /// Create a copy of BucketState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $LoadedBucketStateCopyWith<LoadedBucketState> get copyWith => _$LoadedBucketStateCopyWithImpl<LoadedBucketState>(this, _$identity);
 
@@ -606,7 +605,7 @@ int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(
 
 @override
 String toString() {
-  return 'BucketState.loaded(bucket: $buckets, workOnIndex: $workOnIndex, msg: $msg)';
+  return 'BucketState.loaded(bucket: $bucket, workOnIndex: $workOnIndex, msg: $msg)';
 }
 
 
@@ -615,7 +614,7 @@ String toString() {
 /// @nodoc
 abstract mixin class $LoadedBucketStateCopyWith<$Res> implements $BucketStateCopyWith<$Res> {
   factory $LoadedBucketStateCopyWith(LoadedBucketState value, $Res Function(LoadedBucketState) _then) = _$LoadedBucketStateCopyWithImpl;
-@useResult
+@override @useResult
 $Res call({
  List<Bucket> bucket, int? workOnIndex, String? msg
 });
@@ -634,7 +633,7 @@ class _$LoadedBucketStateCopyWithImpl<$Res>
 
 /// Create a copy of BucketState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? bucket = null,Object? workOnIndex = freezed,Object? msg = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? bucket = null,Object? workOnIndex = freezed,Object? msg = freezed,}) {
   return _then(LoadedBucketState(
 bucket: null == bucket ? _self._bucket : bucket // ignore: cast_nullable_to_non_nullable
 as List<Bucket>,workOnIndex: freezed == workOnIndex ? _self.workOnIndex : workOnIndex // ignore: cast_nullable_to_non_nullable

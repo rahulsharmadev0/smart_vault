@@ -1,6 +1,6 @@
-part of 'organization_repository.dart';
+part of '../repositories/organization_repository.dart';
 
-abstract class OrganizationApi {
+sealed class OrganizationApi extends ApiBase {
   Future<void> create(Organization organization);
 
   Future<void> updateName(String orgId, String newName);

@@ -13,9 +13,9 @@ void main() async {
   bootstrap(() async {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-    final organizationRepo = OrganizationRepository(OrganizationFirebaseApi());
-    final bucketRepo = BucketRepository(BucketFirebaseApi());
-    final fileRepo = FileRepository(FileFirebaseApi());
+    final organizationRepo = OrganizationRepository(FirebaseOrganizationApi());
+    final bucketRepo = BucketRepository(FirebaseBucketApi());
+    final fileRepo = FileRepository(FirebaseFileApi());
     var authRepository = AuthenticationRepository();
 
     return MultiBlocProvider(

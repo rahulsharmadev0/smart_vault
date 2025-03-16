@@ -27,7 +27,7 @@ class _AppNavigationRailState extends State<AppNavigationRail> {
               },
               labelType: NavigationRailLabelType.all,
               destinations: <NavigationRailDestination>[
-                ...p0.buckets.map(
+                ...p0.bucket.map(
                   (e) => NavigationRailDestination(
                     icon: Icon(Icons.business_outlined),
                     selectedIcon: Icon(Icons.home),

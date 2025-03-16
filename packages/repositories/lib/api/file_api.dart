@@ -1,6 +1,6 @@
-part of 'file_repository.dart';
+part of '../repositories/file_repository.dart';
 
-abstract class FileApi {
+sealed class FileApi extends ApiBase {
   Future<void> create(DocumentFile file);
 
   Future<void> update(DocumentFile file);

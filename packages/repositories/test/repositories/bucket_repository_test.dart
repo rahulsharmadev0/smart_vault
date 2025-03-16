@@ -2,7 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:repositories/models/organization.dart';
-import 'package:repositories/repositories/bucket/bucket_repository.dart';
+import 'package:repositories/repositories/bucket_repository.dart';
 
 class MockFirebaseDatabase extends Mock implements FirebaseDatabase {}
 
@@ -26,12 +26,13 @@ void main() {
     when(() => mockFirebaseDatabase.ref('organizations')).thenReturn(mockDatabaseReference);
     when(() => mockDatabaseReference.child(any())).thenReturn(mockOrgReference);
 
-    repository = BucketRepository(BucketFirebaseApi(firestore: mockFirebaseDatabase));
+    repository = BucketRepository(FirebaseBucketApi(firestore: mockFirebaseDatabase));
 
     final now = DateTime.now();
     testBucket = Bucket(
       bucketId: 'test-bucket-id',
       title: 'Test Bucket',
+      orgId: testOrgId,
       description: 'Test Description',
       fileTypes: const [DocumentType.pdf, DocumentType.doc],
       attributes: const [],
@@ -44,7 +45,7 @@ void main() {
     test('create - should call set with correct data', () async {
       when(() => mockOrgReference.set(any())).thenAnswer((_) async => true);
 
-      await repository.create(testOrgId, testBucket);
+      await repository.create(testBucket);
 
       verify(() => mockOrgReference.set(testBucket.toJson())).called(1);
     });
@@ -52,7 +53,7 @@ void main() {
     test('update - should call update with correct data', () async {
       when(() => mockOrgReference.update(any())).thenAnswer((_) async => true);
 
-      await repository.update(testOrgId, testBucket);
+      await repository.update(testBucket);
 
       verify(() => mockOrgReference.update(testBucket.toJson())).called(1);
     });
@@ -60,7 +61,7 @@ void main() {
     test('delete - should call remove on correct reference', () async {
       when(() => mockOrgReference.remove()).thenAnswer((_) async => true);
 
-      await repository.delete(testOrgId, testBucket.bucketId);
+      await repository.delete(testBucket.bucketId);
 
       verify(() => mockOrgReference.remove()).called(1);
     });
@@ -70,7 +71,7 @@ void main() {
       when(() => mockOrgReference.get()).thenAnswer((_) async => mockSnapshot);
       when(() => mockSnapshot.value).thenReturn(testBucket.toJson());
 
-      final result = await repository.getBucketById(testOrgId, testBucket.bucketId);
+      final result = await repository.getBucketById(testBucket.bucketId);
 
       expect(result.bucketId, equals(testBucket.bucketId));
       expect(result.title, equals(testBucket.title));

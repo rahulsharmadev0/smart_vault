@@ -1,9 +1,9 @@
-part of 'bucket_repository.dart';
+part of '../../repositories/bucket_repository.dart';
 
-class BucketFirebaseApi implements BucketApi {
+class FirebaseBucketApi extends BucketApi {
   final db.DatabaseReference orgRef;
 
-  BucketFirebaseApi({db.FirebaseDatabase? firestore})
+  FirebaseBucketApi({db.FirebaseDatabase? firestore})
     : orgRef = (firestore ?? db.FirebaseDatabase.instance).ref('buckets');
 
   @override

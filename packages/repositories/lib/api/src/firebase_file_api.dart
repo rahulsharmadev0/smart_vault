@@ -1,9 +1,9 @@
-part of 'file_repository.dart';
+part of '../../repositories/file_repository.dart';
 
-class FileFirebaseApi implements FileApi {
+class FirebaseFileApi extends FileApi {
   final CollectionReference colRef;
 
-  FileFirebaseApi({FirebaseFirestore? firestore})
+  FirebaseFileApi({FirebaseFirestore? firestore})
     : colRef = (firestore ?? FirebaseFirestore.instance).collection('organizations');
 
   @override

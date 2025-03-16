@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:repositories/models.dart';
+import 'package:repositories/repositories/repository_base.dart';
 
-part 'file_api.dart';
-part 'file_firebase_api.dart';
+part '../api/file_api.dart';
+part '../api/src/firebase_file_api.dart';
 
-class FileRepository {
-  final FileApi api;
-
-  FileRepository(this.api);
+class FileRepository extends RepositoryBase<FileApi> {
+  FileRepository(super.api);
 
   Future<void> create(DocumentFile file) {
     return api.create(file);

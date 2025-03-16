@@ -77,6 +77,38 @@ String toString() {
 /// @nodoc
 
 
+class AuthStateLoading implements AuthState {
+  const AuthStateLoading();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthStateLoading);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'AuthState.loading()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
 class AuthStateError implements AuthState {
   const AuthStateError(this.errorMessage);
   

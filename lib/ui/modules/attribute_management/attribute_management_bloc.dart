@@ -74,7 +74,7 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
     if (this.state is AMLoaded) return;
 
     final state = bucketBloc.state as LoadedBucketState;
-    final bucket = state.buckets.firstWhereOrNull((e) => e.bucketId == bucketId);
+    final bucket = state.bucket.firstWhereOrNull((e) => e.bucketId == bucketId);
     if (bucket == null) {
       emit(AttributeManagementState.error('Bucket not found'));
       return;
@@ -145,7 +145,7 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
     if (bucketState is! LoadedBucketState) return;
 
     _mapperEmit(emit, (state) {
-      final bucket = bucketState.buckets.firstWhere((e) => e.bucketId == bucketId);
+      final bucket = bucketState.bucket.firstWhere((e) => e.bucketId == bucketId);
 
       // BucketEvent.update(bucket.orgId, bucket.copyWith(attributes: state.customAttributes));
       return state;

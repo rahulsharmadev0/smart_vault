@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:bloc_suite/bloc_suite.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:repositories/cache/hive_storage.dart';
 
 Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +14,7 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
 
   Bloc.observer = FlutterBlocObserver();
 
-  HydratedBloc.storage = await HydratedStorage.build(storageDirectory: HydratedStorageDirectory.web);
+  HiveStorage.build(storageDirectory: HiveStorageDirectory.web);
 
   runApp(await builder());
 }

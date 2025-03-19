@@ -1,39 +1,52 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bloc_suite/bloc_suite.dart';
-import 'package:edukit/ui/bloc/bucket_bloc.dart';
+import 'package:edukit/ui/bloc/bucket_bloc';
 import 'package:edukit/ui/material/scaffold.dart';
 import 'package:edukit/ui/modules/attribute_management/attribute_management_bloc.dart';
 import 'package:edukit/ui/widgets/attribute_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:repositories/models/organization.dart';
 
 typedef _AttributeManagementBlocSelector =
-    BlocSelectorWidget<AttributeManagementBloc, AttributeManagementState, List<Attribute>>;
+    BlocSelectorWidget<
+      AttributeManagementBloc,
+      AttributeManagementState,
+      List<Attribute>
+    >;
 
 // =========================================
 
 class AttributeManagementScreen extends StatelessWidget {
   final String bucketId;
-  const AttributeManagementScreen({super.key, required this.bucketId});
+  const AttributeManagementScreen(this.bucketId, {super.key});
 
   @override
   Widget build(BuildContext context) {
     var read = context.read<BucketBloc>();
     return BlocProvider(
       create: (context) => AttributeManagementBloc(bucketId: bucketId, bucketBloc: read),
-      child: BlocBuilder<AttributeManagementBloc, AttributeManagementState>(
-        //Note: Widget not rebuilt when the state is the same
+      child: BlocConsumer<AttributeManagementBloc, AttributeManagementState>(
+        listener: (context, state) {
+          if (state is AMSubmittedSuccessfully) {
+            context.goNamed('bucket', pathParameters: {'bucketId': bucketId});
+          }
+        },
         buildWhen: (p0, p1) => p0.runtimeType != p1.runtimeType,
         builder: (context, state) {
           return AppScaffold(
             titleText: 'Attribute Management',
+            bottomBarActions: [SaveButton()],
             body: Column(
               spacing: 8,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(mainAxisAlignment: MainAxisAlignment.end, children: [AddAttributeButton()]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [AddAttributeButton()],
+                ),
                 Text('Fixed Attributes'),
                 FixedAttributesListView(),
                 SizedBox(height: 12),
@@ -48,7 +61,8 @@ class AttributeManagementScreen extends StatelessWidget {
   }
 }
 
-class AddAttributeButton extends BlocWidget<AttributeManagementBloc, AttributeManagementState> {
+class AddAttributeButton
+    extends BlocWidget<AttributeManagementBloc, AttributeManagementState> {
   const AddAttributeButton({super.key});
 
   @override
@@ -98,7 +112,10 @@ class AddAttributeButton extends BlocWidget<AttributeManagementBloc, AttributeMa
 
 class FixedAttributesListView extends _AttributeManagementBlocSelector {
   FixedAttributesListView({super.key})
-    : super(selector: (state) => state.map(loaded: (v) => v.fixedAttributes, orElse: () => []));
+    : super(
+        selector:
+            (state) => state.map(loaded: (v) => v.fixedAttributes, orElse: () => []),
+      );
 
   @override
   bool get autoClose => false;
@@ -112,6 +129,7 @@ class FixedAttributesListView extends _AttributeManagementBlocSelector {
       itemBuilder: (context, index) {
         return AttributesTile(
           attribute: state[index],
+
           onEdit: () async {
             /// TODO: Need to optmize generate new Attribute with unique id
             final value = await showDialog<Attribute?>(
@@ -136,7 +154,10 @@ class FixedAttributesListView extends _AttributeManagementBlocSelector {
 
 class CustomAttributesListView extends _AttributeManagementBlocSelector {
   CustomAttributesListView({super.key})
-    : super(selector: (state) => state.map(loaded: (v) => v.customAttributes, orElse: () => []));
+    : super(
+        selector:
+            (state) => state.map(loaded: (v) => v.customAttributes, orElse: () => []),
+      );
 
   @override
   bool get autoClose => false;
@@ -203,6 +224,24 @@ class AttributesTile extends StatelessWidget {
           IconButton(icon: Icon(Icons.delete), onPressed: onDelete),
         ],
       ),
+    );
+  }
+}
+
+class SaveButton extends BlocWidget<AttributeManagementBloc, AttributeManagementState> {
+  const SaveButton({super.key});
+
+  @override
+  Widget build(
+    BuildContext context,
+    AttributeManagementBloc bloc,
+    AttributeManagementState state,
+  ) {
+    return ElevatedButton(
+      onPressed: () {
+        bloc.add(const AttributeManagementEvent.onSubmitted());
+      },
+      child: Text('Save'),
     );
   }
 }

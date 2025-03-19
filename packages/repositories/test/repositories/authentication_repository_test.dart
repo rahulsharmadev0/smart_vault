@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:repositories/repositories/authentication/authentication_repository.dart';
+import 'package:repositories/repositories/authentication/authentication_api.dart';
 
 void main() {
   late MockFirebaseAuth mockFirebaseAuth;
-  late AuthenticationRepository authRepo;
+  late AuthenticationApi authRepo;
 
   final mockUser = MockUser(
     isAnonymous: false,
@@ -16,7 +16,7 @@ void main() {
 
   setUp(() {
     mockFirebaseAuth = MockFirebaseAuth(mockUser: mockUser);
-    authRepo = AuthenticationRepository(firebaseAuth: mockFirebaseAuth);
+    authRepo = AuthenticationApi(firebaseAuth: mockFirebaseAuth);
   });
 
   group('AuthenticationRepository', () {
@@ -56,7 +56,10 @@ void main() {
     group('signOut', () {
       test('clears current user', () async {
         // First sign in to ensure we have a current user
-        await authRepo.signInWithEmailAndPassword(email: testEmail, password: testPassword);
+        await authRepo.signInWithEmailAndPassword(
+          email: testEmail,
+          password: testPassword,
+        );
 
         // Verify we're signed in
         expect(mockFirebaseAuth.currentUser, isNotNull);
@@ -73,7 +76,10 @@ void main() {
       test('emits user changes', () async {
         final userStream = authRepo.user;
 
-        await authRepo.signInWithEmailAndPassword(email: testEmail, password: testPassword);
+        await authRepo.signInWithEmailAndPassword(
+          email: testEmail,
+          password: testPassword,
+        );
 
         expect(userStream, emitsInOrder([isNull, isA<User>()]));
       });
@@ -81,7 +87,10 @@ void main() {
 
     group('userOnce', () {
       test('returns current user', () async {
-        await authRepo.signInWithEmailAndPassword(email: testEmail, password: testPassword);
+        await authRepo.signInWithEmailAndPassword(
+          email: testEmail,
+          password: testPassword,
+        );
 
         final currentUser = authRepo.userOnce;
         expect(currentUser?.email, equals(testEmail));

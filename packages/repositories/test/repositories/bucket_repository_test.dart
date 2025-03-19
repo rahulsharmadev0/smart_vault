@@ -23,10 +23,12 @@ void main() {
     mockDatabaseReference = MockDatabaseReference();
     mockOrgReference = MockDatabaseReference();
 
-    when(() => mockFirebaseDatabase.ref('organizations')).thenReturn(mockDatabaseReference);
+    when(
+      () => mockFirebaseDatabase.ref('organizations'),
+    ).thenReturn(mockDatabaseReference);
     when(() => mockDatabaseReference.child(any())).thenReturn(mockOrgReference);
 
-    repository = BucketRepository(FirebaseBucketApi(firestore: mockFirebaseDatabase));
+    repository = BucketRepository();
 
     final now = DateTime.now();
     testBucket = Bucket(
@@ -73,7 +75,7 @@ void main() {
 
       final result = await repository.getBucketById(testBucket.bucketId);
 
-      expect(result.bucketId, equals(testBucket.bucketId));
+      expect(result!.bucketId, equals(testBucket.bucketId));
       expect(result.title, equals(testBucket.title));
       expect(result.description, equals(testBucket.description));
       expect(result.fileTypes, equals(testBucket.fileTypes));

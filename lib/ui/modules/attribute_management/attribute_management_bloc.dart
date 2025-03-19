@@ -1,14 +1,15 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:collection/collection.dart';
-import 'package:edukit/ui/bloc/bucket_bloc.dart';
+import 'package:edukit/ui/bloc/bucket_bloc';
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:repositories/models/organization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 part 'attribute_management_bloc.freezed.dart';
 
 @freezed
-class AttributeManagementEvent with _$AttributeManagementEvent {
+abstract class AttributeManagementEvent with _$AttributeManagementEvent {
   // ignore: unused_element
   const factory AttributeManagementEvent._init() = _Init;
   const factory AttributeManagementEvent.add(Attribute attribute) = _AddAttribute;
@@ -18,13 +19,17 @@ class AttributeManagementEvent with _$AttributeManagementEvent {
 }
 
 @freezed
-class AttributeManagementState with _$AttributeManagementState {
+abstract class AttributeManagementState with _$AttributeManagementState {
   const factory AttributeManagementState.loading() = AMLoading;
   const factory AttributeManagementState.error(String message) = AMError;
   const factory AttributeManagementState.loaded({
     required List<Attribute> fixedAttributes,
     required List<Attribute> customAttributes,
   }) = AMLoaded;
+  const factory AttributeManagementState.submittedSuccessfully({
+    required List<Attribute> fixedAttributes,
+    required List<Attribute> customAttributes,
+  }) = AMSubmittedSuccessfully;
 }
 
 extension AttributeManagementStateExt on AttributeManagementState {
@@ -32,14 +37,17 @@ extension AttributeManagementStateExt on AttributeManagementState {
     T Function(AMLoading state)? loading,
     T Function(AMError state)? error,
     T Function(AMLoaded state)? loaded,
+    T Function(AMSubmittedSuccessfully state)? submittedSuccessfully,
     T Function()? orElse,
   }) {
     // ignore: no_leading_underscores_for_local_identifiers
-    T _else() => orElse?.call() ?? (throw StateError('Unhandled state type: $runtimeType'));
+    T _else() =>
+        orElse?.call() ?? (throw StateError('Unhandled state type: $runtimeType'));
     return switch (this) {
       AMLoading value => loading?.call(value) ?? _else(),
       AMError value => error?.call(value) ?? _else(),
       AMLoaded value => loaded?.call(value) ?? _else(),
+      AMSubmittedSuccessfully value => submittedSuccessfully?.call(value) ?? _else(),
       _ => _else(),
     };
   }
@@ -51,7 +59,8 @@ extension AttributeManagementStateExt on AttributeManagementState {
 
 const _fixedAttributes = {'_name_': 'Name', '_unique_id_': 'Unique Id'};
 
-class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeManagementState> {
+class AttributeManagementBloc
+    extends Bloc<AttributeManagementEvent, AttributeManagementState> {
   final String bucketId;
   final BucketBloc bucketBloc;
   AttributeManagementBloc({required this.bucketId, required this.bucketBloc})
@@ -102,27 +111,35 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
         customAttributes.add(attribute);
       }
     }
-
     emit(
-      AttributeManagementState.loaded(fixedAttributes: fixedAttributes, customAttributes: customAttributes),
+      AttributeManagementState.loaded(
+        fixedAttributes: fixedAttributes,
+        customAttributes: customAttributes,
+      ),
     );
   }
 
   void _updateAttribute(_UpdateAttribute event, Emitter emit) {
     _mapperEmit(emit, (state) {
-      print('idx: ${event.attribute}');
       var fixedAttributes = [...state.fixedAttributes];
       var customAttributes = [...state.customAttributes];
 
-      int idx = fixedAttributes.indexWhere((e) => e.attributeId == event.attribute.attributeId);
+      int idx = fixedAttributes.indexWhere(
+        (e) => e.attributeId == event.attribute.attributeId,
+      );
 
       if (idx != -1) {
         fixedAttributes[idx] = event.attribute;
       } else {
-        idx = customAttributes.indexWhere((e) => e.attributeId == event.attribute.attributeId);
+        idx = customAttributes.indexWhere(
+          (e) => e.attributeId == event.attribute.attributeId,
+        );
         if (idx != -1) customAttributes[idx] = event.attribute;
       }
-      return state.copyWith(fixedAttributes: fixedAttributes, customAttributes: customAttributes);
+      return state.copyWith(
+        fixedAttributes: fixedAttributes,
+        customAttributes: customAttributes,
+      );
     });
   }
 
@@ -142,23 +159,33 @@ class AttributeManagementBloc extends Bloc<AttributeManagementEvent, AttributeMa
 
   void _onSubmitted(_OnSubmitted event, Emitter emit) {
     var bucketState = bucketBloc.state;
-    if (bucketState is! LoadedBucketState) return;
+    if (bucketState is! LoadedBucketState || this.state is! AMLoaded) return;
 
-    _mapperEmit(emit, (state) {
-      final bucket = bucketState.bucket.firstWhere((e) => e.bucketId == bucketId);
+    final state = this.state as AMLoaded;
 
-      // BucketEvent.update(bucket.orgId, bucket.copyWith(attributes: state.customAttributes));
-      return state;
-    });
+    final bucket = bucketState.bucket.firstWhere((e) => e.bucketId == bucketId);
+
+    var bucket2 = bucket.copyWith(
+      attributes: [...state.fixedAttributes, ...state.customAttributes],
+    );
+    bucketBloc.add(BucketEvent.update(bucket.orgId, bucket2));
+    emit(
+      AttributeManagementState.submittedSuccessfully(
+        fixedAttributes: state.fixedAttributes,
+        customAttributes: state.customAttributes,
+      ),
+    );
   }
 
   /// Common method to update state
-  void _mapperEmit(Emitter emit, AttributeManagementState Function(AMLoaded state) mapper) {
+  void _mapperEmit(
+    Emitter emit,
+    AttributeManagementState Function(AMLoaded state) mapper,
+  ) {
     var newState = state.map(
       loaded: (o) => mapper(o),
       orElse: () => AttributeManagementState.error('State is not loaded'),
     );
-    print('<---object${newState.toString()}');
     emit(newState);
   }
 }

@@ -1,4 +1,4 @@
-import 'package:edukit/ui/bloc/bucket_bloc.dart';
+import 'package:edukit/ui/bloc/bucket_bloc';
 import 'package:edukit/ui/bloc/organization_bloc.dart';
 import 'package:edukit/ui/material/scaffold.dart';
 import 'cubit/edit_form_cubit.dart';
@@ -82,10 +82,15 @@ class SaveButton extends StatelessWidget {
     return BlocBuilder<EditFormCubit, EditFormState>(
       builder: (context, state) {
         return ElevatedButton(
-          onPressed: state.isValid && !state.isSubmitting ? () => _saveBucket(context) : null,
+          onPressed:
+              state.isValid && !state.isSubmitting ? () => _saveBucket(context) : null,
           child:
               state.isSubmitting
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                   : const Text('Save'),
         );
       },
@@ -164,7 +169,8 @@ class BucketDescriptionField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EditFormCubit, EditFormState>(
-      buildWhen: (previous, current) => previous.bucketDescription != current.bucketDescription,
+      buildWhen:
+          (previous, current) => previous.bucketDescription != current.bucketDescription,
       builder: (context, state) {
         return TextFormField(
           key: const ValueKey('bucket-description-field'),
@@ -196,12 +202,18 @@ class FileTypeSelector extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Supported File Types', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const Text(
+              'Supported File Types',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             if (state.fileTypes.isEmpty)
               Text(
                 state.fileTypesError ?? 'Select at least one file type',
-                style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
+                  fontSize: 12,
+                ),
               ),
             const SizedBox(height: 8),
             Wrap(

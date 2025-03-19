@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dart_suite/dart_suite.dart';
 import 'package:edukit/ui/bloc/auth_cubit.dart';
 import 'package:equatable/equatable.dart';
@@ -5,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum FormState {
   /// The form has not yet been submitted.
-  initial,
+  idle,
 
   /// The form is in the process of being submitted.
   inProgress,
@@ -87,27 +89,19 @@ class AuthFormState with EquatableMixin {
       email.regMatch(regPatterns.email) &&
       password == confirmPassword;
 
-  AuthFormState toggleMode() =>
-      copyWith(isSignInMode: !isSignInMode, errorMessage: null, formState: FormState.initial);
+  AuthFormState toggleMode() => copyWith(
+    isSignInMode: !isSignInMode,
+    errorMessage: null,
+    formState: FormState.initial,
+  );
 }
 
 class AuthFormCubit extends Cubit<AuthFormState> {
   final AuthCubit bloc;
+  late final StreamSubscription<AuthState> subscription;
+  AuthFormCubit({required this.bloc}) : super(AuthFormState.empty);
 
-  AuthFormCubit({required this.bloc}) : super(AuthFormState.empty) {
-    // Listen to auth state changes
-    bloc.stream.listen(_handleAuthStateChange);
-  }
-
-  void _handleAuthStateChange(AuthState authState) {
-    if (authState is AuthStateError) {
-      emit(state.copyWith(formState: FormState.failure, errorMessage: authState.errorMessage));
-    } else if (authState is AuthStateLoading) {
-      emit(state.copyWith(formState: FormState.inProgress, errorMessage: null));
-    } else if (authState is AuthStateAuthenticated || authState is AuthStateNewAccountCreated) {
-      emit(state.copyWith(formState: FormState.success, errorMessage: null));
-    }
-  }
+  Stream<AuthState> get authState => bloc.stream;
 
   void createAccount() {
     if (state.isValidCreateAccount) {
@@ -117,7 +111,12 @@ class AuthFormCubit extends Cubit<AuthFormState> {
         name: state.organisationName,
       );
     } else {
-      emit(state.copyWith(formState: FormState.failure, errorMessage: 'Please fill all fields correctly'));
+      emit(
+        state.copyWith(
+          formState: FormState.failure,
+          errorMessage: 'Please fill all fields correctly',
+        ),
+      );
     }
   }
 
@@ -126,7 +125,10 @@ class AuthFormCubit extends Cubit<AuthFormState> {
       bloc.signInWithEmailAndPassword(email: state.email, password: state.password);
     } else {
       emit(
-        state.copyWith(formState: FormState.failure, errorMessage: 'Please enter valid email and password'),
+        state.copyWith(
+          formState: FormState.failure,
+          errorMessage: 'Please enter valid email and password',
+        ),
       );
     }
   }
@@ -147,5 +149,11 @@ class AuthFormCubit extends Cubit<AuthFormState> {
 
   void updateConfirmPassword(String confirmPassword) {
     emit(state.copyWith(confirmPassword: confirmPassword));
+  }
+
+  @override
+  Future<void> close() {
+    subscription.cancel();
+    return super.close();
   }
 }

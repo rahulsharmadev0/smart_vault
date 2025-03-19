@@ -1,10 +1,9 @@
-part of '../../repositories/organization_repository.dart';
+part of 'organization_base.dart';
 
-class FirebaseOrganizationApi extends OrganizationApi {
-  final db.DatabaseReference orgRef;
+class OrganizationApi extends ApiBase<db.DatabaseReference> implements OrganizationBase {
+  OrganizationApi() : super(db.FirebaseDatabase.instance.ref('organizations'));
 
-  FirebaseOrganizationApi({db.FirebaseDatabase? firestore})
-    : orgRef = (firestore ?? db.FirebaseDatabase.instance).ref('organizations');
+  db.DatabaseReference get orgRef => credential!;
 
   @override
   Future<void> create(Organization organization) {
@@ -16,11 +15,14 @@ class FirebaseOrganizationApi extends OrganizationApi {
 
   @override
   Future<void> delete(String orgId) {
-    return handleErrors(() => orgRef.child(orgId).remove(), 'Failed to delete organization');
+    return handleErrors(
+      () => orgRef.child(orgId).remove(),
+      'Failed to delete organization',
+    );
   }
 
   @override
-  Future<Organization> getById(String orgId) async {
+  Future<Organization?> getById(String orgId) async {
     return handleErrors(() async {
       final snapshot = await orgRef.child(orgId).get();
       if (snapshot.value == null) {

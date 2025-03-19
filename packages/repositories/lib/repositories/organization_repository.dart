@@ -1,23 +1,49 @@
-import 'dart:convert';
-
-import 'package:firebase_database/firebase_database.dart' as db;
 import 'package:repositories/models/organization.dart';
-import 'package:repositories/repositories/repository_base.dart';
+import 'package:repositories/utils/repository_base.dart';
+import 'package:repositories/repositories/organization/organization_base.dart';
 
-part '../api/organization_api.dart';
-part '../api/src/organization_firebase_api.dart';
+class OrganizationRepository extends CachedRepository<OrganizationApi, OrganizationCache>
+    implements OrganizationBase {
+  OrganizationRepository() : super(OrganizationApi(), OrganizationCache([]));
 
-class OrganizationRepository extends RepositoryBase<OrganizationApi> {
-  OrganizationRepository(super.api);
+  Stream<List<Organization>> get dataStream => cache.cacheStream;
 
-  Future<void> create(Organization organization) => api.create(organization);
+  @override
+  Future<void> create(Organization organization) async {
+    await api.create(organization);
+    await cache.create(organization);
+  }
 
-  Future<void> updateName(String orgId, String newName) => api.updateName(orgId, newName);
+  @override
+  Future<void> delete(String orgId) async {
+    await api.delete(orgId);
+    await cache.delete(orgId);
+  }
 
-  Future<void> updateDescription(String orgId, String newDescription) =>
-      api.updateDescription(orgId, newDescription);
+  @override
+  Future<Organization?> getById(String orgId) async {
+    final cachedOrg = await cache.getById(orgId);
 
-  Future<void> delete(String orgId) => api.delete(orgId);
+    if (cachedOrg != null) {
+      return cachedOrg;
+    }
 
-  Future<Organization> getById(String orgId) => api.getById(orgId);
+    final org = await api.getById(orgId);
+    if (org != null) {
+      await cache.create(org);
+    }
+    return org;
+  }
+
+  @override
+  Future<void> updateDescription(String orgId, String newDescription) async {
+    await api.updateDescription(orgId, newDescription);
+    await cache.updateDescription(orgId, newDescription);
+  }
+
+  @override
+  Future<void> updateName(String orgId, String newName) async {
+    await api.updateName(orgId, newName);
+    await cache.updateName(orgId, newName);
+  }
 }

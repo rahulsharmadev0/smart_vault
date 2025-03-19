@@ -1,9 +1,9 @@
-part of '../../repositories/file_repository.dart';
+part of 'file_base.dart';
 
-class FirebaseFileApi extends FileApi {
+class FileApi extends ApiBase implements FileBase {
   final CollectionReference colRef;
 
-  FirebaseFileApi({FirebaseFirestore? firestore})
+  FileApi({FirebaseFirestore? firestore})
     : colRef = (firestore ?? FirebaseFirestore.instance).collection('organizations');
 
   @override
@@ -29,14 +29,16 @@ class FirebaseFileApi extends FileApi {
               .where('bucketId', isEqualTo: bucketId)
               .withConverter(fromFirestore: _fromFirestore, toFirestore: _toFirestore)
               .get();
-      return snapshot.docs.map((e) => DocumentFile.fromFireStore(e.data() as Map<String, dynamic>)).toList();
+      return snapshot.docs
+          .map((e) => DocumentFile.fromFireStore(e.data() as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw Exception('Failed to get files: $e');
     }
   }
 
   @override
-  Future<DocumentFile> getFileByFileId(String fileId) async {
+  Future<DocumentFile?> getFileByFileId(String fileId) async {
     try {
       final snapshot =
           await colRef
@@ -45,12 +47,13 @@ class FirebaseFileApi extends FileApi {
               .get();
 
       if (snapshot.data() == null || !snapshot.exists) throw Exception('File not found');
-      return snapshot.data()!;
+      return snapshot.data();
     } catch (e) {
       throw Exception('Failed to get file: $e');
     }
   }
 
-  DocumentFile _fromFirestore(snapshot, _) => DocumentFile.fromFireStore(snapshot.data()!);
+  DocumentFile _fromFirestore(snapshot, _) =>
+      DocumentFile.fromFireStore(snapshot.data()!);
   Map<String, Object?> _toFirestore(file, _) => file.toFireStore();
 }

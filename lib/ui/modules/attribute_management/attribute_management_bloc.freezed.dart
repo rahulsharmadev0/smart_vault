@@ -13,11 +13,17 @@ part of 'attribute_management_bloc.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$AttributeManagementEvent {
+mixin _$AttributeManagementEvent implements DiagnosticableTreeMixin {
 
 
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementEvent'))
+    ;
+}
 
 @override
 bool operator ==(Object other) {
@@ -29,7 +35,7 @@ bool operator ==(Object other) {
 int get hashCode => runtimeType.hashCode;
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'AttributeManagementEvent()';
 }
 
@@ -45,7 +51,7 @@ $AttributeManagementEventCopyWith(AttributeManagementEvent _, $Res Function(Attr
 /// @nodoc
 
 
-class _Init implements AttributeManagementEvent {
+class _Init with DiagnosticableTreeMixin implements AttributeManagementEvent {
   const _Init();
   
 
@@ -53,6 +59,12 @@ class _Init implements AttributeManagementEvent {
 
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementEvent._init'))
+    ;
+}
 
 @override
 bool operator ==(Object other) {
@@ -64,7 +76,7 @@ bool operator ==(Object other) {
 int get hashCode => runtimeType.hashCode;
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'AttributeManagementEvent._init()';
 }
 
@@ -77,7 +89,7 @@ String toString() {
 /// @nodoc
 
 
-class _AddAttribute implements AttributeManagementEvent {
+class _AddAttribute with DiagnosticableTreeMixin implements AttributeManagementEvent {
   const _AddAttribute(this.attribute);
   
 
@@ -90,6 +102,12 @@ class _AddAttribute implements AttributeManagementEvent {
 _$AddAttributeCopyWith<_AddAttribute> get copyWith => __$AddAttributeCopyWithImpl<_AddAttribute>(this, _$identity);
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementEvent.add'))
+    ..add(DiagnosticsProperty('attribute', attribute));
+}
 
 @override
 bool operator ==(Object other) {
@@ -101,7 +119,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,attribute);
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'AttributeManagementEvent.add(attribute: $attribute)';
 }
 
@@ -152,7 +170,7 @@ $AttributeCopyWith<$Res> get attribute {
 /// @nodoc
 
 
-class _UpdateAttribute implements AttributeManagementEvent {
+class _UpdateAttribute with DiagnosticableTreeMixin implements AttributeManagementEvent {
   const _UpdateAttribute(this.attribute);
   
 
@@ -165,6 +183,12 @@ class _UpdateAttribute implements AttributeManagementEvent {
 _$UpdateAttributeCopyWith<_UpdateAttribute> get copyWith => __$UpdateAttributeCopyWithImpl<_UpdateAttribute>(this, _$identity);
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementEvent.update'))
+    ..add(DiagnosticsProperty('attribute', attribute));
+}
 
 @override
 bool operator ==(Object other) {
@@ -176,7 +200,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,attribute);
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'AttributeManagementEvent.update(attribute: $attribute)';
 }
 
@@ -227,7 +251,7 @@ $AttributeCopyWith<$Res> get attribute {
 /// @nodoc
 
 
-class _RemoveAttribute implements AttributeManagementEvent {
+class _RemoveAttribute with DiagnosticableTreeMixin implements AttributeManagementEvent {
   const _RemoveAttribute(this.index);
   
 
@@ -240,6 +264,12 @@ class _RemoveAttribute implements AttributeManagementEvent {
 _$RemoveAttributeCopyWith<_RemoveAttribute> get copyWith => __$RemoveAttributeCopyWithImpl<_RemoveAttribute>(this, _$identity);
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementEvent.remove'))
+    ..add(DiagnosticsProperty('index', index));
+}
 
 @override
 bool operator ==(Object other) {
@@ -251,7 +281,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,index);
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'AttributeManagementEvent.remove(index: $index)';
 }
 
@@ -293,7 +323,7 @@ as int,
 /// @nodoc
 
 
-class _OnSubmitted implements AttributeManagementEvent {
+class _OnSubmitted with DiagnosticableTreeMixin implements AttributeManagementEvent {
   const _OnSubmitted();
   
 
@@ -301,6 +331,12 @@ class _OnSubmitted implements AttributeManagementEvent {
 
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementEvent.onSubmitted'))
+    ;
+}
 
 @override
 bool operator ==(Object other) {
@@ -312,7 +348,7 @@ bool operator ==(Object other) {
 int get hashCode => runtimeType.hashCode;
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'AttributeManagementEvent.onSubmitted()';
 }
 
@@ -323,11 +359,17 @@ String toString() {
 
 
 /// @nodoc
-mixin _$AttributeManagementState {
+mixin _$AttributeManagementState implements DiagnosticableTreeMixin {
 
 
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementState'))
+    ;
+}
 
 @override
 bool operator ==(Object other) {
@@ -339,7 +381,7 @@ bool operator ==(Object other) {
 int get hashCode => runtimeType.hashCode;
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'AttributeManagementState()';
 }
 
@@ -355,7 +397,7 @@ $AttributeManagementStateCopyWith(AttributeManagementState _, $Res Function(Attr
 /// @nodoc
 
 
-class AMLoading implements AttributeManagementState {
+class AMLoading with DiagnosticableTreeMixin implements AttributeManagementState {
   const AMLoading();
   
 
@@ -363,6 +405,12 @@ class AMLoading implements AttributeManagementState {
 
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementState.loading'))
+    ;
+}
 
 @override
 bool operator ==(Object other) {
@@ -374,7 +422,7 @@ bool operator ==(Object other) {
 int get hashCode => runtimeType.hashCode;
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'AttributeManagementState.loading()';
 }
 
@@ -387,7 +435,7 @@ String toString() {
 /// @nodoc
 
 
-class AMError implements AttributeManagementState {
+class AMError with DiagnosticableTreeMixin implements AttributeManagementState {
   const AMError(this.message);
   
 
@@ -400,6 +448,12 @@ class AMError implements AttributeManagementState {
 $AMErrorCopyWith<AMError> get copyWith => _$AMErrorCopyWithImpl<AMError>(this, _$identity);
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementState.error'))
+    ..add(DiagnosticsProperty('message', message));
+}
 
 @override
 bool operator ==(Object other) {
@@ -411,7 +465,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,message);
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'AttributeManagementState.error(message: $message)';
 }
 
@@ -453,7 +507,7 @@ as String,
 /// @nodoc
 
 
-class AMLoaded implements AttributeManagementState {
+class AMLoaded with DiagnosticableTreeMixin implements AttributeManagementState {
   const AMLoaded({required final  List<Attribute> fixedAttributes, required final  List<Attribute> customAttributes}): _fixedAttributes = fixedAttributes,_customAttributes = customAttributes;
   
 
@@ -479,6 +533,12 @@ class AMLoaded implements AttributeManagementState {
 $AMLoadedCopyWith<AMLoaded> get copyWith => _$AMLoadedCopyWithImpl<AMLoaded>(this, _$identity);
 
 
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementState.loaded'))
+    ..add(DiagnosticsProperty('fixedAttributes', fixedAttributes))..add(DiagnosticsProperty('customAttributes', customAttributes));
+}
 
 @override
 bool operator ==(Object other) {
@@ -490,7 +550,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_fixedAttributes),const DeepCollectionEquality().hash(_customAttributes));
 
 @override
-String toString() {
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   return 'AttributeManagementState.loaded(fixedAttributes: $fixedAttributes, customAttributes: $customAttributes)';
 }
 
@@ -521,6 +581,92 @@ class _$AMLoadedCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? fixedAttributes = null,Object? customAttributes = null,}) {
   return _then(AMLoaded(
+fixedAttributes: null == fixedAttributes ? _self._fixedAttributes : fixedAttributes // ignore: cast_nullable_to_non_nullable
+as List<Attribute>,customAttributes: null == customAttributes ? _self._customAttributes : customAttributes // ignore: cast_nullable_to_non_nullable
+as List<Attribute>,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class AMSubmittedSuccessfully with DiagnosticableTreeMixin implements AttributeManagementState {
+  const AMSubmittedSuccessfully({required final  List<Attribute> fixedAttributes, required final  List<Attribute> customAttributes}): _fixedAttributes = fixedAttributes,_customAttributes = customAttributes;
+  
+
+ final  List<Attribute> _fixedAttributes;
+ List<Attribute> get fixedAttributes {
+  if (_fixedAttributes is EqualUnmodifiableListView) return _fixedAttributes;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_fixedAttributes);
+}
+
+ final  List<Attribute> _customAttributes;
+ List<Attribute> get customAttributes {
+  if (_customAttributes is EqualUnmodifiableListView) return _customAttributes;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_customAttributes);
+}
+
+
+/// Create a copy of AttributeManagementState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AMSubmittedSuccessfullyCopyWith<AMSubmittedSuccessfully> get copyWith => _$AMSubmittedSuccessfullyCopyWithImpl<AMSubmittedSuccessfully>(this, _$identity);
+
+
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  properties
+    ..add(DiagnosticsProperty('type', 'AttributeManagementState.submittedSuccessfully'))
+    ..add(DiagnosticsProperty('fixedAttributes', fixedAttributes))..add(DiagnosticsProperty('customAttributes', customAttributes));
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AMSubmittedSuccessfully&&const DeepCollectionEquality().equals(other._fixedAttributes, _fixedAttributes)&&const DeepCollectionEquality().equals(other._customAttributes, _customAttributes));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_fixedAttributes),const DeepCollectionEquality().hash(_customAttributes));
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+  return 'AttributeManagementState.submittedSuccessfully(fixedAttributes: $fixedAttributes, customAttributes: $customAttributes)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AMSubmittedSuccessfullyCopyWith<$Res> implements $AttributeManagementStateCopyWith<$Res> {
+  factory $AMSubmittedSuccessfullyCopyWith(AMSubmittedSuccessfully value, $Res Function(AMSubmittedSuccessfully) _then) = _$AMSubmittedSuccessfullyCopyWithImpl;
+@useResult
+$Res call({
+ List<Attribute> fixedAttributes, List<Attribute> customAttributes
+});
+
+
+
+
+}
+/// @nodoc
+class _$AMSubmittedSuccessfullyCopyWithImpl<$Res>
+    implements $AMSubmittedSuccessfullyCopyWith<$Res> {
+  _$AMSubmittedSuccessfullyCopyWithImpl(this._self, this._then);
+
+  final AMSubmittedSuccessfully _self;
+  final $Res Function(AMSubmittedSuccessfully) _then;
+
+/// Create a copy of AttributeManagementState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? fixedAttributes = null,Object? customAttributes = null,}) {
+  return _then(AMSubmittedSuccessfully(
 fixedAttributes: null == fixedAttributes ? _self._fixedAttributes : fixedAttributes // ignore: cast_nullable_to_non_nullable
 as List<Attribute>,customAttributes: null == customAttributes ? _self._customAttributes : customAttributes // ignore: cast_nullable_to_non_nullable
 as List<Attribute>,

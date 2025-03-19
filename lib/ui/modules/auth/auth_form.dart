@@ -1,97 +1,93 @@
+import 'package:bloc_suite/bloc_suite.dart';
 import 'package:edukit/ui/modules/auth/auth_form_cubit.dart';
 import 'package:flutter/material.dart' hide FormState;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AuthenticationForm extends StatelessWidget {
+class AuthenticationForm extends BlocWidget<AuthFormCubit, AuthFormState> {
   const AuthenticationForm({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<AuthFormCubit, AuthFormState>(
-      builder: (context, state) {
-        final isSignInMode = state.isSignInMode;
-        final isSubmitting = state.formState == FormState.inProgress;
+  Widget build(BuildContext context, bloc, state) {
+    final isSignInMode = state.isSignInMode;
+    final isSubmitting = state.formState == FormState.inProgress;
+    return SizedBox(
+      width: 600,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _AuthFormHeader(isSignInMode),
+          const SizedBox(height: 24),
 
-        return SizedBox(
-          width: 600,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _AuthFormHeader(isSignInMode),
-              const SizedBox(height: 24),
+          if (!isSignInMode)
+            _FormField(
+              key: const Key('org_name'),
+              label: 'Organization Name',
+              hint: 'Enter your organization name',
+              value: state.organisationName,
+              onChanged: bloc.updateOrganisationName,
+              isEnabled: !isSubmitting,
+              validator:
+                  (!isSignInMode && state.organisationName.isEmpty)
+                      ? 'Organization name is required'
+                      : null,
+            ),
 
-              if (!isSignInMode)
-                _FormField(
-                  key: const Key('org_name'),
-                  label: 'Organization Name',
-                  hint: 'Enter your organization name',
-                  value: state.organisationName,
-                  onChanged: context.read<AuthFormCubit>().updateOrganisationName,
-                  isEnabled: !isSubmitting,
-                  validator:
-                      (!isSignInMode && state.organisationName.isEmpty)
-                          ? 'Organization name is required'
-                          : null,
-                ),
-
-              _FormField(
-                key: const Key('email'),
-                label: 'Email',
-                hint: 'Enter your email',
-                value: state.email,
-                onChanged: context.read<AuthFormCubit>().updateEmail,
-                isEnabled: !isSubmitting,
-                validator: state.email.isEmpty ? 'Email is required' : null,
-              ),
-
-              _FormField(
-                key: const Key('password'),
-                label: 'Password',
-                hint: 'Enter your password',
-                value: state.password,
-                onChanged: context.read<AuthFormCubit>().updatePassword,
-                isEnabled: !isSubmitting,
-                isPassword: true,
-                validator: state.password.isEmpty ? 'Password is required' : null,
-              ),
-
-              if (!isSignInMode)
-                _FormField(
-                  key: const Key('confirm_password'),
-                  label: 'Confirm Password',
-                  hint: 'Enter your password again',
-                  value: state.confirmPassword,
-                  onChanged: context.read<AuthFormCubit>().updateConfirmPassword,
-                  isEnabled: !isSubmitting,
-                  isPassword: true,
-                  validator:
-                      (!isSignInMode && state.password != state.confirmPassword)
-                          ? 'Passwords do not match'
-                          : null,
-                ),
-
-              if (state.errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: Text(
-                    state.errorMessage!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-
-              const SizedBox(height: 24),
-
-              _ActionButtons(
-                isSignInMode: isSignInMode,
-                isLoading: isSubmitting,
-                isValid: isSignInMode ? state.isValidSignIn : state.isValidCreateAccount,
-              ),
-            ],
+          _FormField(
+            key: const Key('email'),
+            label: 'Email',
+            hint: 'Enter your email',
+            value: state.email,
+            onChanged: bloc.updateEmail,
+            isEnabled: !isSubmitting,
+            validator: state.email.isEmpty ? 'Email is required' : null,
           ),
-        );
-      },
+
+          _FormField(
+            key: const Key('password'),
+            label: 'Password',
+            hint: 'Enter your password',
+            value: state.password,
+            onChanged: bloc.updatePassword,
+            isEnabled: !isSubmitting,
+            isPassword: true,
+            validator: state.password.isEmpty ? 'Password is required' : null,
+          ),
+
+          if (!isSignInMode)
+            _FormField(
+              key: const Key('confirm_password'),
+              label: 'Confirm Password',
+              hint: 'Enter your password again',
+              value: state.confirmPassword,
+              onChanged: bloc.updateConfirmPassword,
+              isEnabled: !isSubmitting,
+              isPassword: true,
+              validator:
+                  (!isSignInMode && state.password != state.confirmPassword)
+                      ? 'Passwords do not match'
+                      : null,
+            ),
+
+          if (state.errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 12.0),
+              child: Text(
+                state.errorMessage!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+                textAlign: TextAlign.center,
+              ),
+            ),
+
+          const SizedBox(height: 24),
+
+          _ActionButtons(
+            isSignInMode: isSignInMode,
+            isLoading: isSubmitting,
+            isValid: isSignInMode ? state.isValidSignIn : state.isValidCreateAccount,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -161,12 +157,15 @@ class _ActionButtons extends StatelessWidget {
   final bool isLoading;
   final bool isValid;
 
-  const _ActionButtons({required this.isSignInMode, required this.isLoading, required this.isValid});
+  const _ActionButtons({
+    required this.isSignInMode,
+    required this.isLoading,
+    required this.isValid,
+  });
 
   @override
   Widget build(BuildContext context) {
     var cubit = context.read<AuthFormCubit>();
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -179,7 +178,9 @@ class _ActionButtons extends StatelessWidget {
         FilledButton(
           key: const Key('sign_in-register'),
           onPressed:
-              (isLoading || !isValid) ? null : () => isSignInMode ? cubit.signIn() : cubit.createAccount(),
+              (isLoading || !isValid)
+                  ? null
+                  : () => isSignInMode ? cubit.signIn() : cubit.createAccount(),
           child:
               isLoading
                   ? const SizedBox(

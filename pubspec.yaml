@@ -18,11 +18,15 @@ dependencies:
   firebase_core: ^3.10.1
   cloud_firestore: ^5.6.2
   flutter_svg: ^2.0.17
-  hydrated_bloc: ^10.0.0
   google_fonts: ^6.2.1
 
   bloc_suite: ^0.0.5
   dart_suite: ^0.0.2
+  flutter_suite:
+    git:
+      url: https://github.com/rahulsharmadev0/suite.git
+      ref: main
+      path: packages/flutter_suite
 
   repositories:
     path: packages/repositories
@@ -35,6 +39,8 @@ dependencies:
   equatable: ^2.0.7
   freezed_annotation: ^3.0.0
   intl: ^0.20.2
+  get_it: ^8.0.3
+  hive_ce: ^2.10.1
 
 dev_dependencies:
   flutter_test:

@@ -1,9 +1,9 @@
-part of '../../repositories/bucket_repository.dart';
+part of 'bucket_base.dart';
 
-class FirebaseBucketApi extends BucketApi {
+class BucketApi extends ApiBase implements BucketBase {
   final db.DatabaseReference orgRef;
 
-  FirebaseBucketApi({db.FirebaseDatabase? firestore})
+  BucketApi({db.FirebaseDatabase? firestore})
     : orgRef = (firestore ?? db.FirebaseDatabase.instance).ref('buckets');
 
   @override
@@ -22,7 +22,7 @@ class FirebaseBucketApi extends BucketApi {
   }
 
   @override
-  Future<Bucket> getBucketById(String bucketId) async {
+  Future<Bucket?> getBucketById(String bucketId) async {
     final snapshot = await orgRef.child(bucketId).get();
     return Bucket.fromJson(json.decode(json.encode(snapshot.value)));
   }
@@ -30,12 +30,17 @@ class FirebaseBucketApi extends BucketApi {
   @override
   Future<List<Bucket>> getBucketsByOrgId(String orgId) async {
     final snapshot = await orgRef.orderByChild('orgId').equalTo(orgId).get();
-    return snapshot.children.map((e) => Bucket.fromJson(json.decode(json.encode(e.value)))).toList();
+    return snapshot.children
+        .map((e) => Bucket.fromJson(json.decode(json.encode(e.value))))
+        .toList();
   }
 
   @override
   Future<void> updateAttributes(String bucketId, List<Attribute> attributes) async {
-    await orgRef.child(bucketId).child('attributes').set(attributes.map((e) => e.toJson()).toList());
+    await orgRef
+        .child(bucketId)
+        .child('attributes')
+        .set(attributes.map((e) => e.toJson()).toList());
   }
 
   @override
@@ -45,7 +50,10 @@ class FirebaseBucketApi extends BucketApi {
 
   @override
   Future<void> updateFileTypes(String bucketId, List<DocumentType> filetypes) async {
-    await orgRef.child(bucketId).child('filetypes').set(filetypes.map((e) => e.name).toList());
+    await orgRef
+        .child(bucketId)
+        .child('filetypes')
+        .set(filetypes.map((e) => e.name).toList());
   }
 
   @override

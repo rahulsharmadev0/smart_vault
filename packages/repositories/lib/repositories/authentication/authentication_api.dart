@@ -4,12 +4,15 @@ class AuthenticationApi extends ApiBase implements AuthenticationBase {
   final fauth.FirebaseAuth _fAuth;
   AuthenticationApi({fauth.FirebaseAuth? firebaseAuth})
     : _fAuth = firebaseAuth ?? fauth.FirebaseAuth.instance;
-
   /// Whether or not the current environment is web
   /// Should only be overridden for testing purposes. Otherwise,
   /// defaults to [kIsWeb]
   @visibleForTesting
   bool isWeb = kIsWeb;
+
+  // User
+  @override
+  fauth.User? get currentUser => _fAuth.currentUser;
 
   @override
   Stream<fauth.User?> get user => _fAuth.authStateChanges();

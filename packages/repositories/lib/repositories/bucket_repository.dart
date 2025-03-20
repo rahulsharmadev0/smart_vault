@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:repositories/models/organization.dart';
 import 'package:repositories/utils/repository_base.dart';
 import 'package:repositories/repositories/bucket/bucket_base.dart';
@@ -9,6 +10,12 @@ class BucketRepository extends CachedRepository<BucketApi, BucketCache>
   BucketRepository() : super(BucketApi(), BucketCache([]));
 
   Stream<List<Bucket>> get dataStream => cache.cacheStream;
+  
+  Stream<Bucket?> selectedStream(String bucketId) {
+    return cache.cacheStream.map(
+      (buckets) => buckets.firstWhereOrNull((b) => b.bucketId == bucketId),
+    );
+  }
 
   @override
   Future<void> create(Bucket bucket) async {
@@ -60,7 +67,10 @@ class BucketRepository extends CachedRepository<BucketApi, BucketCache>
   }
 
   @override
-  Future<void> updateAttributes(String bucketId, List<Attribute> attributes) async {
+  Future<void> updateAttributes(
+    String bucketId,
+    List<Attribute> attributes,
+  ) async {
     await api.updateAttributes(bucketId, attributes);
     await cache.updateAttributes(bucketId, attributes);
   }
@@ -72,7 +82,10 @@ class BucketRepository extends CachedRepository<BucketApi, BucketCache>
   }
 
   @override
-  Future<void> updateFileTypes(String bucketId, List<DocumentType> fileTypes) async {
+  Future<void> updateFileTypes(
+    String bucketId,
+    List<DocumentType> fileTypes,
+  ) async {
     await api.updateFileTypes(bucketId, fileTypes);
     await cache.updateFileTypes(bucketId, fileTypes);
   }

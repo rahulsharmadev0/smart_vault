@@ -1,47 +1,63 @@
 part of 'edit_form_cubit.dart';
 
-class EditFormState {
+class EditFormData {
+  final String? bucketId;
   final String bucketName;
   final String bucketDescription;
   final List<DocumentType> fileTypes;
-  final bool isSubmitting;
+  final FormSubmissionStatus status;
   final String? errorMessage;
 
-  const EditFormState({
-    required this.bucketName,
-    required this.bucketDescription,
-    required this.fileTypes,
-    this.isSubmitting = false,
+  const EditFormData({
+    this.bucketId,
+    this.bucketName = '',
+    this.bucketDescription = '',
+    this.fileTypes = const [],
+    this.status = FormSubmissionStatus.initial,
     this.errorMessage,
   });
 
-  static const empty = EditFormState(bucketName: '', bucketDescription: '', fileTypes: []);
+  bool get isProgress => status == FormSubmissionStatus.inProgress;
+  bool get isSuccess => status == FormSubmissionStatus.success;
 
-  EditFormState copyWith({
+  EditFormData inProgress() =>
+      copyWith(status: FormSubmissionStatus.inProgress);
+  EditFormData success(String bucketId) =>
+      copyWith(status: FormSubmissionStatus.success, bucketId: bucketId);
+  EditFormData failure(String msg) =>
+      copyWith(status: FormSubmissionStatus.failure, errorMessage: msg);
+
+  EditFormData copyWith({
+    String? bucketId,
     String? bucketName,
     String? bucketDescription,
     List<DocumentType>? fileTypes,
-    bool? isSubmitting,
+    FormSubmissionStatus? status,
     String? errorMessage,
   }) {
-    return EditFormState(
+    return EditFormData(
+      bucketId: bucketId ?? this.bucketId,
       bucketName: bucketName ?? this.bucketName,
       bucketDescription: bucketDescription ?? this.bucketDescription,
       fileTypes: fileTypes ?? this.fileTypes,
-      isSubmitting: isSubmitting ?? this.isSubmitting,
+      status: status ?? this.status,
       errorMessage: errorMessage,
     );
   }
 
   bool get isValid {
-    return bucketName.isNotEmpty && bucketDescription.isNotEmpty && fileTypes.isNotEmpty;
+    return bucketName.isNotEmpty &&
+        bucketDescription.isNotEmpty &&
+        fileTypes.isNotEmpty;
   }
 
   String? get nameError => bucketName.isEmpty ? 'Name cannot be empty' : null;
 
-  String? get descriptionError => bucketDescription.isEmpty ? 'Description cannot be empty' : null;
+  String? get descriptionError =>
+      bucketDescription.isEmpty ? 'Description cannot be empty' : null;
 
-  String? get fileTypesError => fileTypes.isEmpty ? 'Select at least one file type' : null;
+  String? get fileTypesError =>
+      fileTypes.isEmpty ? 'Select at least one file type' : null;
 
   Bucket? toBucket(String orgId) {
     if (!isValid) return null;

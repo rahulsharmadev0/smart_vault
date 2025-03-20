@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bloc_suite/bloc_suite.dart';
-import 'package:edukit/ui/bloc/bucket_bloc';
 import 'package:edukit/ui/material/scaffold.dart';
 import 'package:edukit/ui/modules/attribute_management/attribute_management_bloc.dart';
 import 'package:edukit/ui/widgets/attribute_dialog.dart';
@@ -25,9 +24,8 @@ class AttributeManagementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var read = context.read<BucketBloc>();
     return BlocProvider(
-      create: (context) => AttributeManagementBloc(bucketId: bucketId, bucketBloc: read),
+      create: (context) => AttributeManagementBloc(bucketId: bucketId),
       child: BlocConsumer<AttributeManagementBloc, AttributeManagementState>(
         listener: (context, state) {
           if (state is AMSubmittedSuccessfully) {

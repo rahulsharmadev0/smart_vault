@@ -1,4 +1,5 @@
 import 'package:repositories/models/organization.dart';
+import 'package:repositories/repositories.dart';
 import 'package:repositories/utils/repository_base.dart';
 import 'package:repositories/repositories/organization/organization_base.dart';
 
@@ -7,6 +8,8 @@ class OrganizationRepository extends CachedRepository<OrganizationApi, Organizat
   OrganizationRepository() : super(OrganizationApi(), OrganizationCache([]));
 
   Stream<List<Organization>> get dataStream => cache.cacheStream;
+
+  String? get orgId => authRepo.currentUser?.uid;
 
   @override
   Future<void> create(Organization organization) async {

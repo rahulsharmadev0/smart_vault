@@ -1,11 +1,10 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:collection/collection.dart';
-import 'package:edukit/ui/bloc/bucket_bloc';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:repositories/models/organization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:repositories/repositories.dart';
 part 'attribute_management_bloc.freezed.dart';
 
 @freezed
@@ -62,8 +61,7 @@ const _fixedAttributes = {'_name_': 'Name', '_unique_id_': 'Unique Id'};
 class AttributeManagementBloc
     extends Bloc<AttributeManagementEvent, AttributeManagementState> {
   final String bucketId;
-  final BucketBloc bucketBloc;
-  AttributeManagementBloc({required this.bucketId, required this.bucketBloc})
+  AttributeManagementBloc({required this.bucketId})
     : super(const AttributeManagementState.loading()) {
     on<_Init>(_init);
     on<_AddAttribute>(_addAttribute);
@@ -71,19 +69,12 @@ class AttributeManagementBloc
     on<_OnSubmitted>(_onSubmitted);
     on<_UpdateAttribute>(_updateAttribute);
 
-    bucketBloc.stream.listen((event) {
-      if (event is LoadedBucketState) add(const _Init());
-    });
-
-    //TODO: May cause error
     add(const _Init());
   }
 
-  void _init(_Init event, Emitter emit) {
-    if (this.state is AMLoaded) return;
-
-    final state = bucketBloc.state as LoadedBucketState;
-    final bucket = state.bucket.firstWhereOrNull((e) => e.bucketId == bucketId);
+  void _init(_Init event, Emitter emit)async {
+    if (state is AMLoaded) return;
+    final bucket = await bucketRepo.getBucketById(bucketId);
     if (bucket == null) {
       emit(AttributeManagementState.error('Bucket not found'));
       return;
@@ -157,18 +148,15 @@ class AttributeManagementBloc
     });
   }
 
-  void _onSubmitted(_OnSubmitted event, Emitter emit) {
-    var bucketState = bucketBloc.state;
-    if (bucketState is! LoadedBucketState || this.state is! AMLoaded) return;
+  void _onSubmitted(_OnSubmitted event, Emitter emit)async {
+    if(this.state is! AMLoaded) return;
+    var bucket = await bucketRepo.getBucketById(bucketId);
 
     final state = this.state as AMLoaded;
-
-    final bucket = bucketState.bucket.firstWhere((e) => e.bucketId == bucketId);
-
-    var bucket2 = bucket.copyWith(
+    var bucket2 = bucket!.copyWith(
       attributes: [...state.fixedAttributes, ...state.customAttributes],
     );
-    bucketBloc.add(BucketEvent.update(bucket.orgId, bucket2));
+    bucketRepo.update(bucket2);
     emit(
       AttributeManagementState.submittedSuccessfully(
         fixedAttributes: state.fixedAttributes,

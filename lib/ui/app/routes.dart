@@ -2,7 +2,7 @@ import 'package:edukit/ui/material/scaffold.dart';
 import 'package:edukit/ui/modules/attribute_management/attribute_management_screen.dart';
 import 'package:edukit/ui/modules/auth/auth_screen.dart';
 import 'package:edukit/ui/modules/create_bucket/create_or_edit_bucket_screen.dart';
-import 'package:edukit/ui/modules/bucket_screen/bucket_screen.dart';
+import 'package:edukit/ui/modules/files_management_screen/bucket_screen.dart';
 import 'package:edukit/ui/utils/streamtolistenable.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -62,7 +62,7 @@ final class AppRoutes with PathRoutes {
             name: 'bucket',
             builder:
                 (context, state) =>
-                    FilesManagementScreen(bucketId: state.pathParameters['bucketId']),
+                    BucketScreen(bucketId: state.pathParameters['bucketId']),
           ),
         ],
       ),

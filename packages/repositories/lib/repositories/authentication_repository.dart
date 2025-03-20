@@ -1,13 +1,15 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:repositories/repositories.dart';
 import 'package:repositories/repositories/authentication/authentication_base.dart';
 import 'package:repositories/utils/repository_base.dart';
 
 class AuthenticationRepository extends Repository<AuthenticationApi>
     implements AuthenticationBase {
   AuthenticationRepository(super.api);
+
+    @override
+  User? get currentUser => api.currentUser;
 
   @override
   bool get hasActiveSession => api.hasActiveSession;
@@ -22,7 +24,8 @@ class AuthenticationRepository extends Repository<AuthenticationApi>
   FutureOr<void> resetPassword(String email) => api.resetPassword(email);
 
   @override
-  FutureOr<void> signIn(String email, String password) => api.signIn(email, password);
+  FutureOr<void> signIn(String email, String password) =>
+      api.signIn(email, password);
 
   @override
   FutureOr<void> signOut() => api.signOut();
@@ -30,4 +33,6 @@ class AuthenticationRepository extends Repository<AuthenticationApi>
   @override
   FutureOr<void> signUp(String email, String password, String displayName) =>
       api.signUp(email, password, displayName);
+
+
 }

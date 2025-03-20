@@ -10,6 +10,8 @@ part 'authentication_exception.dart';
 abstract class AuthenticationBase {
   bool get hasActiveSession;
 
+  fauth.User? get currentUser;
+
   Stream<fauth.User?> get user;
 
   Stream<bool> get isSignedIn;

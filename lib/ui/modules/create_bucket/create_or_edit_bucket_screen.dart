@@ -1,10 +1,10 @@
-import 'package:edukit/ui/bloc/bucket_bloc';
-import 'package:edukit/ui/bloc/organization_bloc.dart';
+import 'package:bloc_suite/bloc_suite.dart';
+import 'package:edukit/ui/app/routes.dart';
 import 'package:edukit/ui/material/scaffold.dart';
+import 'package:go_router/go_router.dart';
 import 'cubit/edit_form_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:repositories/models.dart';
 
 class CreateOrEditBucketScreen extends StatelessWidget {
@@ -12,18 +12,19 @@ class CreateOrEditBucketScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orgBloc = context.read<OrganizationBloc>();
-
     return BlocProvider(
-      create: (context) => EditFormCubit(orgBloc),
-      child: Builder(
-        builder: (context) {
-          return AppScaffold(
-            titleText: 'Create Bucket',
-            bottomBarActions: const [SaveButton()],
-            body: const _BucketForm(),
-          );
+      create: (context) => EditFormCubit(),
+      child: BlocListener<EditFormCubit, EditFormData>(
+        listener: (context, state) {
+          if (state.isSuccess) {
+            context.go(AppRoutes.I.bucket(state.bucketId!));
+          }
         },
+        child: AppScaffold(
+          titleText: 'Create Bucket',
+          bottomBarActions: const [SaveButton()],
+          body: const _BucketForm(),
+        ),
       ),
     );
   }
@@ -34,7 +35,7 @@ class _BucketForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EditFormCubit, EditFormState>(
+    return BlocBuilder<EditFormCubit, EditFormData>(
       builder: (context, state) {
         if (state.errorMessage != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -74,65 +75,30 @@ class _BucketForm extends StatelessWidget {
   }
 }
 
-class SaveButton extends StatelessWidget {
+class SaveButton extends BlocWidget<EditFormCubit, EditFormData> {
   const SaveButton({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<EditFormCubit, EditFormState>(
-      builder: (context, state) {
-        return ElevatedButton(
-          onPressed:
-              state.isValid && !state.isSubmitting ? () => _saveBucket(context) : null,
-          child:
-              state.isSubmitting
-                  ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                  : const Text('Save'),
-        );
-      },
+  Widget build(BuildContext context, bloc, state) {
+    return ElevatedButton(
+      onPressed:
+          state.isValid && !state.isProgress
+              ? () => _saveBucket(context)
+              : null,
+      child:
+          state.isProgress
+              ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+              : const Text('Save'),
     );
   }
 
-  Future<void> _saveBucket(BuildContext context) async {
+  void _saveBucket(BuildContext context) {
     final formCubit = context.read<EditFormCubit>();
-    final bucketBloc = context.read<BucketBloc>();
-    final orgBloc = context.read<OrganizationBloc>();
-
-    formCubit.setSubmitting(true);
-
-    try {
-      final bucket = formCubit.state.toBucket(orgBloc.orgId);
-      if (bucket == null) {
-        formCubit.setError('Invalid bucket data');
-        formCubit.setSubmitting(false);
-        return;
-      }
-
-      bucketBloc.add(
-        BucketEvent.create(
-          orgBloc.orgId,
-          bucket,
-          onCompleted: () {
-            formCubit.setSubmitting(false);
-            context.pushReplacementNamed(
-              'attribute-management',
-              pathParameters: {'bucketId': bucket.bucketId},
-            );
-          },
-          onError: (error) {
-            formCubit.setError('Failed to create bucket: $error');
-            formCubit.setSubmitting(false);
-          },
-        ),
-      );
-    } catch (e) {
-      formCubit.setError('An unexpected error occurred: $e');
-      formCubit.setSubmitting(false);
-    }
+    formCubit.onSubmit();
   }
 }
 
@@ -141,8 +107,9 @@ class BucketNameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EditFormCubit, EditFormState>(
-      buildWhen: (previous, current) => previous.bucketName != current.bucketName,
+    return BlocBuilder<EditFormCubit, EditFormData>(
+      buildWhen:
+          (previous, current) => previous.bucketName != current.bucketName,
       builder: (context, state) {
         return TextFormField(
           key: const ValueKey('bucket-name-field'),
@@ -156,7 +123,7 @@ class BucketNameField extends StatelessWidget {
           ),
           textInputAction: TextInputAction.next,
           validator: (_) => state.nameError,
-          enabled: !state.isSubmitting,
+          enabled: !state.isProgress,
         );
       },
     );
@@ -168,9 +135,10 @@ class BucketDescriptionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EditFormCubit, EditFormState>(
+    return BlocBuilder<EditFormCubit, EditFormData>(
       buildWhen:
-          (previous, current) => previous.bucketDescription != current.bucketDescription,
+          (previous, current) =>
+              previous.bucketDescription != current.bucketDescription,
       builder: (context, state) {
         return TextFormField(
           key: const ValueKey('bucket-description-field'),
@@ -179,12 +147,15 @@ class BucketDescriptionField extends StatelessWidget {
           decoration: InputDecoration(
             labelText: 'Bucket Description',
             hintText: 'Enter the description of the bucket',
-            errorText: state.bucketDescription.isNotEmpty ? null : state.descriptionError,
+            errorText:
+                state.bucketDescription.isNotEmpty
+                    ? null
+                    : state.descriptionError,
             prefixIcon: const Icon(Icons.description),
             border: const OutlineInputBorder(),
           ),
           validator: (_) => state.descriptionError,
-          enabled: !state.isSubmitting,
+          enabled: !state.isProgress,
         );
       },
     );
@@ -196,7 +167,7 @@ class FileTypeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EditFormCubit, EditFormState>(
+    return BlocBuilder<EditFormCubit, EditFormData>(
       buildWhen: (previous, current) => previous.fileTypes != current.fileTypes,
       builder: (context, state) {
         return Column(
@@ -226,9 +197,11 @@ class FileTypeSelector extends StatelessWidget {
                       label: Text(doc.fullName),
                       selected: state.fileTypes.contains(doc),
                       onSelected:
-                          state.isSubmitting
+                          state.isProgress
                               ? null
-                              : (_) => context.read<EditFormCubit>().toggleFileType(doc),
+                              : (_) => context
+                                  .read<EditFormCubit>()
+                                  .toggleFileType(doc),
                       avatar: _getIconForDocType(doc),
                     );
                   }).toList(),

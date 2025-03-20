@@ -1,33 +1,18 @@
 import 'dart:async';
 import 'package:dart_suite/dart_suite.dart';
+import 'package:edukit/ui/utils/form_submission_status.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:repositories/repositories.dart';
-import 'package:repositories/repositories/authentication_repository.dart';
 
-enum FormState {
-  /// The form has not yet been submitted.
-  initial,
 
-  /// The form is in the process of being submitted.
-  inProgress,
-
-  /// The form has been submitted successfully.
-  success,
-
-  /// The form submission failed.
-  failure,
-
-  /// The form submission has been canceled.
-  canceled,
-}
 
 class AuthFormState with EquatableMixin {
   final String organisationName;
   final String email;
   final String password;
   final String confirmPassword;
-  final FormState formState;
+  final FormSubmissionStatus formState;
   final String? errorMessage;
   final bool isSignInMode;
 
@@ -46,7 +31,7 @@ class AuthFormState with EquatableMixin {
     email: '',
     password: '',
     confirmPassword: '',
-    formState: FormState.initial,
+    formState: FormSubmissionStatus.initial,
     isSignInMode: true,
   );
 
@@ -55,7 +40,7 @@ class AuthFormState with EquatableMixin {
     String? email,
     String? password,
     String? confirmPassword,
-    FormState? formState,
+    FormSubmissionStatus? formState,
     String? msg,
     bool? isSignInMode,
   }) {
@@ -90,7 +75,7 @@ class AuthFormState with EquatableMixin {
       password == confirmPassword;
 
   AuthFormState toggleMode() =>
-      copyWith(isSignInMode: !isSignInMode, msg: null, formState: FormState.initial);
+      copyWith(isSignInMode: !isSignInMode, msg: null, formState: FormSubmissionStatus.initial);
 }
 
 class AuthFormCubit extends Cubit<AuthFormState> {
@@ -100,24 +85,24 @@ class AuthFormCubit extends Cubit<AuthFormState> {
 
   void createAccount() {
     if (state.isValidCreateAccount) {
-      emit(state.copyWith(formState: FormState.inProgress));
+      emit(state.copyWith(formState: FormSubmissionStatus.inProgress));
       authRepo
           .signUp(state.organisationName, state.email, state.password)
-          .then((_) => emit(state.copyWith(formState: FormState.success)))
+          .then((_) => emit(state.copyWith(formState: FormSubmissionStatus.success)))
           .catchError(
-            (e) => emit(state.copyWith(formState: FormState.failure, msg: e.toString())),
+            (e) => emit(state.copyWith(formState: FormSubmissionStatus.failure, msg: e.toString())),
           );
     }
   }
 
   void signIn() async {
     if (state.isValidSignIn) {
-      emit(state.copyWith(formState: FormState.inProgress));
+      emit(state.copyWith(formState: FormSubmissionStatus.inProgress));
       authRepo
           .signIn(state.email, state.password)
-          .then((_) => emit(state.copyWith(formState: FormState.success)))
+          .then((_) => emit(state.copyWith(formState: FormSubmissionStatus.success)))
           .catchError(
-            (e) => emit(state.copyWith(formState: FormState.failure, msg: e.toString())),
+            (e) => emit(state.copyWith(formState: FormSubmissionStatus.failure, msg: e.toString())),
           );
     }
   }

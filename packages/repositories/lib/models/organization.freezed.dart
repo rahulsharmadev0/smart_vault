@@ -530,10 +530,12 @@ as String?,
 @JsonSerializable()
 
 class DateTimeAttribute extends Attribute with DiagnosticableTreeMixin {
-   DateTimeAttribute({required this.label, final  String? attributeId, final  String? $type}): $type = $type ?? 'dateTime',super._(attributeId: attributeId);
+   DateTimeAttribute({required this.label, final  String? attributeId, required this.firstDate, required this.lastDate, final  String? $type}): $type = $type ?? 'dateTime',super._(attributeId: attributeId);
   factory DateTimeAttribute.fromJson(Map<String, dynamic> json) => _$DateTimeAttributeFromJson(json);
 
 @override final  String label;
+ final  DateTime firstDate;
+ final  DateTime lastDate;
 
 @JsonKey(name: 'runtimeType')
 final String $type;
@@ -553,21 +555,21 @@ Map<String, dynamic> toJson() {
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'Attribute.dateTime'))
-    ..add(DiagnosticsProperty('label', label))..add(DiagnosticsProperty('attributeId', attributeId));
+    ..add(DiagnosticsProperty('label', label))..add(DiagnosticsProperty('attributeId', attributeId))..add(DiagnosticsProperty('firstDate', firstDate))..add(DiagnosticsProperty('lastDate', lastDate));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DateTimeAttribute&&(identical(other.label, label) || other.label == label)&&(identical(other.attributeId, attributeId) || other.attributeId == attributeId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DateTimeAttribute&&(identical(other.label, label) || other.label == label)&&(identical(other.attributeId, attributeId) || other.attributeId == attributeId)&&(identical(other.firstDate, firstDate) || other.firstDate == firstDate)&&(identical(other.lastDate, lastDate) || other.lastDate == lastDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,label,attributeId);
+int get hashCode => Object.hash(runtimeType,label,attributeId,firstDate,lastDate);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'Attribute.dateTime(label: $label, attributeId: $attributeId)';
+  return 'Attribute.dateTime(label: $label, attributeId: $attributeId, firstDate: $firstDate, lastDate: $lastDate)';
 }
 
 
@@ -578,7 +580,7 @@ abstract mixin class $DateTimeAttributeCopyWith<$Res> implements $AttributeCopyW
   factory $DateTimeAttributeCopyWith(DateTimeAttribute value, $Res Function(DateTimeAttribute) _then) = _$DateTimeAttributeCopyWithImpl;
 @override @useResult
 $Res call({
- String label, String? attributeId
+ String label, String? attributeId, DateTime firstDate, DateTime lastDate
 });
 
 
@@ -595,11 +597,13 @@ class _$DateTimeAttributeCopyWithImpl<$Res>
 
 /// Create a copy of Attribute
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? attributeId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? attributeId = freezed,Object? firstDate = null,Object? lastDate = null,}) {
   return _then(DateTimeAttribute(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,attributeId: freezed == attributeId ? _self.attributeId : attributeId // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,firstDate: null == firstDate ? _self.firstDate : firstDate // ignore: cast_nullable_to_non_nullable
+as DateTime,lastDate: null == lastDate ? _self.lastDate : lastDate // ignore: cast_nullable_to_non_nullable
+as DateTime,
   ));
 }
 

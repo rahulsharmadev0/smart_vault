@@ -74,12 +74,9 @@ var bucket = Bucket(
   fileTypes: [DocumentType.pdf, DocumentType.doc, DocumentType.md],
 );
 
-void main(List<String> args) {
-  runApp(const App());
-}
 
-class App extends StatelessWidget {
-  const App({super.key});
+class XApp extends StatelessWidget {
+  const XApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -124,8 +121,29 @@ class BuildSelectedFieldAttribute extends StatelessWidget {
       spacing: 12,
       children: [
         MultiSelectDropdown(
-          items: bucket.attributes.map((e) => e.label).toList(),
-          title: 'Select Attributes',
+         attribute: Attribute.multiSelect(label: 'Course', options: [
+           Option(value: 'MCA', id: '1'),
+           Option(value: 'BCA', id: '23'),
+           Option(value: 'DCA', id: '3'),
+           Option(value: 'FCA', id: '4'),
+           Option(value: 'GCS', id: '21'),
+           Option(value: 'PCA', id: '45'),
+         ]),
+        ),
+        SingleSelectDropdown(
+         attribute: Attribute.singleSelect(label: 'Course', options: [
+           Option(value: 'MCA', id: '1'),
+           Option(value: 'BCA', id: '23'),
+           Option(value: 'DCA', id: '3'),
+           Option(value: 'FCA', id: '4'),
+           Option(value: 'GCS', id: '21'),
+           Option(value: 'PCA', id: '45'),
+         ]),
+        ),
+        DateSelectorFieldAttribute(
+         attribute: Attribute.dateTime(label: 'Course Join Date', 
+         firstDate: DateTime(2023), 
+         lastDate: DateTime(2024)),
         ),
       ],
     );

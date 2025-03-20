@@ -94,6 +94,8 @@ DateTimeAttribute _$DateTimeAttributeFromJson(Map<String, dynamic> json) =>
     DateTimeAttribute(
       label: json['label'] as String,
       attributeId: json['attributeId'] as String?,
+      firstDate: DateTime.parse(json['firstDate'] as String),
+      lastDate: DateTime.parse(json['lastDate'] as String),
       $type: json['runtimeType'] as String?,
     );
 
@@ -101,6 +103,8 @@ Map<String, dynamic> _$DateTimeAttributeToJson(DateTimeAttribute instance) =>
     <String, dynamic>{
       'attributeId': instance.attributeId,
       'label': instance.label,
+      'firstDate': instance.firstDate.toIso8601String(),
+      'lastDate': instance.lastDate.toIso8601String(),
       'runtimeType': instance.$type,
     };
 

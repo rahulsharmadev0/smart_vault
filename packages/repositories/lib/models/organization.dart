@@ -103,12 +103,18 @@ sealed class Attribute with _$Attribute {
   @override
   final String attributeId;
 
-  Attribute._({String? attributeId}) : attributeId = attributeId ?? const Uuid().v4();
+  Attribute._({String? attributeId})
+    : attributeId = attributeId ?? const Uuid().v4();
 
-  factory Attribute.text({required String label, String? attributeId}) = TextAttribute;
+  factory Attribute.text({required String label, String? attributeId}) =
+      TextAttribute;
 
-  factory Attribute.dateTime({required String label, String? attributeId}) =
-      DateTimeAttribute;
+  factory Attribute.dateTime({
+    required String label,
+    String? attributeId,
+      required DateTime firstDate,
+      required  DateTime lastDate,
+  }) = DateTimeAttribute;
 
   factory Attribute.singleSelect({
     required String label,
@@ -122,7 +128,8 @@ sealed class Attribute with _$Attribute {
     required List<Option> options,
   }) = MultiSelectAttribute;
 
-  factory Attribute.fromJson(Map<String, dynamic> json) => _$AttributeFromJson(json);
+  factory Attribute.fromJson(Map<String, dynamic> json) =>
+      _$AttributeFromJson(json);
 
   T map<T>({
     T Function(TextAttribute)? text,

@@ -14,7 +14,9 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
 
   Bloc.observer = FlutterBlocObserver();
 
-  HiveStorage.build(storageDirectory: HiveStorageDirectory.web);
+  HiveStorage.instance = await HiveStorage.build(
+    storageDirectory: HiveStorageDirectory.web,
+  );
 
   runApp(await builder());
 }

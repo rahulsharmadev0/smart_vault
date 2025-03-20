@@ -22,7 +22,7 @@ class BucketLoaded extends BucketState {
   List<Object?> get props => [bucket];
 }
 
-class BucketNotFound extends BucketState{}
+class BucketNotFound extends BucketState {}
 
 class BucketError extends BucketState {
   final String error;
@@ -51,7 +51,7 @@ class BucketCubit extends Cubit<BucketState> {
       if (bucket != null) {
         emit(BucketLoaded(bucket));
       } else {
-        emit(BucketError('No bucket found'));
+        emit(BucketNotFound());
       }
     } catch (e) {
       emit(BucketError(e.toString()));

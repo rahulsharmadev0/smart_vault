@@ -3,7 +3,6 @@
     "**/.git": true,
     "**/.svn": true,
     "**/.hg": true,
-    "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     "**.exe": true,
@@ -28,6 +27,7 @@
     "build": true,
     "web": true,
     "windows": true,
+    "**/CVS": true,
     "**/*.freezed.dart": true,
     "linux": true
   },

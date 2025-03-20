@@ -160,6 +160,8 @@ _DocumentFile _$DocumentFileFromJson(Map<String, dynamic> json) =>
       bucketId: json['bucketId'] as String,
       name: json['name'] as String,
       fileUrl: json['fileUrl'] as String,
+      type: $enumDecode(_$DocumentTypeEnumMap, json['type']),
+      description: json['description'] as String?,
       fileId: json['fileId'] as String?,
       uploadedAt:
           json['uploadedAt'] == null
@@ -181,5 +183,7 @@ Map<String, dynamic> _$DocumentFileToJson(_DocumentFile instance) =>
       'bucketId': instance.bucketId,
       'name': instance.name,
       'fileUrl': instance.fileUrl,
+      'type': _$DocumentTypeEnumMap[instance.type]!,
+      'description': instance.description,
       'attributes': instance.attributes,
     };

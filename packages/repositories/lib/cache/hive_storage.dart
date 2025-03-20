@@ -42,7 +42,7 @@ class StorageNotFound implements Exception {
     return 'Storage was accessed before it was initialized.\n'
         'Please ensure that storage has been initialized.\n\n'
         'For example:\n\n'
-        'HydratedBloc.storage = await HydratedStorage.build();';
+        'HiveStorage.storage = await HiveStorage.build();';
   }
 }
 
@@ -72,9 +72,14 @@ class HiveStorageDirectory {
 /// to persist and retrieve state changes from the local device.
 /// {@endtemplate}
 class HiveStorage implements Storage {
+  // ignore: unused_element
   HiveStorage._(this._box);
 
   static HiveStorage? _instance;
+
+  static set instance(HiveStorage storage) {
+    _instance = storage;
+  }
 
   static HiveStorage get instance {
     if (_instance == null) throw const StorageNotFound();

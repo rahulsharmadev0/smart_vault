@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bloc_suite/bloc_suite.dart';
+import 'package:edukit/ui/app/routes.dart';
 import 'package:edukit/ui/material/scaffold.dart';
 import 'package:edukit/ui/modules/attribute_management/attribute_management_bloc.dart';
 import 'package:edukit/ui/widgets/attribute_dialog.dart';
@@ -29,7 +30,7 @@ class AttributeManagementScreen extends StatelessWidget {
       child: BlocConsumer<AttributeManagementBloc, AttributeManagementState>(
         listener: (context, state) {
           if (state is AMSubmittedSuccessfully) {
-            context.goNamed('bucket', pathParameters: {'bucketId': bucketId});
+            context.go(AppRoutes.I.bucket(bucketId));
           }
         },
         buildWhen: (p0, p1) => p0.runtimeType != p1.runtimeType,

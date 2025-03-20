@@ -74,11 +74,11 @@ class _$OrganizationCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? orgId = freezed,Object? email = null,Object? name = null,Object? createdAt = freezed,Object? updatedAt = freezed,Object? description = freezed,}) {
   return _then(_self.copyWith(
-orgId: freezed == orgId ? _self.orgId : orgId // ignore: cast_nullable_to_non_nullable
+orgId: freezed == orgId ? _self.orgId! : orgId // ignore: cast_nullable_to_non_nullable
 as String?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as String,createdAt: freezed == createdAt ? _self.createdAt! : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt! : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -231,14 +231,14 @@ class _$BucketCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? bucketId = freezed,Object? orgId = null,Object? title = null,Object? description = null,Object? fileTypes = null,Object? attributes = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_self.copyWith(
-bucketId: freezed == bucketId ? _self.bucketId : bucketId // ignore: cast_nullable_to_non_nullable
+bucketId: freezed == bucketId ? _self.bucketId! : bucketId // ignore: cast_nullable_to_non_nullable
 as String?,orgId: null == orgId ? _self.orgId : orgId // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,fileTypes: null == fileTypes ? _self.fileTypes : fileTypes // ignore: cast_nullable_to_non_nullable
 as List<DocumentType>,attributes: null == attributes ? _self.attributes : attributes // ignore: cast_nullable_to_non_nullable
-as List<Attribute>,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as List<Attribute>,createdAt: freezed == createdAt ? _self.createdAt! : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt! : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }
@@ -438,7 +438,7 @@ class _$AttributeCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? attributeId = freezed,}) {
   return _then(_self.copyWith(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
-as String,attributeId: freezed == attributeId ? _self.attributeId : attributeId // ignore: cast_nullable_to_non_nullable
+as String,attributeId: freezed == attributeId ? _self.attributeId! : attributeId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -844,7 +844,7 @@ class _$OptionCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? value = null,}) {
   return _then(_self.copyWith(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id! : id // ignore: cast_nullable_to_non_nullable
 as String?,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -933,7 +933,7 @@ as String,
 /// @nodoc
 mixin _$DocumentFile implements DiagnosticableTreeMixin {
 
- String get fileId; DateTime get uploadedAt; DateTime get updatedAt; String get orgId; String get bucketId; String get name; String get fileUrl; Map<String, dynamic> get attributes;
+ String get fileId; DateTime get uploadedAt; DateTime get updatedAt; String get orgId; String get bucketId; String get name; String get fileUrl; DocumentType get type; String? get description; Map<String, dynamic> get attributes;
 /// Create a copy of DocumentFile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -947,21 +947,21 @@ $DocumentFileCopyWith<DocumentFile> get copyWith => _$DocumentFileCopyWithImpl<D
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'DocumentFile'))
-    ..add(DiagnosticsProperty('fileId', fileId))..add(DiagnosticsProperty('uploadedAt', uploadedAt))..add(DiagnosticsProperty('updatedAt', updatedAt))..add(DiagnosticsProperty('orgId', orgId))..add(DiagnosticsProperty('bucketId', bucketId))..add(DiagnosticsProperty('name', name))..add(DiagnosticsProperty('fileUrl', fileUrl))..add(DiagnosticsProperty('attributes', attributes));
+    ..add(DiagnosticsProperty('fileId', fileId))..add(DiagnosticsProperty('uploadedAt', uploadedAt))..add(DiagnosticsProperty('updatedAt', updatedAt))..add(DiagnosticsProperty('orgId', orgId))..add(DiagnosticsProperty('bucketId', bucketId))..add(DiagnosticsProperty('name', name))..add(DiagnosticsProperty('fileUrl', fileUrl))..add(DiagnosticsProperty('type', type))..add(DiagnosticsProperty('description', description))..add(DiagnosticsProperty('attributes', attributes));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DocumentFile&&(identical(other.fileId, fileId) || other.fileId == fileId)&&(identical(other.uploadedAt, uploadedAt) || other.uploadedAt == uploadedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.bucketId, bucketId) || other.bucketId == bucketId)&&(identical(other.name, name) || other.name == name)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&const DeepCollectionEquality().equals(other.attributes, attributes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DocumentFile&&(identical(other.fileId, fileId) || other.fileId == fileId)&&(identical(other.uploadedAt, uploadedAt) || other.uploadedAt == uploadedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.bucketId, bucketId) || other.bucketId == bucketId)&&(identical(other.name, name) || other.name == name)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&(identical(other.type, type) || other.type == type)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.attributes, attributes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,fileId,uploadedAt,updatedAt,orgId,bucketId,name,fileUrl,const DeepCollectionEquality().hash(attributes));
+int get hashCode => Object.hash(runtimeType,fileId,uploadedAt,updatedAt,orgId,bucketId,name,fileUrl,type,description,const DeepCollectionEquality().hash(attributes));
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'DocumentFile(fileId: $fileId, uploadedAt: $uploadedAt, updatedAt: $updatedAt, orgId: $orgId, bucketId: $bucketId, name: $name, fileUrl: $fileUrl, attributes: $attributes)';
+  return 'DocumentFile(fileId: $fileId, uploadedAt: $uploadedAt, updatedAt: $updatedAt, orgId: $orgId, bucketId: $bucketId, name: $name, fileUrl: $fileUrl, type: $type, description: $description, attributes: $attributes)';
 }
 
 
@@ -972,7 +972,7 @@ abstract mixin class $DocumentFileCopyWith<$Res>  {
   factory $DocumentFileCopyWith(DocumentFile value, $Res Function(DocumentFile) _then) = _$DocumentFileCopyWithImpl;
 @useResult
 $Res call({
- String orgId, String bucketId, String name, String fileUrl, String? fileId, DateTime? uploadedAt, DateTime? updatedAt, Map<String, dynamic> attributes
+ String orgId, String bucketId, String name, String fileUrl, DocumentType type, String? description, String? fileId, DateTime? uploadedAt, DateTime? updatedAt, Map<String, dynamic> attributes
 });
 
 
@@ -989,15 +989,17 @@ class _$DocumentFileCopyWithImpl<$Res>
 
 /// Create a copy of DocumentFile
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? orgId = null,Object? bucketId = null,Object? name = null,Object? fileUrl = null,Object? fileId = freezed,Object? uploadedAt = freezed,Object? updatedAt = freezed,Object? attributes = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? orgId = null,Object? bucketId = null,Object? name = null,Object? fileUrl = null,Object? type = null,Object? description = freezed,Object? fileId = freezed,Object? uploadedAt = freezed,Object? updatedAt = freezed,Object? attributes = null,}) {
   return _then(_self.copyWith(
 orgId: null == orgId ? _self.orgId : orgId // ignore: cast_nullable_to_non_nullable
 as String,bucketId: null == bucketId ? _self.bucketId : bucketId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,fileUrl: null == fileUrl ? _self.fileUrl : fileUrl // ignore: cast_nullable_to_non_nullable
-as String,fileId: freezed == fileId ? _self.fileId : fileId // ignore: cast_nullable_to_non_nullable
-as String?,uploadedAt: freezed == uploadedAt ? _self.uploadedAt : uploadedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as DocumentType,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,fileId: freezed == fileId ? _self.fileId! : fileId // ignore: cast_nullable_to_non_nullable
+as String?,uploadedAt: freezed == uploadedAt ? _self.uploadedAt! : uploadedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt! : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,attributes: null == attributes ? _self.attributes : attributes // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>,
   ));
@@ -1010,13 +1012,15 @@ as Map<String, dynamic>,
 @JsonSerializable()
 
 class _DocumentFile extends DocumentFile with DiagnosticableTreeMixin {
-   _DocumentFile({required this.orgId, required this.bucketId, required this.name, required this.fileUrl, final  String? fileId, final  DateTime? uploadedAt, final  DateTime? updatedAt, final  Map<String, dynamic> attributes = const {}}): _attributes = attributes,super._(fileId: fileId, uploadedAt: uploadedAt, updatedAt: updatedAt);
+   _DocumentFile({required this.orgId, required this.bucketId, required this.name, required this.fileUrl, required this.type, this.description, final  String? fileId, final  DateTime? uploadedAt, final  DateTime? updatedAt, final  Map<String, dynamic> attributes = const {}}): _attributes = attributes,super._(fileId: fileId, uploadedAt: uploadedAt, updatedAt: updatedAt);
   factory _DocumentFile.fromJson(Map<String, dynamic> json) => _$DocumentFileFromJson(json);
 
 @override final  String orgId;
 @override final  String bucketId;
 @override final  String name;
 @override final  String fileUrl;
+@override final  DocumentType type;
+@override final  String? description;
  final  Map<String, dynamic> _attributes;
 @override@JsonKey() Map<String, dynamic> get attributes {
   if (_attributes is EqualUnmodifiableMapView) return _attributes;
@@ -1039,21 +1043,21 @@ Map<String, dynamic> toJson() {
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'DocumentFile'))
-    ..add(DiagnosticsProperty('orgId', orgId))..add(DiagnosticsProperty('bucketId', bucketId))..add(DiagnosticsProperty('name', name))..add(DiagnosticsProperty('fileUrl', fileUrl))..add(DiagnosticsProperty('fileId', fileId))..add(DiagnosticsProperty('uploadedAt', uploadedAt))..add(DiagnosticsProperty('updatedAt', updatedAt))..add(DiagnosticsProperty('attributes', attributes));
+    ..add(DiagnosticsProperty('orgId', orgId))..add(DiagnosticsProperty('bucketId', bucketId))..add(DiagnosticsProperty('name', name))..add(DiagnosticsProperty('fileUrl', fileUrl))..add(DiagnosticsProperty('type', type))..add(DiagnosticsProperty('description', description))..add(DiagnosticsProperty('fileId', fileId))..add(DiagnosticsProperty('uploadedAt', uploadedAt))..add(DiagnosticsProperty('updatedAt', updatedAt))..add(DiagnosticsProperty('attributes', attributes));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DocumentFile&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.bucketId, bucketId) || other.bucketId == bucketId)&&(identical(other.name, name) || other.name == name)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&(identical(other.fileId, fileId) || other.fileId == fileId)&&(identical(other.uploadedAt, uploadedAt) || other.uploadedAt == uploadedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other._attributes, _attributes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DocumentFile&&(identical(other.orgId, orgId) || other.orgId == orgId)&&(identical(other.bucketId, bucketId) || other.bucketId == bucketId)&&(identical(other.name, name) || other.name == name)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&(identical(other.type, type) || other.type == type)&&(identical(other.description, description) || other.description == description)&&(identical(other.fileId, fileId) || other.fileId == fileId)&&(identical(other.uploadedAt, uploadedAt) || other.uploadedAt == uploadedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other._attributes, _attributes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,orgId,bucketId,name,fileUrl,fileId,uploadedAt,updatedAt,const DeepCollectionEquality().hash(_attributes));
+int get hashCode => Object.hash(runtimeType,orgId,bucketId,name,fileUrl,type,description,fileId,uploadedAt,updatedAt,const DeepCollectionEquality().hash(_attributes));
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'DocumentFile(orgId: $orgId, bucketId: $bucketId, name: $name, fileUrl: $fileUrl, fileId: $fileId, uploadedAt: $uploadedAt, updatedAt: $updatedAt, attributes: $attributes)';
+  return 'DocumentFile(orgId: $orgId, bucketId: $bucketId, name: $name, fileUrl: $fileUrl, type: $type, description: $description, fileId: $fileId, uploadedAt: $uploadedAt, updatedAt: $updatedAt, attributes: $attributes)';
 }
 
 
@@ -1064,7 +1068,7 @@ abstract mixin class _$DocumentFileCopyWith<$Res> implements $DocumentFileCopyWi
   factory _$DocumentFileCopyWith(_DocumentFile value, $Res Function(_DocumentFile) _then) = __$DocumentFileCopyWithImpl;
 @override @useResult
 $Res call({
- String orgId, String bucketId, String name, String fileUrl, String? fileId, DateTime? uploadedAt, DateTime? updatedAt, Map<String, dynamic> attributes
+ String orgId, String bucketId, String name, String fileUrl, DocumentType type, String? description, String? fileId, DateTime? uploadedAt, DateTime? updatedAt, Map<String, dynamic> attributes
 });
 
 
@@ -1081,13 +1085,15 @@ class __$DocumentFileCopyWithImpl<$Res>
 
 /// Create a copy of DocumentFile
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? orgId = null,Object? bucketId = null,Object? name = null,Object? fileUrl = null,Object? fileId = freezed,Object? uploadedAt = freezed,Object? updatedAt = freezed,Object? attributes = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? orgId = null,Object? bucketId = null,Object? name = null,Object? fileUrl = null,Object? type = null,Object? description = freezed,Object? fileId = freezed,Object? uploadedAt = freezed,Object? updatedAt = freezed,Object? attributes = null,}) {
   return _then(_DocumentFile(
 orgId: null == orgId ? _self.orgId : orgId // ignore: cast_nullable_to_non_nullable
 as String,bucketId: null == bucketId ? _self.bucketId : bucketId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,fileUrl: null == fileUrl ? _self.fileUrl : fileUrl // ignore: cast_nullable_to_non_nullable
-as String,fileId: freezed == fileId ? _self.fileId : fileId // ignore: cast_nullable_to_non_nullable
+as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as DocumentType,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,fileId: freezed == fileId ? _self.fileId : fileId // ignore: cast_nullable_to_non_nullable
 as String?,uploadedAt: freezed == uploadedAt ? _self.uploadedAt : uploadedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,attributes: null == attributes ? _self._attributes : attributes // ignore: cast_nullable_to_non_nullable

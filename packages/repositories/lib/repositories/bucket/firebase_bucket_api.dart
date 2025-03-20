@@ -24,6 +24,7 @@ class BucketApi extends ApiBase implements BucketBase {
   @override
   Future<Bucket?> getBucketById(String bucketId) async {
     final snapshot = await orgRef.child(bucketId).get();
+    if (!snapshot.exists) return null;
     return Bucket.fromJson(json.decode(json.encode(snapshot.value)));
   }
 

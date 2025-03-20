@@ -1,3 +1,4 @@
+import 'package:app_foundation/gen/assets.gen.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -16,6 +17,14 @@ enum DocumentType {
 
   final String fullName;
   const DocumentType(this.fullName);
+
+  SvgGenImage get icon => switch (this) {
+    DocumentType.pdf => Assets.svg.pdf,
+    DocumentType.doc => Assets.svg.doc,
+    DocumentType.sheet => Assets.svg.md,
+    DocumentType.md => Assets.svg.md,
+    DocumentType.txt => Assets.svg.txt,
+  };
 }
 
 enum AttributeType { text, dateTime, singleSelect, multiSelect }
@@ -47,7 +56,8 @@ sealed class Organization with _$Organization {
     String? description,
   }) = _Organization;
 
-  factory Organization.fromJson(Map<String, dynamic> json) => _$OrganizationFromJson(json);
+  factory Organization.fromJson(Map<String, dynamic> json) =>
+      _$OrganizationFromJson(json);
 }
 
 //
@@ -97,7 +107,8 @@ sealed class Attribute with _$Attribute {
 
   factory Attribute.text({required String label, String? attributeId}) = TextAttribute;
 
-  factory Attribute.dateTime({required String label, String? attributeId}) = DateTimeAttribute;
+  factory Attribute.dateTime({required String label, String? attributeId}) =
+      DateTimeAttribute;
 
   factory Attribute.singleSelect({
     required String label,
@@ -105,8 +116,11 @@ sealed class Attribute with _$Attribute {
     required List<Option> options,
   }) = SingleSelectAttribute;
 
-  factory Attribute.multiSelect({required String label, String? attributeId, required List<Option> options}) =
-      MultiSelectAttribute;
+  factory Attribute.multiSelect({
+    required String label,
+    String? attributeId,
+    required List<Option> options,
+  }) = MultiSelectAttribute;
 
   factory Attribute.fromJson(Map<String, dynamic> json) => _$AttributeFromJson(json);
 
@@ -164,13 +178,16 @@ sealed class DocumentFile with _$DocumentFile {
     required String bucketId,
     required String name,
     required String fileUrl,
+    required DocumentType type,
+    String? description,
     String? fileId,
     DateTime? uploadedAt,
     DateTime? updatedAt,
     @Default({}) Map<String, dynamic> attributes,
   }) = _DocumentFile;
 
-  factory DocumentFile.fromJson(Map<String, dynamic> json) => _$DocumentFileFromJson(json);
+  factory DocumentFile.fromJson(Map<String, dynamic> json) =>
+      _$DocumentFileFromJson(json);
 
   // Speceficly desigened as per database schema
   static DocumentFile fromFireStore(final Map<String, dynamic> json) {
@@ -179,6 +196,8 @@ sealed class DocumentFile with _$DocumentFile {
       name: json.remove('name'),
       fileUrl: json.remove('fileUrl'),
       bucketId: json.remove('bucketId'),
+      description: json.remove('description'),
+      type: DocumentType.values.byName(json.remove('type')),
       uploadedAt: DateTime.parse(json.remove('uploadedAt')),
       updatedAt: DateTime.parse(json.remove('updatedAt')),
       orgId: json.remove('orgId'),
@@ -195,6 +214,8 @@ sealed class DocumentFile with _$DocumentFile {
     'uploadedAt': uploadedAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
     'orgId': orgId,
+    'description': description,
+    'type': type.name,
     ...attributes,
   };
 }

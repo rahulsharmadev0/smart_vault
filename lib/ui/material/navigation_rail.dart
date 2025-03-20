@@ -15,32 +15,32 @@ class _AppNavigationRailState extends State<AppNavigationRail> {
 
   @override
   Widget build(BuildContext context) {
-    ;
+    return SizedBox.shrink();
 
-    return state.map(
-      orElse: () => SizedBox.shrink(),
-      loaded: (p0) {
-        return NavigationRail(
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: (int index) {
-            setState(() => _selectedIndex = index);
-          },
-          labelType: NavigationRailLabelType.all,
-          destinations: <NavigationRailDestination>[
-            ...p0.bucket.map(
-              (e) => NavigationRailDestination(
-                icon: Icon(Icons.business_outlined),
-                selectedIcon: Icon(Icons.home),
-                label: Text(e.title),
-              ),
-            ),
-          ],
-          trailing: IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: authRepo.signOut, //! Direct Use of Repository
-          ),
-        );
-      },
-    );
+    // return state.map(
+    //   orElse: () => SizedBox.shrink(),
+    //   loaded: (p0) {
+    //     return NavigationRail(
+    //       selectedIndex: _selectedIndex,
+    //       onDestinationSelected: (int index) {
+    //         setState(() => _selectedIndex = index);
+    //       },
+    //       labelType: NavigationRailLabelType.all,
+    //       destinations: <NavigationRailDestination>[
+    //         ...p0.bucket.map(
+    //           (e) => NavigationRailDestination(
+    //             icon: Icon(Icons.business_outlined),
+    //             selectedIcon: Icon(Icons.home),
+    //             label: Text(e.title),
+    //           ),
+    //         ),
+    //       ],
+    //       trailing: IconButton(
+    //         icon: const Icon(Icons.logout),
+    //         onPressed: authRepo.signOut, //! Direct Use of Repository
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }

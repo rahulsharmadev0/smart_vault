@@ -31,8 +31,12 @@ class $AssetsIconGen {
   SvgGenImage get share =>
       const SvgGenImage('assets/icon/share.svg', size: Size(24.0, 24.0));
 
+  /// File path: assets/icon/upload.svg
+  SvgGenImage get upload =>
+      const SvgGenImage('assets/icon/upload.svg', size: Size(24.0, 24.0));
+
   /// List of all assets
-  List<SvgGenImage> get values => [aiChat, delete, download, share];
+  List<SvgGenImage> get values => [aiChat, delete, download, share, upload];
 }
 
 class $AssetsSvgGen {
@@ -41,6 +45,20 @@ class $AssetsSvgGen {
   /// File path: assets/svg/bg01.svg
   SvgGenImage get bg01 =>
       const SvgGenImage('assets/svg/bg01.svg', size: Size(700.0, 600.0));
+
+  /// File path: assets/svg/darts.svg
+  SvgGenImage get darts =>
+      const SvgGenImage('assets/svg/darts.svg', size: Size(64.0, 64.0));
+
+  /// File path: assets/svg/direct-hit (1).svg
+  SvgGenImage get directHit1 => const SvgGenImage(
+    'assets/svg/direct-hit (1).svg',
+    size: Size(72.0, 72.0),
+  );
+
+  /// File path: assets/svg/direct-hit.svg
+  SvgGenImage get directHit =>
+      const SvgGenImage('assets/svg/direct-hit.svg', size: Size(128.0, 128.0));
 
   /// File path: assets/svg/doc.svg
   SvgGenImage get doc =>
@@ -59,7 +77,16 @@ class $AssetsSvgGen {
       const SvgGenImage('assets/svg/txt.svg', size: Size(40.0, 40.0));
 
   /// List of all assets
-  List<SvgGenImage> get values => [bg01, doc, md, pdf, txt];
+  List<SvgGenImage> get values => [
+    bg01,
+    darts,
+    directHit1,
+    directHit,
+    doc,
+    md,
+    pdf,
+    txt,
+  ];
 }
 
 class Assets {

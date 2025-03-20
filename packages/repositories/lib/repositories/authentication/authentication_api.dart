@@ -4,6 +4,7 @@ class AuthenticationApi extends ApiBase implements AuthenticationBase {
   final fauth.FirebaseAuth _fAuth;
   AuthenticationApi({fauth.FirebaseAuth? firebaseAuth})
     : _fAuth = firebaseAuth ?? fauth.FirebaseAuth.instance;
+
   /// Whether or not the current environment is web
   /// Should only be overridden for testing purposes. Otherwise,
   /// defaults to [kIsWeb]

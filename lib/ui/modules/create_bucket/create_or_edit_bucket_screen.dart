@@ -12,6 +12,7 @@ class CreateOrEditBucketScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('>>>>> CreateOrEditBucketScreen');
     return BlocProvider(
       create: (context) => EditFormCubit(),
       child: BlocListener<EditFormCubit, EditFormData>(
@@ -81,10 +82,7 @@ class SaveButton extends BlocWidget<EditFormCubit, EditFormData> {
   @override
   Widget build(BuildContext context, bloc, state) {
     return ElevatedButton(
-      onPressed:
-          state.isValid && !state.isProgress
-              ? () => _saveBucket(context)
-              : null,
+      onPressed: state.isValid && !state.isProgress ? () => _saveBucket(context) : null,
       child:
           state.isProgress
               ? const SizedBox(
@@ -108,8 +106,7 @@ class BucketNameField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EditFormCubit, EditFormData>(
-      buildWhen:
-          (previous, current) => previous.bucketName != current.bucketName,
+      buildWhen: (previous, current) => previous.bucketName != current.bucketName,
       builder: (context, state) {
         return TextFormField(
           key: const ValueKey('bucket-name-field'),
@@ -137,8 +134,7 @@ class BucketDescriptionField extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<EditFormCubit, EditFormData>(
       buildWhen:
-          (previous, current) =>
-              previous.bucketDescription != current.bucketDescription,
+          (previous, current) => previous.bucketDescription != current.bucketDescription,
       builder: (context, state) {
         return TextFormField(
           key: const ValueKey('bucket-description-field'),
@@ -147,10 +143,7 @@ class BucketDescriptionField extends StatelessWidget {
           decoration: InputDecoration(
             labelText: 'Bucket Description',
             hintText: 'Enter the description of the bucket',
-            errorText:
-                state.bucketDescription.isNotEmpty
-                    ? null
-                    : state.descriptionError,
+            errorText: state.bucketDescription.isNotEmpty ? null : state.descriptionError,
             prefixIcon: const Icon(Icons.description),
             border: const OutlineInputBorder(),
           ),
@@ -199,9 +192,7 @@ class FileTypeSelector extends StatelessWidget {
                       onSelected:
                           state.isProgress
                               ? null
-                              : (_) => context
-                                  .read<EditFormCubit>()
-                                  .toggleFileType(doc),
+                              : (_) => context.read<EditFormCubit>().toggleFileType(doc),
                       avatar: _getIconForDocType(doc),
                     );
                   }).toList(),

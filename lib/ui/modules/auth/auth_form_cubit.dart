@@ -1,13 +1,13 @@
 import 'dart:async';
-
 import 'package:dart_suite/dart_suite.dart';
-import 'package:edukit/ui/bloc/auth_cubit.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:repositories/repositories.dart';
+import 'package:repositories/repositories/authentication_repository.dart';
 
 enum FormState {
   /// The form has not yet been submitted.
-  idle,
+  initial,
 
   /// The form is in the process of being submitted.
   inProgress,
@@ -41,7 +41,7 @@ class AuthFormState with EquatableMixin {
     this.errorMessage,
   });
 
-  static AuthFormState empty = AuthFormState(
+  static AuthFormState initial = AuthFormState(
     organisationName: '',
     email: '',
     password: '',
@@ -56,7 +56,7 @@ class AuthFormState with EquatableMixin {
     String? password,
     String? confirmPassword,
     FormState? formState,
-    String? errorMessage,
+    String? msg,
     bool? isSignInMode,
   }) {
     return AuthFormState(
@@ -65,7 +65,7 @@ class AuthFormState with EquatableMixin {
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
       formState: formState ?? this.formState,
-      errorMessage: errorMessage,
+      errorMessage: msg,
       isSignInMode: isSignInMode ?? this.isSignInMode,
     );
   }
@@ -89,71 +89,54 @@ class AuthFormState with EquatableMixin {
       email.regMatch(regPatterns.email) &&
       password == confirmPassword;
 
-  AuthFormState toggleMode() => copyWith(
-    isSignInMode: !isSignInMode,
-    errorMessage: null,
-    formState: FormState.initial,
-  );
+  AuthFormState toggleMode() =>
+      copyWith(isSignInMode: !isSignInMode, msg: null, formState: FormState.initial);
 }
 
 class AuthFormCubit extends Cubit<AuthFormState> {
-  final AuthCubit bloc;
-  late final StreamSubscription<AuthState> subscription;
-  AuthFormCubit({required this.bloc}) : super(AuthFormState.empty);
+  AuthFormCubit() : super(AuthFormState.initial);
 
-  Stream<AuthState> get authState => bloc.stream;
+  Stream<bool> get authState => authRepo.isSignedIn;
 
   void createAccount() {
     if (state.isValidCreateAccount) {
-      bloc.registerWithEmailAndPassword(
-        email: state.email,
-        password: state.password,
-        name: state.organisationName,
-      );
-    } else {
-      emit(
-        state.copyWith(
-          formState: FormState.failure,
-          errorMessage: 'Please fill all fields correctly',
-        ),
-      );
+      emit(state.copyWith(formState: FormState.inProgress));
+      authRepo
+          .signUp(state.organisationName, state.email, state.password)
+          .then((_) => emit(state.copyWith(formState: FormState.success)))
+          .catchError(
+            (e) => emit(state.copyWith(formState: FormState.failure, msg: e.toString())),
+          );
     }
   }
 
-  void signIn() {
+  void signIn() async {
     if (state.isValidSignIn) {
-      bloc.signInWithEmailAndPassword(email: state.email, password: state.password);
-    } else {
-      emit(
-        state.copyWith(
-          formState: FormState.failure,
-          errorMessage: 'Please enter valid email and password',
-        ),
-      );
+      emit(state.copyWith(formState: FormState.inProgress));
+      authRepo
+          .signIn(state.email, state.password)
+          .then((_) => emit(state.copyWith(formState: FormState.success)))
+          .catchError(
+            (e) => emit(state.copyWith(formState: FormState.failure, msg: e.toString())),
+          );
     }
   }
 
   void toggleForm() => emit(state.toggleMode());
 
-  void updateOrganisationName(String organisationName) {
+  void onChangeOrganisationName(String organisationName) {
     emit(state.copyWith(organisationName: organisationName));
   }
 
-  void updateEmail(String email) {
+  void onChangeEmail(String email) {
     emit(state.copyWith(email: email));
   }
 
-  void updatePassword(String password) {
+  void onChangePassword(String password) {
     emit(state.copyWith(password: password));
   }
 
-  void updateConfirmPassword(String confirmPassword) {
+  void onChangeConfirmPassword(String confirmPassword) {
     emit(state.copyWith(confirmPassword: confirmPassword));
-  }
-
-  @override
-  Future<void> close() {
-    subscription.cancel();
-    return super.close();
   }
 }

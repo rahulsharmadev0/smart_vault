@@ -9,7 +9,6 @@ class AuthenticationForm extends BlocWidget<AuthFormCubit, AuthFormState> {
   @override
   Widget build(BuildContext context, bloc, state) {
     final isSignInMode = state.isSignInMode;
-    final isSubmitting = state.formState == FormState.inProgress;
     return SizedBox(
       width: 600,
       child: Column(
@@ -18,15 +17,13 @@ class AuthenticationForm extends BlocWidget<AuthFormCubit, AuthFormState> {
         children: [
           _AuthFormHeader(isSignInMode),
           const SizedBox(height: 24),
-
           if (!isSignInMode)
             _FormField(
               key: const Key('org_name'),
               label: 'Organization Name',
               hint: 'Enter your organization name',
               value: state.organisationName,
-              onChanged: bloc.updateOrganisationName,
-              isEnabled: !isSubmitting,
+              onChanged: bloc.onChangeOrganisationName,
               validator:
                   (!isSignInMode && state.organisationName.isEmpty)
                       ? 'Organization name is required'
@@ -38,8 +35,7 @@ class AuthenticationForm extends BlocWidget<AuthFormCubit, AuthFormState> {
             label: 'Email',
             hint: 'Enter your email',
             value: state.email,
-            onChanged: bloc.updateEmail,
-            isEnabled: !isSubmitting,
+            onChanged: bloc.onChangeEmail,
             validator: state.email.isEmpty ? 'Email is required' : null,
           ),
 
@@ -48,8 +44,8 @@ class AuthenticationForm extends BlocWidget<AuthFormCubit, AuthFormState> {
             label: 'Password',
             hint: 'Enter your password',
             value: state.password,
-            onChanged: bloc.updatePassword,
-            isEnabled: !isSubmitting,
+            onChanged: bloc.onChangePassword,
+
             isPassword: true,
             validator: state.password.isEmpty ? 'Password is required' : null,
           ),
@@ -60,8 +56,7 @@ class AuthenticationForm extends BlocWidget<AuthFormCubit, AuthFormState> {
               label: 'Confirm Password',
               hint: 'Enter your password again',
               value: state.confirmPassword,
-              onChanged: bloc.updateConfirmPassword,
-              isEnabled: !isSubmitting,
+              onChanged: bloc.onChangeConfirmPassword,
               isPassword: true,
               validator:
                   (!isSignInMode && state.password != state.confirmPassword)
@@ -83,7 +78,6 @@ class AuthenticationForm extends BlocWidget<AuthFormCubit, AuthFormState> {
 
           _ActionButtons(
             isSignInMode: isSignInMode,
-            isLoading: isSubmitting,
             isValid: isSignInMode ? state.isValidSignIn : state.isValidCreateAccount,
           ),
         ],
@@ -115,7 +109,7 @@ class _FormField extends StatelessWidget {
   final String label;
   final String hint;
   final String value;
-  final bool isEnabled;
+
   final bool isPassword;
   final String? validator;
   final ValueChanged<String> onChanged;
@@ -125,7 +119,6 @@ class _FormField extends StatelessWidget {
     required this.hint,
     required this.value,
     required this.onChanged,
-    this.isEnabled = true,
     this.isPassword = false,
     this.validator,
     super.key,
@@ -139,7 +132,6 @@ class _FormField extends StatelessWidget {
         key: key,
         initialValue: value,
         onChanged: onChanged,
-        enabled: isEnabled,
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
@@ -154,41 +146,27 @@ class _FormField extends StatelessWidget {
 
 class _ActionButtons extends StatelessWidget {
   final bool isSignInMode;
-  final bool isLoading;
   final bool isValid;
 
-  const _ActionButtons({
-    required this.isSignInMode,
-    required this.isLoading,
-    required this.isValid,
-  });
+  const _ActionButtons({required this.isSignInMode, required this.isValid});
 
   @override
   Widget build(BuildContext context) {
     var cubit = context.read<AuthFormCubit>();
+    var newVariable = isSignInMode ? cubit.signIn : cubit.createAccount;
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         TextButton(
           key: const Key('toggle_auth_mode'),
-          onPressed: isLoading ? null : cubit.toggleForm,
+          onPressed: cubit.toggleForm,
           child: Text(isSignInMode ? 'Create account' : 'Sign In'),
         ),
         const SizedBox(width: 12),
         FilledButton(
           key: const Key('sign_in-register'),
-          onPressed:
-              (isLoading || !isValid)
-                  ? null
-                  : () => isSignInMode ? cubit.signIn() : cubit.createAccount(),
-          child:
-              isLoading
-                  ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                  )
-                  : Text(isSignInMode ? 'Sign In' : 'Register'),
+          onPressed: !isValid ? null : newVariable,
+          child: Text(isSignInMode ? 'Sign In' : 'Register'),
         ),
       ],
     );

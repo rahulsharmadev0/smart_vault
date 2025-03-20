@@ -1,4 +1,5 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_suite/flutter_suite.dart';
 
 class PageNotFound extends StatelessWidget {
   const PageNotFound(this.url, {super.key});
@@ -7,14 +8,12 @@ class PageNotFound extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void handleHomePressed() => context.go(ScreenPaths.home);
-
     return Scaffold(
-      backgroundColor: $styles.colors.black,
+      backgroundColor: context.colorScheme.secondary,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('Page not found: $url', style: text.headline1)],
+          children: [Text('Page not found: $url', style: context.TxT.h1)],
         ),
       ),
     );

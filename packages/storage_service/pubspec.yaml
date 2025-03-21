@@ -1,0 +1,25 @@
+name: storage_service
+description: "A new Flutter package project."
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ^3.8.0-171.0.dev
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^3.12.1
+  firebase_storage: ^12.4.4
+  file_picker: ^9.2.1
+  web: ^1.0.0
+  uuid: ^4.5.1
+  cross_file: ^0.3.4+2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:

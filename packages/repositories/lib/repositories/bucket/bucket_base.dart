@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:repositories/cache/hive_cache.dart';
 import 'package:repositories/models.dart';
+import 'package:repositories/models/document_type.dart';
 import 'package:repositories/utils/repository_base.dart';
 import 'package:firebase_database/firebase_database.dart' as db;
 

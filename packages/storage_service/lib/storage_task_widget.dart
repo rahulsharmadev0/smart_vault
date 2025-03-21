@@ -43,10 +43,14 @@ abstract class StorageTaskWidget extends StatelessWidget {
       StreamBuilder<TaskSnapshot>(stream: task.snapshotEvents, builder: buildContent);
 }
 
-mixin UploadTaskListTileMixin on StorageTaskWidget {
+mixin TaskSnapshotExt on TaskSnapshot {
   /// Formats the bytes transferred into a human-readable string
-  String bytesTransferred(TaskSnapshot snapshot) {
-    final kb = snapshot.bytesTransferred / 1024;
+  String _humanizeBytes(int bytes) {
+    if (bytes == -1) {
+      return '∞';
+    }
+
+    final kb = bytes / 1024;
     final mb = kb / 1024;
 
     if (mb >= 1.0) {
@@ -55,4 +59,20 @@ mixin UploadTaskListTileMixin on StorageTaskWidget {
       return '${kb.toStringAsFixed(2)} KB';
     }
   }
+
+  String get transferredHumanized => _humanizeBytes(bytesTransferred);
+
+  String get totalHumanized => _humanizeBytes(totalBytes);
+
+  double get percentage => (bytesTransferred / totalBytes) * 100;
+
+  bool get isComplete => state == TaskState.success;
+
+  bool get isFailed => state == TaskState.error;
+
+  bool get isPaused => state == TaskState.paused;
+
+  bool get isRunning => state == TaskState.running;
+
+  bool get isCanceled => state == TaskState.canceled;
 }

@@ -34,51 +34,39 @@ class StorageService {
   /// Picks multiple files from the device
   ///
   /// [allowedExtensions] specifies which file extensions can be selected
-  Future<List<XFile>> pickFiles({List<String> allowedExtensions = const []}) async {
-    return await _manager.pickMultiFiles(allowedExtensions);
-  }
+  Future<List<XFile>> pickFiles({List<String> allowedExtensions = const []}) =>
+      _manager.pickMultiFiles(allowedExtensions);
 
   /// Uploads multiple files to Firebase Storage
   ///
   /// [files] is a list of XFile objects to be uploaded
-  void uploadFiles(List<XFile> files) {
-    _manager.uploadFiles(files);
-  }
+  void uploadFiles(List<XFile> files) => _manager.uploadFiles(files);
 
   /// Downloads a file as bytes and saves it locally
   ///
   /// [ref] is the Firebase Storage reference to the file
-  Future<void> downloadBytes(Reference ref) async {
-    await _manager.downloadBytes(ref);
-  }
+  Future<void> downloadBytes(Reference ref) async => await _manager.downloadBytes(ref);
 
   /// Gets a download URL for a file
   ///
   /// [ref] is the Firebase Storage reference to the file
   /// Returns a String URL to the file
-  Future<String> getDownloadURL(Reference ref) async {
-    return await _manager.downloadLink(ref);
-  }
+  Future<String> getDownloadURL(Reference ref) async => await _manager.downloadLink(ref);
 
   /// Deletes a file from Firebase Storage
   ///
   /// [ref] is the Firebase Storage reference to the file
-  Future<void> deleteFile(Reference ref) async {
-    await _manager.delete(ref);
-  }
+  Future<void> deleteFile(Reference ref) async => await _manager.delete(ref);
 
   /// Deletes multiple files from Firebase Storage
   ///
   /// [refs] is a list of Firebase Storage references to the files
-  Future<void> deleteMultipleFiles(List<Reference> refs) async {
-    await _manager.deleteAll(refs);
-  }
+  Future<void> deleteMultipleFiles(List<Reference> refs) async =>
+      await _manager.deleteAll(refs);
 
   /// Gets the upload progress percentage from a TaskSnapshot
   ///
   /// [snapshot] is the current task snapshot
   /// Returns a double representing the percentage (0-100)
-  double getUploadPercentage(TaskSnapshot snapshot) {
-    return _manager.percentage(snapshot);
-  }
+  double getUploadPercentage(TaskSnapshot snapshot) => _manager.percentage(snapshot);
 }

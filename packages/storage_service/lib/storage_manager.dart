@@ -9,6 +9,7 @@ import 'save_as/save_as.dart';
 import 'package:storage_service/utils.dart';
 import 'package:uuid/uuid.dart';
 
+@protected
 class StorageManager {
   final ValueNotifier<List<UploadTask>> _uploadTasks = ValueNotifier(const []);
 

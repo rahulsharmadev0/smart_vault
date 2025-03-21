@@ -6,21 +6,15 @@ extension BucketExtension on Bucket {
   }
 
   Bucket removeAttribute(String attributeId) {
-    return copyWith(
-      attributes: attributes.where((attribute) => attribute.attributeId != attributeId).toList(),
-    );
+    bool test(o) => o.attributeId != attributeId;
+    return copyWith(attributes: attributes.where(test).toList());
   }
 
   Bucket updateAttribute(Attribute updatedAttribute) {
-    return copyWith(
-      attributes:
-          attributes
-              .map(
-                (attribute) =>
-                    attribute.attributeId == updatedAttribute.attributeId ? updatedAttribute : attribute,
-              )
-              .toList(),
-    );
+    Attribute toElement(o) =>
+        o.attributeId == updatedAttribute.attributeId ? updatedAttribute : o;
+
+    return copyWith(attributes: attributes.map(toElement).toList());
   }
 
   Attribute? getAttribute(String attributeId) =>

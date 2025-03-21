@@ -29,16 +29,15 @@ class FileApi extends ApiBase implements FileBase {
               .where('bucketId', isEqualTo: bucketId)
               .withConverter(fromFirestore: _fromFirestore, toFirestore: _toFirestore)
               .get();
-      return snapshot.docs
-          .map((e) => DocumentFile.fromFireStore(e.data() as Map<String, dynamic>))
-          .toList();
+
+      return snapshot.docs.map((e) => e.data()).toList();
     } catch (e) {
       throw Exception('Failed to get files: $e');
     }
   }
 
   @override
-  Future<DocumentFile?> getFileByFileId(String fileId) async {
+  Future<DocumentFile?> getFilesByQuery(String fileId) async {
     try {
       final snapshot =
           await colRef
@@ -52,6 +51,21 @@ class FileApi extends ApiBase implements FileBase {
       throw Exception('Failed to get file: $e');
     }
   }
+
+  // @override
+  // Future<List<DocumentFile?>> getFilesByQuery(
+  //   List<Filter> filters, {
+
+  // }) async {
+  //   try {
+  //     if (filters.isEmpty) return const [];
+  //     Filter filter = Filter.and(Filter(field), filter2);
+
+  //     return snapshot.docs.map((e) => e.data()).toList();
+  //   } catch (e) {
+  //     throw Exception('Failed to get file: $e');
+  //   }
+  // }
 
   DocumentFile _fromFirestore(snapshot, _) =>
       DocumentFile.fromFireStore(snapshot.data()!);

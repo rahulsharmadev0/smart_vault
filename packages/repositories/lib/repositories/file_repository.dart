@@ -38,14 +38,14 @@ class FileRepository extends CachedRepository<FileApi, FileCache> implements Fil
   }
 
   @override
-  FutureOr<DocumentFile?> getFileByFileId(String fileId) async {
-    final cachedFile = await cache.getFileByFileId(fileId);
+  FutureOr<DocumentFile?> getFilesByQuery(String fileId) async {
+    final cachedFile = await cache.getFilesByQuery(fileId);
 
     if (cachedFile != null) {
       return cachedFile;
     }
 
-    final file = await api.getFileByFileId(fileId);
+    final file = await api.getFilesByQuery(fileId);
     if (file != null) {
       await cache.create(file);
     }

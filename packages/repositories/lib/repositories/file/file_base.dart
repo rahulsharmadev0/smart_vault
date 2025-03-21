@@ -18,5 +18,5 @@ abstract class FileBase {
 
   FutureOr<List<DocumentFile>> getFileByBucketId(String bucketId);
 
-  FutureOr<DocumentFile?> getFileByFileId(String fileId);
+  FutureOr<DocumentFile?> getFilesByQuery(String fileId);
 }

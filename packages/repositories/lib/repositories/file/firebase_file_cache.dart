@@ -23,7 +23,7 @@ class FileCache extends HiveCache<List<DocumentFile>> implements FileBase {
   }
 
   @override
-  FutureOr<DocumentFile?> getFileByFileId(String fileId) =>
+  FutureOr<DocumentFile?> getFilesByQuery(String fileId) =>
       cache.firstWhereOrNull((file) => file.fileId == fileId);
 
   @override

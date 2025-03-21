@@ -56,7 +56,7 @@ extension AttributeManagementStateExt on AttributeManagementState {
 //                  AttributeManagementBloc
 //==============================================================
 
-const _fixedAttributes = {'_name_': 'Name', '_unique_id_': 'Unique Id'};
+const fixedAttributesMap = {'_name_': 'Name', '_unique_id_': 'Unique Id'};
 
 class AttributeManagementBloc
     extends Bloc<AttributeManagementEvent, AttributeManagementState> {
@@ -72,7 +72,7 @@ class AttributeManagementBloc
     add(const _Init());
   }
 
-  void _init(_Init event, Emitter emit)async {
+  void _init(_Init event, Emitter emit) async {
     if (state is AMLoaded) return;
     final bucket = await bucketRepo.getBucketById(bucketId);
     if (bucket == null) {
@@ -86,7 +86,7 @@ class AttributeManagementBloc
         AttributeManagementState.loaded(
           customAttributes: const [],
           fixedAttributes: [
-            for (var entry in _fixedAttributes.entries)
+            for (var entry in fixedAttributesMap.entries)
               Attribute.text(attributeId: entry.key, label: entry.value),
           ],
         ),
@@ -96,7 +96,7 @@ class AttributeManagementBloc
 
     List<Attribute> customAttributes = [], fixedAttributes = [];
     for (var attribute in bucket.attributes) {
-      if (_fixedAttributes.containsKey(attribute.attributeId)) {
+      if (fixedAttributesMap.containsKey(attribute.attributeId)) {
         fixedAttributes.add(attribute);
       } else {
         customAttributes.add(attribute);
@@ -148,8 +148,8 @@ class AttributeManagementBloc
     });
   }
 
-  void _onSubmitted(_OnSubmitted event, Emitter emit)async {
-    if(this.state is! AMLoaded) return;
+  void _onSubmitted(_OnSubmitted event, Emitter emit) async {
+    if (this.state is! AMLoaded) return;
     var bucket = await bucketRepo.getBucketById(bucketId);
 
     final state = this.state as AMLoaded;

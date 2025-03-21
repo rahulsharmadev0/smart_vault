@@ -1,6 +1,6 @@
 import 'package:edukit/ui/utils/form_submission_status.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:repositories/models/organization.dart';
+import 'package:repositories/models.dart';
 import 'package:repositories/repositories.dart';
 import 'package:uuid/uuid.dart';
 
@@ -9,7 +9,6 @@ part 'edit_form_state.dart';
 /// Use bucketRepo
 class EditFormCubit extends Cubit<EditFormData> {
   EditFormCubit() : super(EditFormData());
-
 
   void updateBucketName(String bucketName) {
     emit(state.copyWith(bucketName: bucketName));

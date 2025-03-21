@@ -34,6 +34,9 @@ dependencies:
   app_foundation:
     path: packages/app_foundation
 
+  storage_service:
+    path: packages/storage_service
+
   uuid: ^4.5.1
   collection: ^1.19.0
   equatable: ^2.0.7

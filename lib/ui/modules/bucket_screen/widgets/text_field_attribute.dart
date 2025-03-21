@@ -1,6 +1,4 @@
-import 'package:edukit/ui/modules/attribute_management/attribute_management_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_suite/flutter_suite.dart';
 import 'package:repositories/models/organization.dart';
 
@@ -53,12 +51,10 @@ class TwoInOneTextFieldAttribute extends StatefulWidget {
   });
 
   @override
-  State<TwoInOneTextFieldAttribute> createState() =>
-      _TwoInOneTextFieldAttributeState();
+  State<TwoInOneTextFieldAttribute> createState() => _TwoInOneTextFieldAttributeState();
 }
 
-class _TwoInOneTextFieldAttributeState
-    extends State<TwoInOneTextFieldAttribute> {
+class _TwoInOneTextFieldAttributeState extends State<TwoInOneTextFieldAttribute> {
   late final ValueNotifier<TwoInOne> _valueNotifier =
       widget.controller ?? ValueNotifier(TwoInOne.first);
 
@@ -96,8 +92,7 @@ class _TwoInOneTextFieldAttributeState
       child: ValueListenableBuilder<TwoInOne>(
         valueListenable: _valueNotifier,
         builder: (context, value, child) {
-          Attribute curr =
-              value == TwoInOne.first ? widget.first : widget.second;
+          Attribute curr = value == TwoInOne.first ? widget.first : widget.second;
           return TextField(
             controller: widget.textFieldController,
             decoration: InputDecoration(
@@ -131,9 +126,7 @@ class _TwoInOneTextFieldAttributeState
 
   void toggle() =>
       _valueNotifier.value =
-          _valueNotifier.value == TwoInOne.first
-              ? TwoInOne.second
-              : TwoInOne.first;
+          _valueNotifier.value == TwoInOne.first ? TwoInOne.second : TwoInOne.first;
 
   @override
   void dispose() {
@@ -141,8 +134,6 @@ class _TwoInOneTextFieldAttributeState
     super.dispose();
   }
 }
-
-
 
 //------------------------
 // Multi Select Dropdown
@@ -152,11 +143,7 @@ class MultiSelectDropdown extends StatefulWidget {
   final Attribute attribute;
   final ValueNotifier<List<Option>>? selectedOptions;
 
-  const MultiSelectDropdown({
-    super.key,
-    required this.attribute,
-    this.selectedOptions,
-  });
+  const MultiSelectDropdown({super.key, required this.attribute, this.selectedOptions});
 
   @override
   State<MultiSelectDropdown> createState() => _MultiSelectDropdownState();
@@ -180,13 +167,11 @@ class _MultiSelectDropdownState extends State<MultiSelectDropdown> {
             builder: (context, menuCtrl, child) {
               return FilledButton(
                 child: Text('${widget.attribute.label} (${selectedItems.length})'),
-                onPressed:
-                    () => menuCtrl.isOpen ? menuCtrl.close() : menuCtrl.open(),
+                onPressed: () => menuCtrl.isOpen ? menuCtrl.close() : menuCtrl.open(),
               );
             },
             menuChildren: [
-              for (var item
-                  in (widget.attribute as MultiSelectAttribute).options)
+              for (var item in (widget.attribute as MultiSelectAttribute).options)
                 CheckboxMenuButton(
                   style: ButtonStyle(
                     minimumSize: WidgetStateProperty.all(const Size(100, 48)),
@@ -196,9 +181,7 @@ class _MultiSelectDropdownState extends State<MultiSelectDropdown> {
                   value: selectedItems.contains(item),
                   onChanged: (bool? value) {
                     final updatedItems = List<Option>.from(selectedItems);
-                    value == true
-                        ? updatedItems.add(item)
-                        : updatedItems.remove(item);
+                    value == true ? updatedItems.add(item) : updatedItems.remove(item);
                     _valueNotifier.value = updatedItems;
                   },
                   child: Text(item.value),
@@ -215,8 +198,6 @@ class _MultiSelectDropdownState extends State<MultiSelectDropdown> {
   }
 }
 
-
-
 //------------------------
 // Single Radio Select Dropdown
 //------------------------
@@ -225,11 +206,7 @@ class SingleSelectDropdown extends StatefulWidget {
   final Attribute attribute;
   final ValueNotifier<Option?>? selectedOption;
 
-  const SingleSelectDropdown({
-    super.key,
-    required this.attribute,
-    this.selectedOption,
-  });
+  const SingleSelectDropdown({super.key, required this.attribute, this.selectedOption});
 
   @override
   State<SingleSelectDropdown> createState() => _SingleSelectDropdownState();
@@ -246,29 +223,30 @@ class _SingleSelectDropdownState extends State<SingleSelectDropdown> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: _valueNotifier,
-      builder: (_, selectedItem, __) => MenuAnchor(
-        controller: controller,
-        childFocusNode: _buttonFocusNode,
-        builder: (context, menuCtrl, child) {
-          return FilledButton(
-            child: Text(selectedItem?.value ?? 'Select an option'),
-            onPressed: () => menuCtrl.isOpen ? menuCtrl.close() : menuCtrl.open(),
-          );
-        },
-        menuChildren: [
-          for (var item in (widget.attribute as SingleSelectAttribute).options)
-            RadioMenuButton<Option>(
-              key: Key(item.id),
-              value: item,
-              groupValue: selectedItem,
-              onChanged: (value) {
-                _valueNotifier.value = value;
-                controller.close();
-              },
-              child: Text(item.value),
-            ),
-        ],
-      ),
+      builder:
+          (_, selectedItem, __) => MenuAnchor(
+            controller: controller,
+            childFocusNode: _buttonFocusNode,
+            builder: (context, menuCtrl, child) {
+              return FilledButton(
+                child: Text(selectedItem?.value ?? 'Select an option'),
+                onPressed: () => menuCtrl.isOpen ? menuCtrl.close() : menuCtrl.open(),
+              );
+            },
+            menuChildren: [
+              for (var item in (widget.attribute as SingleSelectAttribute).options)
+                RadioMenuButton<Option>(
+                  key: Key(item.id),
+                  value: item,
+                  groupValue: selectedItem,
+                  onChanged: (value) {
+                    _valueNotifier.value = value;
+                    controller.close();
+                  },
+                  child: Text(item.value),
+                ),
+            ],
+          ),
     );
   }
 
@@ -279,15 +257,13 @@ class _SingleSelectDropdownState extends State<SingleSelectDropdown> {
   }
 }
 
-
-
 class DateSelectorFieldAttribute extends StatefulWidget {
   final Attribute attribute;
   final ValueNotifier<DateTime?>? selectedDate;
 
   const DateSelectorFieldAttribute({
     super.key,
-    required  this.attribute,
+    required this.attribute,
     this.selectedDate,
   });
 
@@ -306,27 +282,33 @@ class _DateSelectorFieldAttributeState extends State<DateSelectorFieldAttribute>
     var attribute = widget.attribute as DateTimeAttribute;
     return ValueListenableBuilder(
       valueListenable: _valueNotifier,
-      builder: (_, selectedDate, __) => FilledButton(
-        child: Text(selectedDate != null
-            ? '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'
-            : 'Select a date'),
-        onPressed: () async {
-          DateTime? pickedDate = await showDatePicker(
-            context: context,
-            initialDate: selectedDate ?? DateTime.now(),
-            firstDate: attribute.firstDate,
-            lastDate: attribute.lastDate,
-          );
-          if (pickedDate != null && pickedDate != selectedDate) {
-            _valueNotifier.value = pickedDate;
-          }
-        },
-      ),
+      builder:
+          (_, selectedDate, __) => FilledButton(
+            child: Text(
+              selectedDate != null
+                  ? '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'
+                  : 'Select a date',
+            ),
+            onPressed: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: selectedDate ?? DateTime.now(),
+                firstDate: attribute.firstDate,
+                lastDate: attribute.lastDate,
+              );
+              if (pickedDate != null && pickedDate != selectedDate) {
+                _valueNotifier.value = pickedDate;
+              }
+            },
+          ),
     );
   }
 
   @override
   void dispose() {
+    if (widget.selectedDate == null) {
+      _valueNotifier.dispose();
+    }
     _buttonFocusNode.dispose();
     super.dispose();
   }

@@ -32,6 +32,49 @@ Map<String, dynamic> _$OrganizationToJson(_Organization instance) =>
       'description': instance.description,
     };
 
+_DocumentFile _$DocumentFileFromJson(Map<String, dynamic> json) =>
+    _DocumentFile(
+      orgId: json['orgId'] as String,
+      bucketId: json['bucketId'] as String,
+      name: json['name'] as String,
+      fullPath: json['fullPath'] as String,
+      type: $enumDecode(_$DocumentTypeEnumMap, json['type']),
+      description: json['description'] as String?,
+      fileId: json['fileId'] as String?,
+      uploadedAt:
+          json['uploadedAt'] == null
+              ? null
+              : DateTime.parse(json['uploadedAt'] as String),
+      updatedAt:
+          json['updatedAt'] == null
+              ? null
+              : DateTime.parse(json['updatedAt'] as String),
+      attributes: json['attributes'] as Map<String, dynamic>? ?? const {},
+    );
+
+Map<String, dynamic> _$DocumentFileToJson(_DocumentFile instance) =>
+    <String, dynamic>{
+      'fileId': instance.fileId,
+      'uploadedAt': instance.uploadedAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
+      'orgId': instance.orgId,
+      'bucketId': instance.bucketId,
+      'name': instance.name,
+      'fullPath': instance.fullPath,
+      'type': _$DocumentTypeEnumMap[instance.type]!,
+      'description': instance.description,
+      'attributes': instance.attributes,
+    };
+
+const _$DocumentTypeEnumMap = {
+  DocumentType.pdf: 'pdf',
+  DocumentType.doc: 'doc',
+  DocumentType.sheet: 'sheet',
+  DocumentType.md: 'md',
+  DocumentType.txt: 'txt',
+  DocumentType.csv: 'csv',
+};
+
 _Bucket _$BucketFromJson(Map<String, dynamic> json) => _Bucket(
   bucketId: json['bucketId'] as String?,
   orgId: json['orgId'] as String,
@@ -66,14 +109,6 @@ Map<String, dynamic> _$BucketToJson(_Bucket instance) => <String, dynamic>{
   'fileTypes':
       instance.fileTypes.map((e) => _$DocumentTypeEnumMap[e]!).toList(),
   'attributes': instance.attributes,
-};
-
-const _$DocumentTypeEnumMap = {
-  DocumentType.pdf: 'pdf',
-  DocumentType.doc: 'doc',
-  DocumentType.sheet: 'sheet',
-  DocumentType.md: 'md',
-  DocumentType.txt: 'txt',
 };
 
 TextAttribute _$TextAttributeFromJson(Map<String, dynamic> json) =>
@@ -157,37 +192,3 @@ Map<String, dynamic> _$OptionToJson(_Option instance) => <String, dynamic>{
   'id': instance.id,
   'value': instance.value,
 };
-
-_DocumentFile _$DocumentFileFromJson(Map<String, dynamic> json) =>
-    _DocumentFile(
-      orgId: json['orgId'] as String,
-      bucketId: json['bucketId'] as String,
-      name: json['name'] as String,
-      fileUrl: json['fileUrl'] as String,
-      type: $enumDecode(_$DocumentTypeEnumMap, json['type']),
-      description: json['description'] as String?,
-      fileId: json['fileId'] as String?,
-      uploadedAt:
-          json['uploadedAt'] == null
-              ? null
-              : DateTime.parse(json['uploadedAt'] as String),
-      updatedAt:
-          json['updatedAt'] == null
-              ? null
-              : DateTime.parse(json['updatedAt'] as String),
-      attributes: json['attributes'] as Map<String, dynamic>? ?? const {},
-    );
-
-Map<String, dynamic> _$DocumentFileToJson(_DocumentFile instance) =>
-    <String, dynamic>{
-      'fileId': instance.fileId,
-      'uploadedAt': instance.uploadedAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
-      'orgId': instance.orgId,
-      'bucketId': instance.bucketId,
-      'name': instance.name,
-      'fileUrl': instance.fileUrl,
-      'type': _$DocumentTypeEnumMap[instance.type]!,
-      'description': instance.description,
-      'attributes': instance.attributes,
-    };

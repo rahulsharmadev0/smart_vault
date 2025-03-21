@@ -3,24 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_suite/flutter_suite.dart';
 import 'package:intl/intl.dart';
 import 'package:repositories/models.dart';
+import 'package:storage_service/storage_task_widget.dart';
 
-class DocumentTile extends StatelessWidget {
-  final DocumentFile documentFile;
+class SyncUploadDocumentTile extends StorageTaskWidget {
   final VoidCallback? onAiChat;
   final VoidCallback? onShare;
-  final VoidCallback? onDownload;
-  final VoidCallback? onDelete;
-  const DocumentTile({
+  const SyncUploadDocumentTile({
     super.key,
+    required super.task,
     this.onAiChat,
     this.onShare,
-    this.onDownload,
-    this.onDelete,
-    required this.documentFile,
+    super.onDownload,
+    super.onDelete,
   });
 
   @override
-  Widget build(context) {
+  Widget buildContent(context, asyncSnapshot) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -33,8 +31,8 @@ class DocumentTile extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          buildThumbnail(context),
-          Expanded(child: innerContent(context)),
+          buildThumbnail(context, task.snapshot.ref.name),
+          Expanded(child: innerContent(context, task.snapshot.ref.name)),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [buildDateTimeStamp(context), buildActions(context)],
@@ -44,42 +42,39 @@ class DocumentTile extends StatelessWidget {
     );
   }
 
-  Container buildThumbnail(BuildContext context) {
+  Container buildThumbnail(BuildContext context, String name) {
+    var ext = task.snapshot.ref.name.split('.').last.toLowerCase();
     return Container(
-      width: 1284,
-      height: 200,
+      width: 92,
+      height: 92,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(18)),
-      child: documentFile.type.icon.svg(),
+      child: DocumentType.values
+          .map((e) {
+            if (e.extension == ext) {
+              return e.icon.svg();
+            }
+            return null;
+          })
+          .firstWhere((element) => element != null, orElse: () => Assets.svg.txt.svg()),
     );
   }
 
-  Column innerContent(BuildContext context) {
+  Column innerContent(BuildContext context, String name) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 4,
       children: [
-        Text(
-          documentFile.name,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: context.TxT.h2,
-        ),
-        Text(
-          documentFile.name,
-          style: context.TxT.b2,
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
-        ),
+        Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: context.TxT.h2),
       ],
     );
   }
 
   Widget buildDateTimeStamp(BuildContext context) {
     return Text(
-      DateFormat('dd MMM yyyy').format(documentFile.uploadedAt),
+      DateFormat('dd MMM yyyy').format(DateTime.now()),
       style: context.TxT.b2?.copyWith(color: const Color(0xFF828282)),
     );
   }

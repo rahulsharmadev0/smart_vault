@@ -9,7 +9,7 @@ import 'save_as/save_as.dart';
 import 'package:storage_service/utils.dart';
 import 'package:uuid/uuid.dart';
 
-class FileStorageManager {
+class StorageManager {
   final ValueNotifier<List<UploadTask>> _uploadTasks = ValueNotifier(const []);
 
   ValueNotifier<List<UploadTask>> get uploadTasks => _uploadTasks;
@@ -74,8 +74,7 @@ class FileStorageManager {
     await saveAsBytes(bytes!, ref.name);
   }
 
-  Future<String> downloadLink(Reference ref) async =>
-      await ref.getDownloadURL();
+  Future<String> downloadLink(Reference ref) async => await ref.getDownloadURL();
 
   Future<void> downloadFile(Reference ref) async {
     // code here
@@ -89,8 +88,6 @@ class FileStorageManager {
 
   Future<void> deleteAll(List<Reference> refs) async =>
       await refs.map((e) => e.delete()).wait;
-
-  
 
   /*----------------Usefull utility---------------- */
   /// Displays the current transferred percentage.

@@ -1,39 +1,81 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Storage Service
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A Flutter package that provides a simple interface for interacting with Firebase Storage.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Upload files to Firebase Storage
+- Download files from Firebase Storage
+- Delete files from Firebase Storage
+- Track upload progress with UI components
+- File type detection and handling
+- Web support with proper file saving
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+1. Add this package to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  storage_service: ^0.0.1
+```
+
+2. Make sure your app is initialized with Firebase:
+
+```dart
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+```dart
+// Create a storage service instance
+final storageService = StorageService();
+
+// Pick files from device
+final files = await storageService.pickFiles(
+  allowedExtensions: ['pdf', 'doc', 'docx']
+);
+
+// Upload files
+storageService.uploadFiles(files);
+
+// Get download URL
+final ref = FirebaseStorage.instance.ref().child('path/to/file');
+final url = await storageService.getDownloadURL(ref);
+
+// Download file
+await storageService.downloadBytes(ref);
+
+// Delete file
+await storageService.deleteFile(ref);
+```
+
+### Tracking uploads
+
+The service provides a ValueNotifier to track uploads:
 
 ```dart
-const like = 'sample';
+ValueListenableBuilder<List<UploadTask>>(
+  valueListenable: storageService.uploadTasks,
+  builder: (context, tasks, _) {
+    return ListView.builder(
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final task = tasks[index];
+        return YourUploadTaskWidget(
+          task: task,
+          onDismissed: () => storageService.removeTask(index),
+          // ...other callbacks
+        );
+      },
+    );
+  },
+),
 ```
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+This package is designed to be used with Firebase Storage. Make sure you have Firebase correctly set up in your project before using this package.

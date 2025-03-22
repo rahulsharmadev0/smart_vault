@@ -6,16 +6,12 @@ class OrganizationCache<Data> extends HiveCache<List<Organization>>
 
   @override
   FutureOr<void> create(Organization organization) {
-    List<Organization> oldCache = List.of(cache);
-    oldCache.add(organization);
-    cache = oldCache;
+    cache = [...cache, organization];
   }
 
   @override
   FutureOr<void> delete(String orgId) {
-    List<Organization> oldCache = List.of(cache);
-    oldCache.removeWhere((org) => org.orgId == orgId);
-    cache = oldCache;
+    cache = cache = [...cache]..removeWhere((org) => org.orgId == orgId);
   }
 
   @override
@@ -24,7 +20,7 @@ class OrganizationCache<Data> extends HiveCache<List<Organization>>
 
   @override
   FutureOr<void> updateDescription(String orgId, String newDescription) {
-    List<Organization> oldCache = List.of(cache);
+    List<Organization> oldCache = [...cache];
     final index = oldCache.indexWhere((org) => org.orgId == orgId);
     if (index != -1) {
       Organization oldOrg = oldCache[index];
@@ -35,7 +31,7 @@ class OrganizationCache<Data> extends HiveCache<List<Organization>>
 
   @override
   FutureOr<void> updateName(String orgId, String newName) {
-    List<Organization> oldCache = List.of(cache);
+    List<Organization> oldCache = [...cache];
     final index = oldCache.indexWhere((org) => org.orgId == orgId);
     if (index != -1) {
       Organization oldOrg = oldCache[index];
@@ -45,9 +41,10 @@ class OrganizationCache<Data> extends HiveCache<List<Organization>>
   }
 
   @override
-  List<Organization> fromJson(Map<String, dynamic> json) => [
-    for (final org in json['organizations'] ?? []) Organization.fromJson(org),
-  ];
+  List<Organization> fromJson(Map<String, dynamic> json) =>
+      List.from(
+        json['organizations'] ?? [],
+      ).map((org) => Organization.fromJson(Map.from(org))).toList();
 
   @override
   Map<String, dynamic> toJson(List<Organization> cache) => {

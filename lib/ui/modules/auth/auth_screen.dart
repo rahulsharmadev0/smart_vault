@@ -14,9 +14,9 @@ class AuthScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => AuthFormCubit(),
       child: BlocListener<AuthFormCubit, AuthFormState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state.formState == FormSubmissionStatus.success) {
-            GoRouter.of(context).refresh();
+            context.go('/');
           }
         },
         child: AppScaffold(

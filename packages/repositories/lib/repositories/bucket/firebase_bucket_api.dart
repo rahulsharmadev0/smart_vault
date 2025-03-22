@@ -13,12 +13,16 @@ class BucketApi extends ApiBase implements BucketBase {
 
   @override
   Future<void> update(Bucket bucket) async {
-    await orgRef.child(bucket.bucketId).update(bucket.toJson());
+    await handleErrors(() async {
+      await orgRef.child(bucket.bucketId).update(bucket.toJson());
+    }, 'Failed to update bucket');
   }
 
   @override
   Future<void> delete(String bucketId) async {
-    await orgRef.child(bucketId).remove();
+    await handleErrors(() async {
+      await orgRef.child(bucketId).remove();
+    }, 'Failed to delete bucket');
   }
 
   @override
@@ -38,15 +42,21 @@ class BucketApi extends ApiBase implements BucketBase {
 
   @override
   Future<void> updateAttributes(String bucketId, List<Attribute> attributes) async {
-    await orgRef
-        .child(bucketId)
-        .child('attributes')
-        .set(attributes.map((e) => e.toJson()).toList());
+    await handleErrors(
+      () async => await orgRef
+          .child(bucketId)
+          .child('attributes')
+          .set(attributes.map((e) => e.toJson()).toList()),
+      'Failed to update attributes',
+    );
   }
 
   @override
   Future<void> updateDescription(String bucketId, String description) async {
-    await orgRef.child(bucketId).child('description').set(description);
+    await handleErrors(
+      () async => await orgRef.child(bucketId).child('description').set(description),
+      'Failed to update description',
+    );
   }
 
   @override

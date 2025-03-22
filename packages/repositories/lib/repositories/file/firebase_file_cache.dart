@@ -5,16 +5,12 @@ class FileCache extends HiveCache<List<DocumentFile>> implements FileBase {
 
   @override
   FutureOr<void> create(DocumentFile file) {
-    final List<DocumentFile> oldcache = List.of(cache);
-    oldcache.add(file);
-    cache = oldcache;
+    cache = [...cache, file];
   }
 
   @override
   FutureOr<void> delete(String fileId) {
-    final List<DocumentFile> oldcache = List.of(cache);
-    oldcache.removeWhere((file) => file.fileId == fileId);
-    cache = oldcache;
+    cache = [...cache].where((file) => file.fileId != fileId).toList();
   }
 
   @override
@@ -28,7 +24,7 @@ class FileCache extends HiveCache<List<DocumentFile>> implements FileBase {
 
   @override
   FutureOr<void> update(DocumentFile file) {
-    final List<DocumentFile> oldcache = List.of(cache);
+    List<DocumentFile> oldcache = [...cache];
     final index = oldcache.indexWhere((f) => f.fileId == file.fileId);
     if (index != -1) {
       oldcache[index] = file;
@@ -37,12 +33,13 @@ class FileCache extends HiveCache<List<DocumentFile>> implements FileBase {
   }
 
   @override
-  List<DocumentFile> fromJson(Map<String, dynamic> json) => [
-    for (final file in json['files'] ?? []) DocumentFile.fromJson(file),
-  ];
+  List<DocumentFile> fromJson(Map<String, dynamic> json) =>
+      List.from(
+        json['files'] ?? [],
+      ).map((file) => DocumentFile.fromJson(Map.from(file))).toList();
 
   @override
-  Map<String, dynamic> toJson(List<DocumentFile> cache) => {
+  Map<String, dynamic> toJson(List<DocumentFile> cache) => Map.from({
     'files': [for (final file in cache) file.toJson()],
-  };
+  });
 }

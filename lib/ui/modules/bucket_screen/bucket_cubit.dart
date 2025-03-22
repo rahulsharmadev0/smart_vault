@@ -66,6 +66,10 @@ class BucketCubit extends Cubit<BucketState> {
 
   void onLoadBuckets() async {
     emit(BucketLoading());
+    if (bucketId.trim().isEmpty) {
+      emit(BucketNotFound());
+      return;
+    }
     try {
       final bucket = await bucketRepo.getBucketById(bucketId);
       if (bucket != null) {

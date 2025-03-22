@@ -156,7 +156,7 @@ class AttributeManagementBloc
     var bucket2 = bucket!.copyWith(
       attributes: [...state.fixedAttributes, ...state.customAttributes],
     );
-    bucketRepo.update(bucket2);
+    await bucketRepo.update(bucket2);
     emit(
       AttributeManagementState.submittedSuccessfully(
         fixedAttributes: state.fixedAttributes,

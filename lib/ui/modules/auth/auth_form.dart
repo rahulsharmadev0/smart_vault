@@ -76,10 +76,7 @@ class AuthenticationForm extends BlocWidget<AuthFormCubit, AuthFormState> {
 
           const SizedBox(height: 24),
 
-          _ActionButtons(
-            isSignInMode: isSignInMode,
-            isValid: isSignInMode ? state.isValidSignIn : state.isValidCreateAccount,
-          ),
+          _ActionButtons(),
         ],
       ),
     );
@@ -144,29 +141,25 @@ class _FormField extends StatelessWidget {
   }
 }
 
-class _ActionButtons extends StatelessWidget {
-  final bool isSignInMode;
-  final bool isValid;
-
-  const _ActionButtons({required this.isSignInMode, required this.isValid});
-
+class _ActionButtons extends BlocWidget<AuthFormCubit, AuthFormState> {
   @override
-  Widget build(BuildContext context) {
-    var cubit = context.read<AuthFormCubit>();
-    var newVariable = isSignInMode ? cubit.signIn : cubit.createAccount;
+  Widget build(BuildContext context, bloc, state) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         TextButton(
           key: const Key('toggle_auth_mode'),
-          onPressed: cubit.toggleForm,
-          child: Text(isSignInMode ? 'Create account' : 'Sign In'),
+          onPressed: bloc.toggleForm,
+          child: Text(state.isSignInMode ? 'Create account' : 'Sign In'),
         ),
         const SizedBox(width: 12),
         FilledButton(
           key: const Key('sign_in-register'),
-          onPressed: !isValid ? null : newVariable,
-          child: Text(isSignInMode ? 'Sign In' : 'Register'),
+          onPressed:
+              state.isSignInMode
+                  ? (state.isValidSignIn ? bloc.signIn : null)
+                  : (state.isValidCreateAccount ? bloc.createAccount : null),
+          child: Text(state.isSignInMode ? 'Sign In' : 'Register'),
         ),
       ],
     );

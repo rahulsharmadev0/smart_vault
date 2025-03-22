@@ -7,7 +7,6 @@ import 'package:edukit/ui/utils/streamtolistenable.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:repositories/repositories.dart';
-import 'package:flutter_suite/flutter_suite.dart';
 
 final class AppRoutes with PathRoutes {
   AppRoutes._();
@@ -20,7 +19,7 @@ final class AppRoutes with PathRoutes {
 
   late final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: '/',
+    initialLocation: home(),
     debugLogDiagnostics: true,
     observers: [RouteObserver()],
     refreshListenable: StreamToListenable(authRepo.isSignedIn),
@@ -30,6 +29,7 @@ final class AppRoutes with PathRoutes {
       if (!authRepo.hasActiveSession && !isAuthRoute) {
         return '/auth';
       }
+
       // Default - no redirection needed
       return null;
     },
@@ -40,22 +40,23 @@ final class AppRoutes with PathRoutes {
         name: 'auth',
         builder: (context, state) => const AuthScreen(),
       ),
+
       ShellRoute(
         navigatorKey: shellNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         builder: (context, state, child) => AppScaffold(body: child),
         routes: [
-          GoRoute(
-            path: '/create-bucket',
-            name: 'create-bucket',
-            builder: (context, state) => const CreateOrEditBucketScreen(),
-          ),
-
           GoRoute(
             path: '/attribute-management/:bucketId',
             name: 'attribute-management',
             builder:
                 (_, state) =>
                     AttributeManagementScreen(state.pathParameters['bucketId']!),
+          ),
+          GoRoute(
+            path: '/create-bucket',
+            name: 'create-bucket',
+            builder: (context, state) => const CreateOrEditBucketScreen(),
           ),
 
           GoRoute(
@@ -68,7 +69,7 @@ final class AppRoutes with PathRoutes {
           GoRoute(
             path: '/',
             name: 'home',
-            builder: (context, state) => BucketScreen(bucketId: "s"),
+            builder: (context, state) => BucketScreen(bucketId: ""),
           ),
         ],
       ),

@@ -3,9 +3,8 @@ import 'package:dart_suite/dart_suite.dart';
 import 'package:edukit/ui/utils/form_submission_status.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:repositories/models/organization.dart';
 import 'package:repositories/repositories.dart';
-
-
 
 class AuthFormState with EquatableMixin {
   final String organisationName;
@@ -74,8 +73,11 @@ class AuthFormState with EquatableMixin {
       email.regMatch(regPatterns.email) &&
       password == confirmPassword;
 
-  AuthFormState toggleMode() =>
-      copyWith(isSignInMode: !isSignInMode, msg: null, formState: FormSubmissionStatus.initial);
+  AuthFormState toggleMode() => copyWith(
+    isSignInMode: !isSignInMode,
+    msg: null,
+    formState: FormSubmissionStatus.initial,
+  );
 }
 
 class AuthFormCubit extends Cubit<AuthFormState> {
@@ -83,15 +85,25 @@ class AuthFormCubit extends Cubit<AuthFormState> {
 
   Stream<bool> get authState => authRepo.isSignedIn;
 
-  void createAccount() {
-    if (state.isValidCreateAccount) {
-      emit(state.copyWith(formState: FormSubmissionStatus.inProgress));
-      authRepo
-          .signUp(state.organisationName, state.email, state.password)
-          .then((_) => emit(state.copyWith(formState: FormSubmissionStatus.success)))
-          .catchError(
-            (e) => emit(state.copyWith(formState: FormSubmissionStatus.failure, msg: e.toString())),
-          );
+  Future<void> createAccount() async {
+    if (!state.isValidCreateAccount) return;
+
+    emit(state.copyWith(formState: FormSubmissionStatus.inProgress));
+
+    try {
+      await authRepo.signUp(state.email, state.password, state.organisationName);
+
+      final organization = Organization(
+        orgId: authRepo.currentUser!.uid,
+        name: state.organisationName,
+        email: state.email,
+      );
+
+      await orgRepo.create(organization);
+
+      emit(state.copyWith(formState: FormSubmissionStatus.success));
+    } catch (e) {
+      emit(state.copyWith(formState: FormSubmissionStatus.failure, msg: e.toString()));
     }
   }
 
@@ -102,7 +114,9 @@ class AuthFormCubit extends Cubit<AuthFormState> {
           .signIn(state.email, state.password)
           .then((_) => emit(state.copyWith(formState: FormSubmissionStatus.success)))
           .catchError(
-            (e) => emit(state.copyWith(formState: FormSubmissionStatus.failure, msg: e.toString())),
+            (e) => emit(
+              state.copyWith(formState: FormSubmissionStatus.failure, msg: e.toString()),
+            ),
           );
     }
   }

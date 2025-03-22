@@ -35,49 +35,52 @@ class BucketScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => BucketCubit(bucketId)..onLoadBuckets()),
-        BlocProvider(
-          create: (context) => FilesCubit(fileRepository: context.read<FileRepository>()),
-        ),
+        BlocProvider(create: (context) => FilesCubit(fileRepository: fileRepo)),
       ],
-      child: BlocConsumer<BucketCubit, BucketState>(
-        listener: (context, state) {
-          if (state is BucketNotFound) {
-            context.go(AppRoutes.I.createBucket());
-          } else if (state is BucketLoaded) {
-            if (state.bucket.attributes.isEmpty) {
-              context.go(AppRoutes.I.attributeManagement(state.bucket.bucketId));
-            } else {
-              // Load files when bucket is loaded
-              context.read<FilesCubit>().loadFiles(state.bucket.bucketId);
-            }
-          }
-        },
-        builder: (context, state) {
-          if (state is BucketLoading) {
-            return const AppScaffold(
-              titleText: 'Loading Bucket...',
-              body: Center(child: CircularProgressIndicator()),
-            );
-          } else if (state is BucketError) {
-            return AppScaffold(
-              titleText: 'Error',
-              body: Center(child: Text('Error: ${state.error}')),
-            );
-          } else if (state is BucketNotFound) {
-            return const AppScaffold(
-              titleText: 'Bucket Not Found',
-              body: Center(child: Text('Bucket not found')),
-            );
-          } else if (state is BucketLoaded) {
-            return RepositoryProvider.value(
-              value: state.bucket,
-              child: const _BucketLayout(),
-            );
-          }
-
-          return const AppScaffold(
-            titleText: 'Unknown State',
-            body: Center(child: Text('Unknown state')),
+      child: Builder(
+        builder: (context) {
+          return BlocListener<BucketCubit, BucketState>(
+            listener: (context, state) {
+              if (state is BucketNotFound) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  context.go(AppRoutes.I.createBucket());
+                });
+              } else if (state is BucketLoaded) {
+                if (state.bucket.attributes.isEmpty) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    context.go(AppRoutes.I.attributeManagement(state.bucket.bucketId));
+                  });
+                } else {
+                  context.read<FilesCubit>().loadFiles(state.bucket.bucketId);
+                }
+              }
+            },
+            child: BlocBuilder<BucketCubit, BucketState>(
+              builder: (context, state) {
+                return switch (state) {
+                  BucketLoading _ => const AppScaffold(
+                    titleText: 'Loading Bucket...',
+                    body: Center(child: CircularProgressIndicator()),
+                  ),
+                  BucketError _ => AppScaffold(
+                    titleText: 'Error',
+                    body: Center(child: Text('Error: ${state.error}')),
+                  ),
+                  BucketNotFound _ => const AppScaffold(
+                    titleText: 'Bucket Not Found',
+                    body: Center(child: Text('Bucket not found')),
+                  ),
+                  BucketLoaded _ => RepositoryProvider.value(
+                    value: state.bucket,
+                    child: const _BucketLayout(),
+                  ),
+                  _ => AppScaffold(
+                    titleText: 'Unknown State',
+                    body: Center(child: Text('Unknown state')),
+                  ),
+                };
+              },
+            ),
           );
         },
       ),
@@ -188,8 +191,9 @@ class BucketResultBody extends StatelessWidget {
       children: [
         // Display files being uploaded
         ValueListenableBuilder(
-          valueListenable: StorageManager().uploadTasks,
+          valueListenable: StorageService().uploadTasks,
           builder: (context, tasks, __) {
+            print('tasks: $tasks');
             if (tasks.isEmpty) return const SizedBox.shrink();
 
             return Expanded(

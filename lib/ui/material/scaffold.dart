@@ -1,6 +1,8 @@
 import 'package:edukit/ui/material/navigation_rail.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:repositories/repositories.dart';
 
 class AppScaffold extends StatelessWidget {
   final Widget body;
@@ -43,6 +45,10 @@ class AppScaffold extends StatelessWidget {
     );
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => authRepo.signOut(),
+        child: const Icon(Icons.exit_to_app),
+      ),
       body: Container(
         decoration: decoration,
         child:

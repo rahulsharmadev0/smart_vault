@@ -7,6 +7,7 @@ mixin ErrorHandlingMixin {
       return await operation();
     } catch (e) {
       final prefix = errorPrefix != null ? '$errorPrefix: ' : '';
+      print('$prefix${e.toString()}');
       throw Exception('$prefix${e.toString()}');
     }
   }

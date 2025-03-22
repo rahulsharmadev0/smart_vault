@@ -21,8 +21,6 @@ String getContentType(String extension) {
   }
 }
 
-
 extension XFileExtension on XFile {
-  String get extension => path.trim().split('.').last.toLowerCase();
+  String get extension => name.trim().split('.').last.toLowerCase();
 }
-

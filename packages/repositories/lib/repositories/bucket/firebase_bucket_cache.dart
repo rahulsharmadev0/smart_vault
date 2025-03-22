@@ -5,16 +5,12 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
 
   @override
   FutureOr<void> create(Bucket bucket) {
-    List<Bucket> oldcache = List.of(cache);
-    oldcache.add(bucket);
-    cache = oldcache;
+    cache = [...cache, bucket];
   }
 
   @override
   FutureOr<void> delete(String bucketId) {
-    List<Bucket> oldcache = List.of(cache);
-    oldcache.removeWhere((bucket) => bucket.bucketId == bucketId);
-    cache = oldcache;
+    cache = [...cache].where((bucket) => bucket.bucketId != bucketId).toList();
   }
 
   @override
@@ -28,7 +24,7 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
 
   @override
   FutureOr<void> update(Bucket bucket) {
-    List<Bucket> oldcache = List.of(cache);
+    List<Bucket> oldcache = [...cache];
     final index = oldcache.indexWhere((b) => b.bucketId == bucket.bucketId);
     if (index != -1) {
       oldcache[index] = bucket;
@@ -38,7 +34,7 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
 
   @override
   FutureOr<void> updateAttributes(String bucketId, List<Attribute> attributes) {
-    List<Bucket> oldcache = List.of(cache);
+    List<Bucket> oldcache = [...cache];
     final index = oldcache.indexWhere((b) => b.bucketId == bucketId);
     if (index != -1) {
       Bucket oldcache2 = oldcache[index];
@@ -49,7 +45,7 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
 
   @override
   FutureOr<void> updateDescription(String bucketId, String description) {
-    List<Bucket> oldcache = List.of(cache);
+    List<Bucket> oldcache = [...cache];
     final index = oldcache.indexWhere((b) => b.bucketId == bucketId);
     if (index != -1) {
       Bucket oldcache2 = oldcache[index];
@@ -60,7 +56,7 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
 
   @override
   FutureOr<void> updateFileTypes(String bucketId, List<DocumentType> fileTypes) {
-    List<Bucket> oldcache = List.of(cache);
+    List<Bucket> oldcache = [...cache];
     final index = oldcache.indexWhere((b) => b.bucketId == bucketId);
     if (index != -1) {
       Bucket oldcache2 = oldcache[index];
@@ -71,7 +67,7 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
 
   @override
   FutureOr<void> updateTitle(String bucketId, String title) {
-    List<Bucket> oldcache = List.of(cache);
+    List<Bucket> oldcache = [...cache];
     final index = oldcache.indexWhere((b) => b.bucketId == bucketId);
     if (index != -1) {
       Bucket oldcache2 = oldcache[index];
@@ -82,10 +78,12 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
 
   @override
   Map<String, dynamic> toJson(List<Bucket> cache) => {
-    'buckets': [for (final bucket in cache) bucket.toJson()],
+    'buckets': json.encode([for (final bucket in cache) bucket.toJson()]),
   };
+
   @override
-  List<Bucket> fromJson(Map<String, dynamic> json) => [
-    for (final bucket in json['buckets'] ?? []) Bucket.fromJson(bucket),
-  ];
+  List<Bucket> fromJson(Map<String, dynamic> json) =>
+      List.from(
+        jsonDecode(json['buckets'] ?? []),
+      ).map((bucket) => Bucket.fromJson(Map.from(bucket))).toList();
 }

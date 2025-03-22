@@ -26,8 +26,9 @@ class StorageManager {
       allowedExtensions: allowedExtensions,
       allowCompression: false,
       lockParentWindow: true,
+      type: FileType.custom,
     );
-    if (result != null && result.files.isNotEmpty) {
+    if (result != null && result.xFiles.isNotEmpty) {
       return result.xFiles;
     }
     throw Exception('No files selected');

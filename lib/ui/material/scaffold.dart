@@ -45,10 +45,6 @@ class AppScaffold extends StatelessWidget {
     );
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => authRepo.signOut(),
-        child: const Icon(Icons.exit_to_app),
-      ),
       body: Container(
         decoration: decoration,
         child:

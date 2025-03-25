@@ -4,6 +4,37 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:repositories/repositories.dart';
 
+abstract class BucketEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+class LoadBucket extends BucketEvent {}
+
+class UpdateTitle extends BucketEvent {
+  final String title;
+  UpdateTitle(this.title);
+
+  @override
+  List<Object?> get props => [title];
+}
+
+class UpdateDescription extends BucketEvent {
+  final String description;
+  UpdateDescription(this.description);
+
+  @override
+  List<Object?> get props => [description];
+}
+
+class UpdateAttributes extends BucketEvent {
+  final List<Attribute> attributes;
+  UpdateAttributes(this.attributes);
+
+  @override
+  List<Object?> get props => [attributes];
+}
+
 abstract class BucketState extends Equatable {
   @override
   List<Object?> get props => [];
@@ -19,7 +50,10 @@ class BucketLoaded extends BucketState {
   List<Object?> get props => [bucket];
 }
 
-class BucketNotFound extends BucketState {}
+class BucketNotFound extends BucketState {
+  @override
+  List<Object?> get props => ['Bucket not found'];
+}
 
 class BucketError extends BucketState {
   final String error;
@@ -29,42 +63,40 @@ class BucketError extends BucketState {
   List<Object?> get props => [error];
 }
 
-/// Use bucketRepo
-class BucketCubit extends Cubit<BucketState> {
+class BucketBloc extends Bloc<BucketEvent, BucketState> {
   final String bucketId;
+  final BucketRepository bucketRepo;
   StreamSubscription<List<Bucket>>? _bucketSubscription;
   Bucket? _cachedBucket;
 
-  BucketCubit(this.bucketId) : super(BucketLoading()) {
-    // Subscribe to bucket changes if the repository provides a stream
+  BucketBloc(this.bucketId, this.bucketRepo) : super(BucketLoading()) {
+    on<LoadBucket>(_onLoadBucket);
+    on<UpdateTitle>(_onUpdateTitle);
+    on<UpdateDescription>(_onUpdateDescription);
+    on<UpdateAttributes>(_onUpdateAttributes);
+
     _setupSubscription();
   }
 
   void _setupSubscription() {
     try {
       _bucketSubscription = bucketRepo.dataStream.listen((buckets) {
-        // If we already have a loaded state, update it if our bucket changed
-        if (state is BucketLoaded) {
-          final currentBucket = buckets.firstWhere(
-            (b) => b.bucketId == bucketId,
-            orElse: () => _cachedBucket!,
-          );
+        final currentBucket = buckets.firstWhere(
+          (b) => b.bucketId == bucketId,
+          orElse: () => _cachedBucket!,
+        );
 
-          if (currentBucket != _cachedBucket) {
-            _cachedBucket = currentBucket;
-            emit(BucketLoaded(currentBucket));
-          }
-        } else {
-          // Otherwise load fresh
-          onLoadBuckets();
+        if (currentBucket != _cachedBucket) {
+          _cachedBucket = currentBucket;
+          add(LoadBucket());
         }
-      }, onError: (error) => emit(BucketError(error.toString())));
+      }, onError: (error) => addError(error.toString()));
     } catch (e) {
       // Repository might not support streaming, fallback to one-time load
     }
   }
 
-  void onLoadBuckets() async {
+  Future<void> _onLoadBucket(LoadBucket event, Emitter<BucketState> emit) async {
     emit(BucketLoading());
     if (bucketId.trim().isEmpty) {
       emit(BucketNotFound());
@@ -83,14 +115,13 @@ class BucketCubit extends Cubit<BucketState> {
     }
   }
 
-  void updateTitle(String title) async {
+  Future<void> _onUpdateTitle(UpdateTitle event, Emitter<BucketState> emit) async {
     if (_cachedBucket == null) return;
 
     try {
-      await bucketRepo.updateTitle(bucketId, title);
-      // If no stream is available, manually update state
+      await bucketRepo.updateTitle(bucketId, event.title);
       if (_bucketSubscription == null) {
-        _cachedBucket = _cachedBucket!.copyWith(title: title);
+        _cachedBucket = _cachedBucket!.copyWith(title: event.title);
         emit(BucketLoaded(_cachedBucket!));
       }
     } catch (e) {
@@ -98,14 +129,16 @@ class BucketCubit extends Cubit<BucketState> {
     }
   }
 
-  void updateDescription(String description) async {
+  Future<void> _onUpdateDescription(
+    UpdateDescription event,
+    Emitter<BucketState> emit,
+  ) async {
     if (_cachedBucket == null) return;
 
     try {
-      await bucketRepo.updateDescription(bucketId, description);
-      // If no stream is available, manually update state
+      await bucketRepo.updateDescription(bucketId, event.description);
       if (_bucketSubscription == null) {
-        _cachedBucket = _cachedBucket!.copyWith(description: description);
+        _cachedBucket = _cachedBucket!.copyWith(description: event.description);
         emit(BucketLoaded(_cachedBucket!));
       }
     } catch (e) {
@@ -113,24 +146,21 @@ class BucketCubit extends Cubit<BucketState> {
     }
   }
 
-  void updateAttributes(List<Attribute> attributes) async {
+  Future<void> _onUpdateAttributes(
+    UpdateAttributes event,
+    Emitter<BucketState> emit,
+  ) async {
     if (_cachedBucket == null) return;
 
     try {
-      await bucketRepo.updateAttributes(bucketId, attributes);
-      // If no stream is available, manually update state
+      await bucketRepo.updateAttributes(bucketId, event.attributes);
       if (_bucketSubscription == null) {
-        _cachedBucket = _cachedBucket!.copyWith(attributes: attributes);
+        _cachedBucket = _cachedBucket!.copyWith(attributes: event.attributes);
         emit(BucketLoaded(_cachedBucket!));
       }
     } catch (e) {
       emit(BucketError('Failed to update attributes: ${e.toString()}'));
     }
-  }
-
-  // Refresh bucket data manually
-  void refresh() {
-    onLoadBuckets();
   }
 
   @override

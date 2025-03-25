@@ -4,7 +4,7 @@ import 'package:bloc_suite/bloc_suite.dart';
 import 'package:edukit/ui/app/routes.dart';
 import 'package:edukit/ui/material/scaffold.dart';
 import 'package:edukit/ui/modules/attribute_management/attribute_management_bloc.dart';
-import 'package:edukit/ui/widgets/attribute_dialog.dart';
+import 'package:edukit/ui/modules/attribute_management/attribute_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -64,40 +64,56 @@ class AddAttributeButton
     extends BlocWidget<AttributeManagementBloc, AttributeManagementState> {
   const AddAttributeButton({super.key});
 
+  void onTap(
+    AttributeManagementBloc bloc,
+    BuildContext context,
+    AttributeType type,
+  ) async {
+    Attribute? attribute = switch (type) {
+      AttributeType.text => await showDialog<Attribute?>(
+        context: context,
+        builder: (ctx) => AttributeDialog(attribute: Attribute.text(label: '')),
+      ),
+      AttributeType.singleSelect => await showDialog<Attribute?>(
+        context: context,
+        builder:
+            (ctx) => AttributeDialog(
+              attribute: Attribute.singleSelect(label: '', options: []),
+            ),
+      ),
+      AttributeType.multiSelect => await showDialog<Attribute?>(
+        context: context,
+        builder:
+            (ctx) =>
+                AttributeDialog(attribute: Attribute.multiSelect(label: '', options: [])),
+      ),
+      AttributeType.dateTime => await showDialog<Attribute?>(
+        context: context,
+        builder:
+            (ctx) => AttributeDialog(
+              attribute: Attribute.dateTime(
+                label: '',
+                firstDate: DateTime.now(),
+                lastDate: DateTime.now(),
+              ),
+            ),
+      ),
+    };
+
+    if (attribute != null) {
+      bloc.add(AttributeManagementEvent.add(attribute));
+    }
+  }
+
   @override
   Widget build(context, attributeManagementBloc, state) {
-    void onTap(AttributeType type) async {
-      Attribute? attribute = switch (type) {
-        AttributeType.text => await showDialog<Attribute?>(
-          context: context,
-          builder: (ctx) => AttributeDialog(),
-        ),
-        AttributeType.singleSelect => await showDialog<Attribute?>(
-          context: context,
-          builder: (ctx) => AttributeDialog.withOptions(),
-        ),
-        AttributeType.multiSelect => await showDialog<Attribute?>(
-          context: context,
-          builder: (ctx) => AttributeDialog.withOptions(),
-        ),
-        AttributeType.dateTime => await showDialog<Attribute?>(
-          context: context,
-          builder: (ctx) => AttributeDialog(),
-        ),
-      };
-
-      if (attribute != null) {
-        attributeManagementBloc.add(AttributeManagementEvent.add(attribute));
-      }
-    }
-
     return PopupMenuButton<AttributeType>(
       itemBuilder: (context) {
         return AttributeType.values.map((e) {
           return PopupMenuItem(value: e, child: Text('${e.name} Attribute'));
         }).toList();
       },
-      onSelected: onTap,
+      onSelected: (value) => onTap(attributeManagementBloc, context, value),
       borderRadius: BorderRadius.circular(8),
       style: FilledButton.styleFrom(),
       icon: Row(spacing: 4, children: [Icon(Icons.add), Text('Attribute')]),
@@ -133,7 +149,7 @@ class FixedAttributesListView extends _AttributeManagementBlocSelector {
             /// TODO: Need to optmize generate new Attribute with unique id
             final value = await showDialog<Attribute?>(
               context: context,
-              builder: (ctx) => AttributeDialog(label: state[index].label),
+              builder: (ctx) => AttributeDialog(attribute: state[index]),
             );
 
             if (value != null) {
@@ -177,12 +193,14 @@ class CustomAttributesListView extends _AttributeManagementBlocSelector {
             final value = await showDialog<Attribute?>(
               context: context,
               // TODO: Need to open correct dialog based on the attribute type
-              builder: (ctx) => AttributeDialog(label: state[index].label),
+              builder: (ctx) {
+                // TODO: Currently AttributeDialog not support dateTime Dialog
+                return AttributeDialog(attribute: state[index]);
+              },
             );
 
             if (value != null) {
-              var attribute = state[index].copyWith(label: value.label);
-              bloc.add(AttributeManagementEvent.update(attribute));
+              bloc.add(AttributeManagementEvent.update(value));
             }
           },
         );

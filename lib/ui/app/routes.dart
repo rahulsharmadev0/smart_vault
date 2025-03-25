@@ -5,6 +5,7 @@ import 'package:edukit/ui/modules/bucket_screen/bucket_screen.dart';
 import 'package:edukit/ui/modules/create_bucket/create_or_edit_bucket_screen.dart';
 import 'package:edukit/ui/utils/streamtolistenable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_suite/flutter_suite.dart';
 import 'package:go_router/go_router.dart';
 import 'package:repositories/repositories.dart';
 
@@ -21,7 +22,7 @@ final class AppRoutes with PathRoutes {
     navigatorKey: rootNavigatorKey,
     initialLocation: home(),
     debugLogDiagnostics: true,
-    observers: [RouteObserver()],
+    observers: [RouteNavigatorObserver()],
     refreshListenable: StreamToListenable(authRepo.isSignedIn),
     redirect: (context, state) {
       final isAuthRoute = state.matchedLocation == '/auth';

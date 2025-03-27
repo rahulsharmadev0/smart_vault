@@ -13,29 +13,37 @@ class SyncUploadDocumentTile extends StorageTaskWidget {
     required super.task,
     this.onAiChat,
     this.onShare,
-    super.onDownload,
-    super.onDelete,
   });
 
   @override
   Widget buildContent(context, asyncSnapshot) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: ShapeDecoration(
-        shape: RoundedRectangleBorder(
-          side: BorderSide(width: 2, color: const Color(0xFF828282)),
-          borderRadius: BorderRadius.circular(18),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      padding: 12.$.edges,
+      height: 92,
+      decoration: ShapeDecoration(shape: 18.$.rounded.shape),
+      child: Column(
         children: [
-          buildThumbnail(context, task.snapshot.ref.name),
-          Expanded(child: innerContent(context, task.snapshot.ref.name)),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [buildDateTimeStamp(context), buildActions(context)],
+          Expanded(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buildThumbnail(context, task.snapshot.ref.name),
+                Expanded(child: innerContent(context, task.snapshot.ref.name)),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildDateTimeStamp(context),
+                    Expanded(child: buildActions(context)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          LinearProgressIndicator(
+            value: task.snapshot.bytesTransferred / task.snapshot.totalBytes,
+            backgroundColor: context.colorScheme.primary.withAlpha(50),
+            valueColor: AlwaysStoppedAnimation<Color>(context.colorScheme.primary),
           ),
         ],
       ),
@@ -74,7 +82,7 @@ class SyncUploadDocumentTile extends StorageTaskWidget {
 
   Widget buildDateTimeStamp(BuildContext context) {
     return Text(
-      DateFormat('dd MMM yyyy').format(DateTime.now()),
+      DateFormat.yMEd().format(DateTime.now()),
       style: context.TxT.b2?.copyWith(color: const Color(0xFF828282)),
     );
   }

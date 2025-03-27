@@ -594,86 +594,38 @@ as List<Attribute>,
 
 
 class AMSubmittedSuccessfully with DiagnosticableTreeMixin implements AttributeManagementState {
-  const AMSubmittedSuccessfully({required final  List<Attribute> fixedAttributes, required final  List<Attribute> customAttributes}): _fixedAttributes = fixedAttributes,_customAttributes = customAttributes;
+  const AMSubmittedSuccessfully();
   
 
- final  List<Attribute> _fixedAttributes;
- List<Attribute> get fixedAttributes {
-  if (_fixedAttributes is EqualUnmodifiableListView) return _fixedAttributes;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_fixedAttributes);
-}
-
- final  List<Attribute> _customAttributes;
- List<Attribute> get customAttributes {
-  if (_customAttributes is EqualUnmodifiableListView) return _customAttributes;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_customAttributes);
-}
 
 
-/// Create a copy of AttributeManagementState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$AMSubmittedSuccessfullyCopyWith<AMSubmittedSuccessfully> get copyWith => _$AMSubmittedSuccessfullyCopyWithImpl<AMSubmittedSuccessfully>(this, _$identity);
 
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'AttributeManagementState.submittedSuccessfully'))
-    ..add(DiagnosticsProperty('fixedAttributes', fixedAttributes))..add(DiagnosticsProperty('customAttributes', customAttributes));
+    ;
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AMSubmittedSuccessfully&&const DeepCollectionEquality().equals(other._fixedAttributes, _fixedAttributes)&&const DeepCollectionEquality().equals(other._customAttributes, _customAttributes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AMSubmittedSuccessfully);
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_fixedAttributes),const DeepCollectionEquality().hash(_customAttributes));
+int get hashCode => runtimeType.hashCode;
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'AttributeManagementState.submittedSuccessfully(fixedAttributes: $fixedAttributes, customAttributes: $customAttributes)';
+  return 'AttributeManagementState.submittedSuccessfully()';
 }
 
 
 }
 
-/// @nodoc
-abstract mixin class $AMSubmittedSuccessfullyCopyWith<$Res> implements $AttributeManagementStateCopyWith<$Res> {
-  factory $AMSubmittedSuccessfullyCopyWith(AMSubmittedSuccessfully value, $Res Function(AMSubmittedSuccessfully) _then) = _$AMSubmittedSuccessfullyCopyWithImpl;
-@useResult
-$Res call({
- List<Attribute> fixedAttributes, List<Attribute> customAttributes
-});
 
 
-
-
-}
-/// @nodoc
-class _$AMSubmittedSuccessfullyCopyWithImpl<$Res>
-    implements $AMSubmittedSuccessfullyCopyWith<$Res> {
-  _$AMSubmittedSuccessfullyCopyWithImpl(this._self, this._then);
-
-  final AMSubmittedSuccessfully _self;
-  final $Res Function(AMSubmittedSuccessfully) _then;
-
-/// Create a copy of AttributeManagementState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? fixedAttributes = null,Object? customAttributes = null,}) {
-  return _then(AMSubmittedSuccessfully(
-fixedAttributes: null == fixedAttributes ? _self._fixedAttributes : fixedAttributes // ignore: cast_nullable_to_non_nullable
-as List<Attribute>,customAttributes: null == customAttributes ? _self._customAttributes : customAttributes // ignore: cast_nullable_to_non_nullable
-as List<Attribute>,
-  ));
-}
-
-
-}
 
 // dart format on

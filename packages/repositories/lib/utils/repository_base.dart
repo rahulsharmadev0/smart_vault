@@ -2,9 +2,14 @@ import 'package:repositories/cache/hive_cache.dart';
 
 /// Mixin to provide error handling behavior
 mixin ErrorHandlingMixin {
-  Future<T> handleErrors<T>(Future<T> Function() operation, [String? errorPrefix]) async {
+  Future<T> handleErrors<T, R>(
+    Future<T> Function(R? value) operation, [
+    R? value,
+    String? errorPrefix,
+  ]) async {
     try {
-      return await operation();
+      print('[Api] Executing operation: $operation with value: $value');
+      return await operation(value);
     } catch (e) {
       final prefix = errorPrefix != null ? '$errorPrefix: ' : '';
       print('$prefix${e.toString()}');

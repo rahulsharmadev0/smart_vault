@@ -96,10 +96,25 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
     }
   }
 
+  // This method is responsible for:
+  //
+  // Emits [BucketLoading] while loading.
+  // If `bucketId` is empty, fetches buckets by org ID:
+  //   - Emits [BucketNotFound] if none found.
+  //   - Otherwise, caches and emits the first bucket as [BucketLoaded].
+  // If `bucketId` is not empty, fetches bucket by ID:
+  //   - Emits [BucketLoaded] if found, or [BucketNotFound] if not.
+  // Emits [BucketError] on failure.
   Future<void> _onLoadBucket(LoadBucket event, Emitter<BucketState> emit) async {
     emit(BucketLoading());
     if (bucketId.trim().isEmpty) {
-      emit(BucketNotFound());
+      var buckets = await bucketRepo.getBucketsByOrgId(orgRepo.orgId!);
+      if (buckets.isEmpty) {
+        emit(BucketNotFound());
+      } else {
+        _cachedBucket = buckets.first;
+        emit(BucketLoaded(_cachedBucket!));
+      }
       return;
     }
     try {

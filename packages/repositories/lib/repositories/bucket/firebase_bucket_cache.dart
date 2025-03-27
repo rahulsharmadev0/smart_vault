@@ -37,9 +37,8 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
     List<Bucket> oldcache = [...cache];
     final index = oldcache.indexWhere((b) => b.bucketId == bucketId);
     if (index != -1) {
-      Bucket oldcache2 = oldcache[index];
-      oldcache2 = oldcache2.copyWith(attributes: attributes);
-      cache[index] = oldcache2;
+      oldcache[index] = oldcache[index].copyWith(attributes: attributes);
+      cache = oldcache;
     }
   }
 
@@ -48,9 +47,8 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
     List<Bucket> oldcache = [...cache];
     final index = oldcache.indexWhere((b) => b.bucketId == bucketId);
     if (index != -1) {
-      Bucket oldcache2 = oldcache[index];
-      oldcache2 = oldcache2.copyWith(description: description);
-      cache[index] = oldcache2;
+      oldcache[index] = oldcache[index].copyWith(description: description);
+      cache = oldcache;
     }
   }
 
@@ -59,9 +57,8 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
     List<Bucket> oldcache = [...cache];
     final index = oldcache.indexWhere((b) => b.bucketId == bucketId);
     if (index != -1) {
-      Bucket oldcache2 = oldcache[index];
-      oldcache2 = oldcache2.copyWith(fileTypes: fileTypes);
-      cache[index] = oldcache2;
+      oldcache[index] = oldcache[index].copyWith(fileTypes: fileTypes);
+      cache = oldcache;
     }
   }
 
@@ -70,9 +67,8 @@ class BucketCache extends HiveCache<List<Bucket>> implements BucketBase {
     List<Bucket> oldcache = [...cache];
     final index = oldcache.indexWhere((b) => b.bucketId == bucketId);
     if (index != -1) {
-      Bucket oldcache2 = oldcache[index];
-      oldcache2 = oldcache2.copyWith(title: title);
-      cache[index] = oldcache2;
+      oldcache[index] = oldcache[index].copyWith(title: title);
+      cache = oldcache;
     }
   }
 

@@ -63,31 +63,38 @@ class BucketRepository extends CachedRepository<BucketApi, BucketCache>
 
   @override
   Future<void> update(Bucket bucket) async {
-    await api.update(bucket);
-    await cache.update(bucket);
+    await (api.update(bucket), Future.value(cache.update(bucket))).wait;
   }
 
   @override
   Future<void> updateAttributes(String bucketId, List<Attribute> attributes) async {
-    await api.updateAttributes(bucketId, attributes);
-    await cache.updateAttributes(bucketId, attributes);
+    await (
+      api.updateAttributes(bucketId, attributes),
+      Future.value(cache.updateAttributes(bucketId, attributes)),
+    ).wait;
   }
 
   @override
   Future<void> updateDescription(String bucketId, String description) async {
-    await api.updateDescription(bucketId, description);
-    await cache.updateDescription(bucketId, description);
+    await (
+      api.updateDescription(bucketId, description),
+      Future.value(cache.updateDescription(bucketId, description)),
+    ).wait;
   }
 
   @override
   Future<void> updateFileTypes(String bucketId, List<DocumentType> fileTypes) async {
-    await api.updateFileTypes(bucketId, fileTypes);
-    await cache.updateFileTypes(bucketId, fileTypes);
+    await (
+      api.updateFileTypes(bucketId, fileTypes),
+      Future.value(cache.updateFileTypes(bucketId, fileTypes)),
+    ).wait;
   }
 
   @override
   Future<void> updateTitle(String bucketId, String title) async {
-    await api.updateTitle(bucketId, title);
-    await cache.updateTitle(bucketId, title);
+    await (
+      api.updateTitle(bucketId, title),
+      Future.value(cache.updateTitle(bucketId, title)),
+    ).wait;
   }
 }

@@ -25,10 +25,8 @@ abstract class AttributeManagementState with _$AttributeManagementState {
     required List<Attribute> fixedAttributes,
     required List<Attribute> customAttributes,
   }) = AMLoaded;
-  const factory AttributeManagementState.submittedSuccessfully({
-    required List<Attribute> fixedAttributes,
-    required List<Attribute> customAttributes,
-  }) = AMSubmittedSuccessfully;
+  const factory AttributeManagementState.submittedSuccessfully() =
+      AMSubmittedSuccessfully;
 }
 
 extension AttributeManagementStateExt on AttributeManagementState {
@@ -72,16 +70,18 @@ class AttributeManagementBloc
     add(const _Init());
   }
 
-  void _init(_Init event, Emitter emit) async {
+  Bucket? bucket;
+
+  void _init(_Init event, Emitter<AttributeManagementState> emit) async {
     if (state is AMLoaded) return;
-    final bucket = await bucketRepo.getBucketById(bucketId);
+    bucket ??= await bucketRepo.getBucketById(bucketId);
     if (bucket == null) {
       emit(AttributeManagementState.error('Bucket not found'));
       return;
     }
 
     // If bucket has no attributes, return fixed attributes
-    if (bucket.attributes.isEmpty) {
+    if (bucket!.attributes.isEmpty) {
       emit(
         AttributeManagementState.loaded(
           customAttributes: const [],
@@ -95,7 +95,7 @@ class AttributeManagementBloc
     }
 
     List<Attribute> customAttributes = [], fixedAttributes = [];
-    for (var attribute in bucket.attributes) {
+    for (var attribute in bucket!.attributes) {
       if (fixedAttributesMap.containsKey(attribute.attributeId)) {
         fixedAttributes.add(attribute);
       } else {
@@ -110,70 +110,66 @@ class AttributeManagementBloc
     );
   }
 
-  void _updateAttribute(_UpdateAttribute event, Emitter emit) {
-    _mapperEmit(emit, (state) {
-      var fixedAttributes = [...state.fixedAttributes];
-      var customAttributes = [...state.customAttributes];
+  void _updateAttribute(
+    _UpdateAttribute event,
+    Emitter<AttributeManagementState> emit,
+  ) async {
+    if (this.state is! AMLoaded) return;
+    final state = this.state as AMLoaded;
 
-      int idx = fixedAttributes.indexWhere(
+    var fixedAttributes = [...state.fixedAttributes];
+    var customAttributes = [...state.customAttributes];
+
+    int idx = fixedAttributes.indexWhere(
+      (e) => e.attributeId == event.attribute.attributeId,
+    );
+
+    if (idx != -1) {
+      fixedAttributes[idx] = event.attribute;
+    } else {
+      idx = customAttributes.indexWhere(
         (e) => e.attributeId == event.attribute.attributeId,
       );
-
-      if (idx != -1) {
-        fixedAttributes[idx] = event.attribute;
-      } else {
-        idx = customAttributes.indexWhere(
-          (e) => e.attributeId == event.attribute.attributeId,
-        );
-        if (idx != -1) customAttributes[idx] = event.attribute;
-      }
-      return state.copyWith(
+      if (idx != -1) customAttributes[idx] = event.attribute;
+    }
+    bucket = bucket!.copyWith(attributes: [...fixedAttributes, ...customAttributes]);
+    emit(
+      state.copyWith(
         fixedAttributes: fixedAttributes,
         customAttributes: customAttributes,
-      );
-    });
-  }
-
-  void _addAttribute(_AddAttribute event, Emitter emit) {
-    _mapperEmit(emit, (state) {
-      var customAttributes = [...state.customAttributes, event.attribute];
-      return state.copyWith(customAttributes: customAttributes);
-    });
-  }
-
-  void _removeAttribute(_RemoveAttribute event, Emitter emit) {
-    _mapperEmit(emit, (state) {
-      final customAttributes = [...state.customAttributes]..removeAt(event.index);
-      return state.copyWith(customAttributes: customAttributes);
-    });
-  }
-
-  void _onSubmitted(_OnSubmitted event, Emitter emit) async {
-    if (this.state is! AMLoaded) return;
-    var bucket = await bucketRepo.getBucketById(bucketId);
-
-    final state = this.state as AMLoaded;
-    var bucket2 = bucket!.copyWith(
-      attributes: [...state.fixedAttributes, ...state.customAttributes],
-    );
-    await bucketRepo.update(bucket2);
-    emit(
-      AttributeManagementState.submittedSuccessfully(
-        fixedAttributes: state.fixedAttributes,
-        customAttributes: state.customAttributes,
       ),
     );
   }
 
-  /// Common method to update state
-  void _mapperEmit(
-    Emitter emit,
-    AttributeManagementState Function(AMLoaded state) mapper,
-  ) {
-    var newState = state.map(
-      loaded: (o) => mapper(o),
-      orElse: () => AttributeManagementState.error('State is not loaded'),
+  void _addAttribute(_AddAttribute event, Emitter<AttributeManagementState> emit) async {
+    if (this.state is! AMLoaded) return;
+    final state = this.state as AMLoaded;
+
+    var customAttributes = [...state.customAttributes, event.attribute];
+    bucket = bucket!.copyWith(
+      attributes: [...state.fixedAttributes, ...customAttributes],
     );
-    emit(newState);
+    emit(state.copyWith(customAttributes: customAttributes));
+  }
+
+  void _removeAttribute(
+    _RemoveAttribute event,
+    Emitter<AttributeManagementState> emit,
+  ) async {
+    if (this.state is! AMLoaded) return;
+    final state = this.state as AMLoaded;
+
+    final customAttributes = [...state.customAttributes]..removeAt(event.index);
+    bucket = bucket!.copyWith(
+      attributes: [...state.fixedAttributes, ...customAttributes],
+    );
+    emit(state.copyWith(customAttributes: customAttributes));
+  }
+
+  void _onSubmitted(_OnSubmitted event, Emitter<AttributeManagementState> emit) async {
+    if (state is! AMLoaded || bucket == null) return;
+
+    await bucketRepo.updateAttributes(bucketId, bucket!.attributes);
+    emit(AttributeManagementState.submittedSuccessfully());
   }
 }

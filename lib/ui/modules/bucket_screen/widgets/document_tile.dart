@@ -62,6 +62,12 @@ class DocumentTile extends StatelessWidget {
       spacing: 4,
       children: [
         Text(
+          documentFile.isDraft ? 'Draft' : documentFile.type.name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: context.TxT.h2,
+        ),
+        Text(
           documentFile.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,

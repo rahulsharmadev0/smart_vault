@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
@@ -5,42 +7,79 @@ import 'package:flutter/material.dart';
 ///
 /// This widget allows for monitoring upload progress and provides actions
 /// like download, get link, and delete once the upload is complete.
-abstract class StorageTaskWidget extends StatelessWidget {
-  const StorageTaskWidget({
+class StorageTaskBuilder extends StatefulWidget {
+  const StorageTaskBuilder({
     super.key,
     required this.task,
-    this.onDownload,
-    this.onDownloadLink,
-    this.onDelete,
+    required this.builder,
+    this.onError,
+    this.onCancel,
+    this.onPause,
+    this.onResume,
+    this.onSuccess,
   });
 
   /// The Firebase Storage upload task to display.
   final UploadTask task;
 
-  /// Optional callback triggered when the user presses the download button on a completed upload task.
-  /// If null, the download button won't be displayed.
-  final VoidCallback? onDownload;
+  final VoidCallback? onError;
 
-  /// Optional callback triggered when the user presses the "link" button on a completed upload task.
-  /// If null, the link button won't be displayed.
-  final VoidCallback? onDownloadLink;
+  final VoidCallback? onCancel;
 
-  /// Optional callback triggered when the user presses the "delete" button on a completed upload task.
-  /// If null, the delete button won't be displayed.
-  final VoidCallback? onDelete;
+  final VoidCallback? onPause;
 
-  /// Build the content of the upload task tile based on the current snapshot.
-  ///
-  /// Override this method to customize the appearance of the tile.
-  ///
-  /// [context] The build context.
-  /// [asyncSnapshot] The latest snapshot of the task's progress.
-  Widget buildContent(BuildContext context, AsyncSnapshot<TaskSnapshot> asyncSnapshot);
+  final VoidCallback? onResume;
+
+  final VoidCallback? onSuccess;
+
+  final Widget Function(BuildContext context, AsyncSnapshot<TaskSnapshot> asyncSnapshot)
+  builder;
 
   @override
-  @protected
+  State<StorageTaskBuilder> createState() => _StorageTaskBuilderState();
+}
+
+class _StorageTaskBuilderState extends State<StorageTaskBuilder> {
+  StreamSubscription<TaskSnapshot>? _snapshotSubscription;
+
+  @override
+  void initState() {
+    _snapshotSubscription = widget.task.snapshotEvents.listen(
+      _onSnapshotEvent,
+      onError: (_) => widget.onError,
+    );
+    super.initState();
+  }
+
+  void _onSnapshotEvent(TaskSnapshot snapshot) => switch (snapshot.state) {
+    TaskState.success => widget.onSuccess?.call(),
+    TaskState.canceled => widget.onCancel?.call(),
+    TaskState.paused => widget.onPause?.call(),
+    TaskState.running => widget.onResume?.call(),
+    TaskState.error => widget.onError?.call(),
+  };
+
+  @override
+  void dispose() {
+    _snapshotSubscription?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant StorageTaskBuilder oldWidget) {
+    if (oldWidget.task != widget.task) {
+      _snapshotSubscription?.cancel();
+      _snapshotSubscription = widget.task.snapshotEvents.listen(
+        _onSnapshotEvent,
+        onError: (_) => widget.onError,
+      );
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) =>
-      StreamBuilder<TaskSnapshot>(stream: task.snapshotEvents, builder: buildContent);
+      StreamBuilder(stream: widget.task.snapshotEvents, builder: widget.builder);
 }
 
 mixin TaskSnapshotExt on TaskSnapshot {

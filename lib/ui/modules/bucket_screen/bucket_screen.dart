@@ -2,8 +2,8 @@ import 'package:app_foundation/gen/assets.gen.dart';
 import 'package:edukit/ui/app/routes.dart';
 import 'package:edukit/ui/material/scaffold.dart';
 import 'package:edukit/ui/modules/attribute_management/attribute_management_bloc.dart';
-import 'package:edukit/ui/modules/bucket_screen/bucket_cubit.dart';
-import 'package:edukit/ui/modules/bucket_screen/files_cubit.dart';
+import 'package:edukit/ui/modules/bucket_screen/bloc/bucket_cubit.dart';
+import 'package:edukit/ui/modules/bucket_screen/bloc/files_cubit.dart';
 import 'package:edukit/ui/modules/bucket_screen/widgets/document_tile.dart';
 import 'package:edukit/ui/modules/bucket_screen/widgets/sync_upload_document_tile.dart';
 import 'package:edukit/ui/modules/bucket_screen/widgets/text_field_attribute.dart';
@@ -34,10 +34,8 @@ class BucketScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => BucketBloc(bucketId, bucketRepo)..add(LoadBucket()),
-        ),
-        BlocProvider(create: (context) => FilesCubit(fileRepository: fileRepo)),
+        BlocProvider(create: (_) => BucketBloc(bucketId, bucketRepo)..add(LoadBucket())),
+        BlocProvider(create: (_) => FilesCubit(fileRepository: fileRepo)),
       ],
       child: BlocConsumer<BucketBloc, BucketState>(
         listener: (context, state) {
@@ -52,28 +50,20 @@ class BucketScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return switch (state) {
-            BucketLoading _ => const AppScaffold(
-              titleText: 'Loading Bucket...',
-              body: Center(child: CircularProgressIndicator()),
-            ),
-            BucketError _ => AppScaffold(
-              titleText: 'Error',
-              body: Center(child: Text('Error: ${state.error}')),
-            ),
-            BucketNotFound _ => const AppScaffold(
-              titleText: 'Bucket Not Found',
-              body: Center(child: Text('Bucket not found')),
-            ),
+          var body = switch (state) {
+            BucketLoading _ => Center(child: CircularProgressIndicator()),
+            BucketError _ => Center(child: Text('Error: ${state.error}')),
+            BucketNotFound _ => Center(child: Text('Bucket not found')),
             BucketLoaded _ => RepositoryProvider.value(
               value: state.bucket,
-              child: const _BucketLayout(),
+              child: const _BucketScreenLayout(),
             ),
-            _ => AppScaffold(
-              titleText: 'Unknown State',
-              body: Center(child: Text('Unknown state')),
-            ),
+            _ => Center(child: Text('Unknown state')),
           };
+
+          if (state is BucketLoaded) return body;
+
+          return AppScaffold(body: body);
         },
       ),
     );
@@ -84,10 +74,10 @@ class BucketScreen extends StatelessWidget {
  Bucket Layout divided into 3 sections:
    - TextFieldAttribute Section -> 2In1TextFieldAttribute, TextFieldAttribute
    - SelectFieldAttribute Section -> MultiSelectDropdown, SingleSelectDropdown, DateSelectorFieldAttribute
-   - BucketResultBody Section -> SyncUploadDocumentTile | DocumentTile
+   - BucketResultBody Section -> SyncUploadDocumentTile | Draft | DocumentTile
   */
-class _BucketLayout extends StatelessWidget {
-  const _BucketLayout();
+class _BucketScreenLayout extends StatelessWidget {
+  const _BucketScreenLayout();
 
   @override
   Widget build(BuildContext context) {
@@ -105,27 +95,21 @@ class _BucketLayout extends StatelessWidget {
           // Only show text field section if there are appropriate attributes
           if (attributesByType.fixedAttributes.isNotEmpty ||
               attributesByType.textAttributes.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: TextFieldAttributeSection(
-                fixedAttributes: attributesByType.fixedAttributes,
-                otherAttributes: attributesByType.textAttributes,
-              ),
+            TextFieldAttributeSection(
+              fixedAttributes: attributesByType.fixedAttributes,
+              otherAttributes: attributesByType.textAttributes,
             ),
 
           // Only show select field section if there are appropriate attributes
           if (attributesByType.hasSelectAttributes)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: SelectFieldAttributeSection(
-                mulitAttributes: attributesByType.multiSelectAttributes,
-                singleAttributes: attributesByType.singleSelectAttributes,
-                dateAttributes: attributesByType.dateAttributes,
-              ),
+            SelectFieldAttributeSection(
+              mulitAttributes: attributesByType.multiSelectAttributes,
+              singleAttributes: attributesByType.singleSelectAttributes,
+              dateAttributes: attributesByType.dateAttributes,
             ),
 
           // Show files section
-          Expanded(child: BucketResultBody(bucketId: bucket.bucketId)),
+          Expanded(child: _BucketResultBody()),
         ],
       ),
     );
@@ -171,107 +155,49 @@ class _AttributesByType {
       dateAttributes.isNotEmpty;
 }
 
-class BucketResultBody extends StatelessWidget {
-  final String bucketId;
-
-  const BucketResultBody({super.key, required this.bucketId});
-
+class _BucketResultBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Display files being uploaded
-        ValueListenableBuilder(
-          valueListenable: StorageService().uploadTasks,
-          builder: (context, tasks, __) {
-            print('tasks: $tasks');
-            if (tasks.isEmpty) return const SizedBox.shrink();
+        UploadingTiles(),
 
-            return Expanded(
-              flex: tasks.isEmpty ? 0 : 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      'Uploading Files',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: tasks.length,
-                      itemBuilder:
-                          (context, index) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: SyncUploadDocumentTile(
-                              task: tasks[index],
-                              onAiChat: () {}, // Implement AI chat functionality
-                              onShare: () {}, // Implement share functionality
-                            ),
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-
-        // Display files from the database
         Expanded(
-          flex: 2,
           child: BlocBuilder<FilesCubit, FilesState>(
-            builder: (context, state) {
-              if (state is FilesLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is FilesError) {
-                return Center(child: Text('Error: ${state.error}'));
-              } else if (state is FilesLoaded) {
-                if (state.files.isEmpty) {
-                  return const Center(
-                    child: Text('No files found. Upload files to get started.'),
-                  );
-                }
+            builder:
+                (_, s) => switch (s) {
+                  FilesLoading _ => Center(child: CircularProgressIndicator()),
+                  FilesError _ => Center(child: Text('Error: ${s.error}')),
+                  FilesLoaded data => regularTiles(context, data),
+                  _ => Center(child: Text('Unknown state')),
+                },
+          ),
+        ),
+      ],
+    );
+  }
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        'Files',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: state.files.length,
-                        itemBuilder:
-                            (context, index) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: DocumentTile(
-                                documentFile: state.files[index],
-                                onAiChat: () {}, // Implement AI chat functionality
-                                onShare: () {}, // Implement share functionality
-                                onDownload: () {}, // Implement download functionality
-                                onDelete:
-                                    () => _handleDeleteFile(
-                                      context,
-                                      state.files[index].fileId,
-                                    ),
-                              ),
-                            ),
-                      ),
-                    ),
-                  ],
-                );
-              }
-
-              return const Center(child: Text('No files found'));
-            },
+  Widget regularTiles(BuildContext context, FilesLoaded data) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text('Files', style: Theme.of(context).textTheme.titleMedium),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: data.files.length,
+            itemBuilder:
+                (context, index) => DocumentTile(
+                  documentFile: data.files[index],
+                  onAiChat: () {}, // Implement AI chat functionality
+                  onShare: () {}, // Implement share functionality
+                  onDownload: () {}, // Implement download functionality
+                  onDelete: () => _handleDeleteFile(context, data.files[index].fileId),
+                ),
           ),
         ),
       ],
@@ -303,6 +229,46 @@ class BucketResultBody extends StatelessWidget {
   }
 }
 
+class UploadingTiles extends StatelessWidget {
+  const UploadingTiles({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: StorageService().uploadTasks,
+      builder: (context, tasks, __) {
+        if (tasks.isEmpty) return const SizedBox.shrink();
+        return Expanded(
+          flex: tasks.isEmpty ? 0 : 1,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'Uploading Files',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: tasks.length,
+                  itemBuilder:
+                      (context, index) => SyncUploadDocumentTile(
+                        index: index,
+                        onAiChat: () {}, // Implement AI chat functionality
+                        onShare: () {}, // Implement share functionality
+                      ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 class SelectFieldAttributeSection extends StatelessWidget {
   final List<Attribute> mulitAttributes;
   final List<Attribute> singleAttributes;
@@ -328,9 +294,11 @@ class SelectFieldAttributeSection extends StatelessWidget {
   }
 }
 
-/// Section for TextFieldAttribute
-/// Render 2In1TextFieldAttribute, TextFieldAttribute
-/// based on the attribute type
+// -----------------------------------------------------
+//  Attribute Section
+//    - TextFieldAttribute: TextField for text input
+//    - TwoInOneTextFieldAttribute: Two text fields for input
+// -----------------------------------------------------
 class TextFieldAttributeSection extends StatelessWidget {
   final List<Attribute> fixedAttributes;
   final List<Attribute> otherAttributes;
@@ -358,6 +326,11 @@ class TextFieldAttributeSection extends StatelessWidget {
   }
 }
 
+// -----------------------------------------------------
+//  Actions for the AppBar
+//    - Download: Bulk download
+//    - Upload: Pick files & upload
+// -----------------------------------------------------
 class BuildActions extends StatelessWidget {
   const BuildActions({super.key});
 

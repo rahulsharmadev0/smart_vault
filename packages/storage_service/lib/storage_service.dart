@@ -1,12 +1,20 @@
+library;
+
 import 'dart:async';
 import 'package:cross_file/cross_file.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:storage_service/storage_manager.dart';
+import 'package:flutter/foundation.dart';
+import 'package:storage_service/save_as/save_as.dart';
+import 'dart:io' as io;
 
-export 'package:storage_service/storage_manager.dart';
+import 'package:storage_service/utils.dart';
+import 'package:uuid/uuid.dart';
+
+export 'package:firebase_storage/firebase_storage.dart' show UploadTask, TaskState;
 export 'package:storage_service/utils.dart';
 export 'package:storage_service/storage_task_widget.dart';
+part 'storage_manager.dart';
 
 /// A service for managing file storage operations.
 class StorageService {
@@ -20,7 +28,7 @@ class StorageService {
   }
 
   /// Private constructor for the singleton pattern
-  StorageService._internal() : _manager = StorageManager();
+  StorageService._internal() : _manager = StorageManager._();
 
   /// The storage manager used by this service
   final StorageManager _manager;

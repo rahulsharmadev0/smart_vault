@@ -21,6 +21,7 @@ sealed class DocumentFile with _$DocumentFile {
     required String orgId,
     required String bucketId,
     required String name,
+    required bool isDraft,
 
     /// The full path of this object.
     required String fullPath,
@@ -29,7 +30,7 @@ sealed class DocumentFile with _$DocumentFile {
     String? fileId,
     DateTime? uploadedAt,
     DateTime? updatedAt,
-    @Default({}) Map<String, dynamic> attributes,
+    @Default({}) Map<String, dynamic>? attributes,
   }) = _DocumentFile;
 
   factory DocumentFile.fromJson(Map<String, dynamic> json) =>
@@ -47,6 +48,7 @@ sealed class DocumentFile with _$DocumentFile {
       uploadedAt: DateTime.parse(json.remove('uploadedAt')),
       updatedAt: DateTime.parse(json.remove('updatedAt')),
       orgId: json.remove('orgId'),
+      isDraft: json.remove('isDraft'),
       attributes: json,
     );
   }
@@ -62,6 +64,7 @@ sealed class DocumentFile with _$DocumentFile {
     'orgId': orgId,
     'description': description,
     'type': type.name,
-    ...attributes,
+    'isDraft': isDraft,
+    ...?attributes,
   };
 }

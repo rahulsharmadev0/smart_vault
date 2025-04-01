@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:repositories/repositories/authentication/authentication_api.dart';
+import 'package:repositories/repositories.dart';
+import 'package:repositories/repositories/authentication/authentication_base.dart';
 
 void main() {
   late MockFirebaseAuth mockFirebaseAuth;
@@ -26,25 +27,18 @@ void main() {
 
     group('registerWithEmailAndPassword', () {
       test('succeeds with valid credentials', () async {
-        final credential = await authRepo.registerWithEmailAndPassword(
-          email: testEmail,
-          password: testPassword,
-          displayName: testDisplayName,
-        );
+        await authRepo.signUp(testEmail, testPassword, testDisplayName);
 
-        expect(credential.user?.email, equals(testEmail));
-        expect(credential.user?.displayName, equals(testDisplayName));
+        expect(authRepo.currentUser?.email, equals(testEmail));
+        expect(authRepo.currentUser?.displayName, equals(testDisplayName));
       });
     });
 
     group('signInWithEmailAndPassword', () {
       test('succeeds with valid credentials', () async {
-        final credential = await authRepo.signInWithEmailAndPassword(
-          email: testEmail,
-          password: testPassword,
-        );
+        await authRepo.signIn(testEmail, testPassword);
 
-        expect(credential.user?.email, equals(testEmail));
+        expect(authRepo.currentUser?.email, equals(testEmail));
         expect(mockFirebaseAuth.currentUser, isNotNull);
       });
     });
@@ -56,10 +50,7 @@ void main() {
     group('signOut', () {
       test('clears current user', () async {
         // First sign in to ensure we have a current user
-        await authRepo.signInWithEmailAndPassword(
-          email: testEmail,
-          password: testPassword,
-        );
+        await authRepo.signIn(testEmail, testPassword);
 
         // Verify we're signed in
         expect(mockFirebaseAuth.currentUser, isNotNull);
@@ -76,10 +67,7 @@ void main() {
       test('emits user changes', () async {
         final userStream = authRepo.user;
 
-        await authRepo.signInWithEmailAndPassword(
-          email: testEmail,
-          password: testPassword,
-        );
+        await authRepo.signIn(testEmail, testPassword);
 
         expect(userStream, emitsInOrder([isNull, isA<User>()]));
       });
@@ -87,12 +75,9 @@ void main() {
 
     group('userOnce', () {
       test('returns current user', () async {
-        await authRepo.signInWithEmailAndPassword(
-          email: testEmail,
-          password: testPassword,
-        );
+        await authRepo.signIn(testEmail, testPassword);
 
-        final currentUser = authRepo.userOnce;
+        final currentUser = authRepo.currentUser;
         expect(currentUser?.email, equals(testEmail));
       });
     });

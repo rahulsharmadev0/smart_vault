@@ -7,7 +7,6 @@ import 'package:repositories/repositories.dart';
 void main() async {
   bootstrap(() async {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
     initializeRepositories();
     return const App();
   });

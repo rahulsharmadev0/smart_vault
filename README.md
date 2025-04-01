@@ -16,14 +16,21 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 Auth Screen  
-    ↓  
+ ↓  
 Loading Bucket  
-    ↓  
+ ↓  
 Check bucket.isNotEmpty  
-    → Yes → Dashboard  
-    → No → Check attributes  
-        → Yes → Dashboard  
-        → No → Create Attribute → Dashboard  
+ → Yes → Dashboard  
+ → No → Check attributes  
+ → Yes → Dashboard  
+ → No → Create Attribute → Dashboard
 
+---
 
+when upolod finish
+↳ add file document in firestore
+↳ reflect changes on app
 
+make ai chat working.
+↳ integrate ai_chat to file tile button
+↳ first need to download respective file or see is firebase work via uri?

@@ -1,16 +1,9 @@
-import 'dart:async';
-import 'package:cross_file/cross_file.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
-import 'dart:io' as io;
+part of 'storage_service.dart';
 
-import 'save_as/save_as.dart';
-import 'package:storage_service/utils.dart';
-import 'package:uuid/uuid.dart';
-
-@protected
 class StorageManager {
+  /// Private static instance of the singleton
+  StorageManager._();
+
   final ValueNotifier<List<UploadTask>> _uploadTasks = ValueNotifier(const []);
 
   ValueNotifier<List<UploadTask>> get uploadTasks => _uploadTasks;

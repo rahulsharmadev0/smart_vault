@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:repositories/models/document_type.dart';
 import 'package:repositories/models/organization.dart';
 import 'package:repositories/repositories/bucket_repository.dart';
 

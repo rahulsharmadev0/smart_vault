@@ -12,7 +12,7 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
     log(details.exceptionAsString(), stackTrace: details.stack);
   };
 
-  Bloc.observer = FlutterBlocObserver();
+  Bloc.observer = FlutterBlocObserver(printTransitions: false);
 
   HiveStorage.instance = await HiveStorage.build(
     storageDirectory: HiveStorageDirectory.web,

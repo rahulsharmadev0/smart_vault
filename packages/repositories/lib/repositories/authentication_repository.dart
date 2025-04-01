@@ -6,7 +6,7 @@ import 'package:repositories/utils/repository_base.dart';
 
 class AuthenticationRepository extends Repository<AuthenticationApi>
     implements AuthenticationBase {
-  AuthenticationRepository(super.api);
+  AuthenticationRepository() : super(AuthenticationApi());
 
   @override
   User? get currentUser => api.currentUser;

@@ -110,8 +110,7 @@ class AuthFormCubit extends Cubit<AuthFormState> {
   void signIn() async {
     if (state.isValidSignIn) {
       emit(state.copyWith(formState: FormSubmissionStatus.inProgress));
-      authRepo
-          .signIn(state.email, state.password)
+      Future.value(authRepo.signIn(state.email, state.password))
           .then((_) => emit(state.copyWith(formState: FormSubmissionStatus.success)))
           .catchError(
             (e) => emit(

@@ -8,7 +8,9 @@ import 'package:edukit/ui/modules/bucket_screen/widgets/document_tile.dart';
 import 'package:edukit/ui/modules/bucket_screen/widgets/sync_upload_document_tile.dart';
 import 'package:edukit/ui/modules/bucket_screen/widgets/text_field_attribute.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_suite/flutter_suite.dart';
 import 'package:go_router/go_router.dart';
 import 'package:repositories/models.dart';
 import 'package:repositories/repositories.dart';
@@ -45,7 +47,15 @@ class BucketScreen extends StatelessWidget {
             if (state.bucket.attributes.isEmpty) {
               context.go(AppRoutes.I.attributeManagement(state.bucket.bucketId));
             } else {
-              context.read<FilesCubit>().loadFiles(state.bucket.bucketId);
+              if (bucketId.isEmpty) {
+                context.goNamed(
+                  'bucket',
+                  pathParameters: {'bucketId': state.bucket.bucketId},
+                );
+              } else {
+                // Load files for the bucket
+                context.read<FilesCubit>().loadFiles(bucketId);
+              }
             }
           }
         },
@@ -162,7 +172,7 @@ class _BucketResultBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Display files being uploaded
-        UploadingTiles(),
+        _UploadingTiles(),
 
         Expanded(
           child: BlocBuilder<FilesCubit, FilesState>(
@@ -183,18 +193,31 @@ class _BucketResultBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text('Files', style: Theme.of(context).textTheme.titleMedium),
-        ),
+        Padding(padding: 8.$.edges, child: Text('Files', style: context.TxT.t2)),
         Expanded(
           child: ListView.builder(
             itemCount: data.files.length,
             itemBuilder:
                 (context, index) => DocumentTile(
                   documentFile: data.files[index],
-                  onAiChat: () {}, // Implement AI chat functionality
-                  onShare: () {}, // Implement share functionality
+                  onAiChat: () {
+                    context.pushNamed('chat', extra: data.files[index].fullPath);
+                  },
+                  onShare: () async {
+                    var text =
+                        await StorageService()
+                            .createRef(data.files[index].fullPath)
+                            .getDownloadURL();
+                    Clipboard.setData(ClipboardData(text: text));
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Link copied to clipboard!'),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
                   onDownload: () {}, // Implement download functionality
                   onDelete: () => _handleDeleteFile(context, data.files[index].fileId),
                 ),
@@ -229,9 +252,7 @@ class _BucketResultBody extends StatelessWidget {
   }
 }
 
-class UploadingTiles extends StatelessWidget {
-  const UploadingTiles({super.key});
-
+class _UploadingTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -244,11 +265,8 @@ class UploadingTiles extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  'Uploading Files',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                padding: 8.$.edges,
+                child: Text('Uploading Files', style: context.TxT.t2),
               ),
               Expanded(
                 child: ListView.builder(

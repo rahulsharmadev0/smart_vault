@@ -53,7 +53,9 @@ class StorageService {
   /// Downloads a file as bytes and saves it locally
   ///
   /// [ref] is the Firebase Storage reference to the file
-  Future<void> downloadBytes(Reference ref) async => await _manager.downloadBytes(ref);
+  Future<void> downloadBytes(Reference ref) async => await _manager.downloadSaveAs(ref);
+
+  Reference createRef(String fullPath) => _manager.createRef(fullPath);
 
   /// Gets a download URL for a file
   ///

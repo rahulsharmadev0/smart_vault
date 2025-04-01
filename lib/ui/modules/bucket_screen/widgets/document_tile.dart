@@ -44,14 +44,8 @@ class DocumentTile extends StatelessWidget {
     );
   }
 
-  Container buildThumbnail(BuildContext context) {
-    return Container(
-      width: 1284,
-      height: 200,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(18)),
-      child: documentFile.type.icon.svg(),
-    );
+  Widget buildThumbnail(BuildContext context) {
+    return SizedBox(width: 64, height: 64, child: documentFile.type.icon.svg());
   }
 
   Column innerContent(BuildContext context) {

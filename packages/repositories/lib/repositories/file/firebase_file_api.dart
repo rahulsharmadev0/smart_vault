@@ -4,7 +4,7 @@ class FileApi extends ApiBase implements FileBase {
   final CollectionReference colRef;
 
   FileApi({FirebaseFirestore? firestore})
-    : colRef = (firestore ?? FirebaseFirestore.instance).collection('organizations');
+    : colRef = (firestore ?? FirebaseFirestore.instance).collection('files');
 
   @override
   Future<void> create(DocumentFile file) async {

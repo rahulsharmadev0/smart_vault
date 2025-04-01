@@ -13,10 +13,10 @@ void main() {
 
   group('Utils', () {
     test('returns correct content type for extensions', () {
-      expect(getContentType('pdf'), 'application/pdf');
-      expect(getContentType('doc'), 'application/msword');
-      expect(getContentType('txt'), 'text/plain');
-      expect(getContentType('unknown'), 'application/octet-stream');
+      expect(getMimeType('pdf'), 'application/pdf');
+      expect(getMimeType('doc'), 'application/msword');
+      expect(getMimeType('txt'), 'text/plain');
+      expect(getMimeType('unknown'), 'application/octet-stream');
     });
   });
 }

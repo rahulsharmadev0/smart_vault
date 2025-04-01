@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_ai_toolkit/flutter_ai_toolkit.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
@@ -17,10 +18,12 @@ class AiChatView extends StatefulWidget {
     required this.geminiApiKey,
     this.model = 'gemini-1.5-flash',
     required this.onResetApiKey,
+    this.document,
     super.key,
   });
-
+  final ({String mimeType, Uint8List bytes})? document;
   final String model;
+
   final String geminiApiKey;
   final void Function() onResetApiKey;
 
@@ -36,14 +39,44 @@ class _AiChatViewState extends State<AiChatView> with SingleTickerProviderStateM
     upperBound: 1.0,
   );
 
-  late final _provider = GeminiProvider(
-    model: GenerativeModel(model: widget.model, apiKey: widget.geminiApiKey),
-  );
+  late final GeminiProvider _provider;
 
   @override
   void initState() {
     super.initState();
-    _provider.sendMessageStream('Hello and welcome to the Smart Chat!');
+    _provider = GeminiProvider(
+      model: GenerativeModel(
+        model: widget.model,
+        apiKey: widget.geminiApiKey,
+        systemInstruction: Content.text(
+          'You are a professional document assistant specialized in analyzing and improving written content. '
+          'When provided with documents, you will: '
+          '1. Provide concise, well-structured summaries highlighting key points '
+          '2. Identify logical inconsistencies, factual errors, or gaps in reasoning '
+          '3. Suggest specific improvements for clarity, organization, and readability '
+          '4. Maintain the original tone and intent while enhancing the quality '
+          '5. Respond with actionable feedback that can be immediately applied '
+          'Focus on being helpful, precise, and constructive in all interactions.',
+        ),
+      ),
+      chatSafetySettings: [
+        SafetySetting(HarmCategory.sexuallyExplicit, HarmBlockThreshold.low),
+        SafetySetting(HarmCategory.hateSpeech, HarmBlockThreshold.low),
+      ],
+    );
+
+    // Add document to history if available and send initial request
+    if (widget.document != null) {
+      _provider.history = [
+        ChatMessage.user('Document', [
+          FileAttachment.fileOrImage(
+            name: 'document',
+            mimeType: widget.document!.mimeType,
+            bytes: widget.document!.bytes,
+          ),
+        ]),
+      ];
+    }
     _resetAnimation();
   }
 
@@ -55,6 +88,7 @@ class _AiChatViewState extends State<AiChatView> with SingleTickerProviderStateM
   @override
   void dispose() {
     _animationController.dispose();
+    _provider.dispose();
     super.dispose();
   }
 
@@ -65,12 +99,16 @@ class _AiChatViewState extends State<AiChatView> with SingleTickerProviderStateM
       builder: (context, child) {
         return LlmChatView(
           provider: _provider,
-          style: LlmChatViewStyle.defaultStyle(),
-          welcomeMessage: 'Hello and welcome to the Smart Chat!',
+          welcomeMessage:
+              widget.document == null ? 'Hello and welcome to the Smart Chat!' : null,
           suggestions: [
-            'Can you summarize this long doc into key points?',
-            'Can you detect any inconsistencies in my argument?',
+            'Summarize this document into key points?',
+            'Please analyze this document and identify any inconsistencies or errors.',
             'How can I improve the readability of this document?',
+            'What are the strengths and weaknesses of this document?',
+            'Suggest a better structure for this document.',
+            'Can you provide feedback on the tone and style?',
+            'Identify areas where more evidence or examples would be helpful.',
           ],
         );
       },

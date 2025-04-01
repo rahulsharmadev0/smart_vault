@@ -42,7 +42,7 @@ class StorageManager {
     final ext = file.extension;
 
     final metadata = SettableMetadata(
-      contentType: getContentType(ext),
+      contentType: getMimeType(ext),
       customMetadata: {'picked-file-path': file.path},
     );
 
@@ -63,7 +63,7 @@ class StorageManager {
   }
 
   /*----------------Download file---------------- */
-  Future<void> downloadBytes(Reference ref) async {
+  Future<void> downloadSaveAs(Reference ref) async {
     final bytes = await ref.getData();
     // Download...
     await saveAsBytes(bytes!, ref.name);
@@ -86,7 +86,8 @@ class StorageManager {
 
   /*----------------Usefull utility---------------- */
   /// Displays the current transferred percentage.
-  double percentage(TaskSnapshot snapshot) {
-    return (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  }
+  double percentage(TaskSnapshot snapshot) =>
+      (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+  Reference createRef(String fullPath) => FirebaseStorage.instance.ref(fullPath);
 }

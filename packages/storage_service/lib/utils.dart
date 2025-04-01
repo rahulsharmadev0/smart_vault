@@ -1,6 +1,6 @@
 import 'package:cross_file/cross_file.dart';
 
-String getContentType(String extension) {
+String getMimeType(String extension) {
   switch (extension.toLowerCase()) {
     case 'pdf':
       return 'application/pdf';

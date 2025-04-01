@@ -1,4 +1,5 @@
 import 'package:edukit/ui/material/scaffold.dart';
+import 'package:edukit/ui/modules/ai_chat/ai_chat_screen.dart';
 import 'package:edukit/ui/modules/attribute_management/attribute_management_screen.dart';
 import 'package:edukit/ui/modules/auth/auth_screen.dart';
 import 'package:edukit/ui/modules/bucket_screen/bucket_screen.dart';
@@ -40,6 +41,11 @@ final class AppRoutes with PathRoutes {
         path: '/auth',
         name: 'auth',
         builder: (context, state) => const AuthScreen(),
+      ),
+      GoRoute(
+        path: '/chat',
+        name: 'chat',
+        builder: (context, state) => AiChatScreen(filePath: state.extra as String),
       ),
 
       ShellRoute(
@@ -84,6 +90,8 @@ mixin PathRoutes {
   String createBucket() => '/create-bucket';
   String bucket(String bucketId) => '/$bucketId';
   String attributeManagement(String bucketId) => '/attribute-management/$bucketId';
+
+  // String chat() => _appendToCurrentPath('chat');
 
   String _appendToCurrentPath(String newPath) {
     final newPathUri = Uri.parse(newPath);

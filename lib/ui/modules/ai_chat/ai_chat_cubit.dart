@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:storage_service/storage_service.dart';
@@ -60,7 +59,6 @@ class AiChatCubit extends Cubit<AiChatState> {
         return;
       }
 
-      print('Document loaded: ${metadata.contentType}');
       emit(AiChatState.loaded(documentBytes: data, mimeType: metadata.contentType!));
     } catch (e) {
       emit(AiChatState.error('Error: ${e.toString()}'));

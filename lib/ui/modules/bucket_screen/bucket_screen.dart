@@ -36,7 +36,9 @@ class BucketScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => BucketBloc(bucketId, bucketRepo)..add(LoadBucket())),
+        BlocProvider(
+          create: (_) => BucketBloc(bucketId, bucketRepo, orgRepo)..add(LoadBucket()),
+        ),
         BlocProvider(create: (_) => FilesCubit(fileRepository: fileRepo)),
       ],
       child: BlocConsumer<BucketBloc, BucketState>(
@@ -60,20 +62,16 @@ class BucketScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          var body = switch (state) {
+          return switch (state) {
             BucketLoading _ => Center(child: CircularProgressIndicator()),
             BucketError _ => Center(child: Text('Error: ${state.error}')),
             BucketNotFound _ => Center(child: Text('Bucket not found')),
             BucketLoaded _ => RepositoryProvider.value(
               value: state.bucket,
-              child: const _BucketScreenLayout(),
+              child: AppScaffold(body: const _BucketScreenLayout()),
             ),
             _ => Center(child: Text('Unknown state')),
           };
-
-          if (state is BucketLoaded) return body;
-
-          return AppScaffold(body: body);
         },
       ),
     );

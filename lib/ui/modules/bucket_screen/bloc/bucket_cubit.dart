@@ -43,8 +43,11 @@ abstract class BucketState extends Equatable {
 class BucketLoading extends BucketState {}
 
 class BucketLoaded extends BucketState {
-  final Bucket bucket;
-  BucketLoaded(this.bucket);
+  final List<Bucket> buckets;
+  final int currentSelectedIndex;
+
+  Bucket get bucket => buckets[currentSelectedIndex];
+  BucketLoaded(this.buckets, this.currentSelectedIndex);
 
   @override
   List<Object?> get props => [bucket];
@@ -66,10 +69,12 @@ class BucketError extends BucketState {
 class BucketBloc extends Bloc<BucketEvent, BucketState> {
   final String bucketId;
   final BucketRepository bucketRepo;
-  StreamSubscription<List<Bucket>>? _bucketSubscription;
-  Bucket? _cachedBucket;
+  final OrganizationRepository orgRepo;
+  StreamSubscription<List<Bucket>>? bucketSubscription;
+  List<Bucket> _cachedBuckets = [];
+  int _currentIndex = 0;
 
-  BucketBloc(this.bucketId, this.bucketRepo) : super(BucketLoading()) {
+  BucketBloc(this.bucketId, this.bucketRepo, this.orgRepo) : super(BucketLoading()) {
     on<LoadBucket>(_onLoadBucket);
     on<UpdateTitle>(_onUpdateTitle);
     on<UpdateDescription>(_onUpdateDescription);
@@ -80,14 +85,10 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
 
   void _setupSubscription() {
     try {
-      _bucketSubscription = bucketRepo.dataStream.listen((buckets) {
-        final currentBucket = buckets.firstWhere(
-          (b) => b.bucketId == bucketId,
-          orElse: () => _cachedBucket!,
-        );
-
-        if (currentBucket != _cachedBucket) {
-          _cachedBucket = currentBucket;
+      bucketSubscription = bucketRepo.dataStream.listen((buckets) {
+        _cachedBuckets = buckets;
+        _currentIndex = buckets.indexWhere((b) => b.bucketId == bucketId);
+        if (_currentIndex >= 0) {
           add(LoadBucket());
         }
       }, onError: (error) => addError(error.toString()));
@@ -96,32 +97,27 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
     }
   }
 
-  // This method is responsible for:
-  //
-  // Emits [BucketLoading] while loading.
-  // If `bucketId` is empty, fetches buckets by org ID:
-  //   - Emits [BucketNotFound] if none found.
-  //   - Otherwise, caches and emits the first bucket as [BucketLoaded].
-  // If `bucketId` is not empty, fetches bucket by ID:
-  //   - Emits [BucketLoaded] if found, or [BucketNotFound] if not.
-  // Emits [BucketError] on failure.
   Future<void> _onLoadBucket(LoadBucket event, Emitter<BucketState> emit) async {
     emit(BucketLoading());
-    if (bucketId.trim().isEmpty) {
-      var buckets = await bucketRepo.getBucketsByOrgId(orgRepo.orgId!);
-      if (buckets.isEmpty) {
-        emit(BucketNotFound());
-      } else {
-        _cachedBucket = buckets.first;
-        emit(BucketLoaded(_cachedBucket!));
-      }
-      return;
-    }
+
     try {
+      if (bucketId.trim().isEmpty) {
+        var buckets = await bucketRepo.getBucketsByOrgId(orgRepo.orgId!);
+        if (buckets.isEmpty) {
+          emit(BucketNotFound());
+        } else {
+          _cachedBuckets = buckets;
+          _currentIndex = 0;
+          emit(BucketLoaded(buckets, 0));
+        }
+        return;
+      }
+
       final bucket = await bucketRepo.getBucketById(bucketId);
       if (bucket != null) {
-        _cachedBucket = bucket;
-        emit(BucketLoaded(bucket));
+        _cachedBuckets = [bucket];
+        _currentIndex = 0;
+        emit(BucketLoaded(_cachedBuckets, _currentIndex));
       } else {
         emit(BucketNotFound());
       }
@@ -131,13 +127,14 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
   }
 
   Future<void> _onUpdateTitle(UpdateTitle event, Emitter<BucketState> emit) async {
-    if (_cachedBucket == null) return;
+    if (_cachedBuckets.isEmpty || _currentIndex < 0) return;
 
     try {
       await bucketRepo.updateTitle(bucketId, event.title);
-      if (_bucketSubscription == null) {
-        _cachedBucket = _cachedBucket!.copyWith(title: event.title);
-        emit(BucketLoaded(_cachedBucket!));
+      if (bucketSubscription == null) {
+        var updatedBucket = _cachedBuckets[_currentIndex].copyWith(title: event.title);
+        _cachedBuckets[_currentIndex] = updatedBucket;
+        emit(BucketLoaded(_cachedBuckets, _currentIndex));
       }
     } catch (e) {
       emit(BucketError('Failed to update title: ${e.toString()}'));
@@ -148,13 +145,16 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
     UpdateDescription event,
     Emitter<BucketState> emit,
   ) async {
-    if (_cachedBucket == null) return;
+    if (_cachedBuckets.isEmpty || _currentIndex < 0) return;
 
     try {
       await bucketRepo.updateDescription(bucketId, event.description);
-      if (_bucketSubscription == null) {
-        _cachedBucket = _cachedBucket!.copyWith(description: event.description);
-        emit(BucketLoaded(_cachedBucket!));
+      if (bucketSubscription == null) {
+        var updatedBucket = _cachedBuckets[_currentIndex].copyWith(
+          description: event.description,
+        );
+        _cachedBuckets[_currentIndex] = updatedBucket;
+        emit(BucketLoaded(_cachedBuckets, _currentIndex));
       }
     } catch (e) {
       emit(BucketError('Failed to update description: ${e.toString()}'));
@@ -165,13 +165,16 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
     UpdateAttributes event,
     Emitter<BucketState> emit,
   ) async {
-    if (_cachedBucket == null) return;
+    if (_cachedBuckets.isEmpty || _currentIndex < 0) return;
 
     try {
       await bucketRepo.updateAttributes(bucketId, event.attributes);
-      if (_bucketSubscription == null) {
-        _cachedBucket = _cachedBucket!.copyWith(attributes: event.attributes);
-        emit(BucketLoaded(_cachedBucket!));
+      if (bucketSubscription == null) {
+        var updatedBucket = _cachedBuckets[_currentIndex].copyWith(
+          attributes: event.attributes,
+        );
+        _cachedBuckets[_currentIndex] = updatedBucket;
+        emit(BucketLoaded(_cachedBuckets, _currentIndex));
       }
     } catch (e) {
       emit(BucketError('Failed to update attributes: ${e.toString()}'));
@@ -180,7 +183,7 @@ class BucketBloc extends Bloc<BucketEvent, BucketState> {
 
   @override
   Future<void> close() {
-    _bucketSubscription?.cancel();
+    bucketSubscription?.cancel();
     return super.close();
   }
 }
